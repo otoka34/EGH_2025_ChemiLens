@@ -1,73 +1,96 @@
 import 'package:flutter/material.dart';
-import '../services/history_store.dart';
-import '../../widgets/nav.dart';
+import 'package:team_25_app/screens/services/history_store.dart';
+import 'package:team_25_app/screens/collection/widgets/history_list.dart';
+import 'package:team_25_app/screens/collection/widgets/history_tab_bar.dart';
+import 'package:team_25_app/screens/camera/camera_screen.dart';
+import 'package:team_25_app/screens/album/album_screen.dart';
 
-class HistoryScreen extends StatelessWidget {
+class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+  State<HistoryScreen> createState() => _HistoryScreenState();
+}
 
+class _HistoryScreenState extends State<HistoryScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_onTabChanged);
+
+    // モックデータを初期化（デバッグ用）
+    HistoryStore.initMockData();
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_onTabChanged);
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  void _onTabChanged() {
+    if (_tabController.indexIsChanging) return;
+
+    final filter = _tabController.index == 0
+        ? HistoryFilter.favorites
+        : HistoryFilter.all;
+    HistoryStore.setFilter(filter);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('chemilens')),
-      bottomNavigationBar: buildBottomNav(context, 0), // 履歴タブ選択
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // アルバム選択用FAB
+          FloatingActionButton(
+            heroTag: "album",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AlbumScreen()),
+              );
+            },
+            child: const Icon(Icons.photo_library),
+          ),
+          const SizedBox(height: 12),
+          // カメラ撮影用FAB
+          FloatingActionButton(
+            heroTag: "camera",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const CameraScreen()),
+              );
+            },
+            child: const Icon(Icons.camera_alt),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 白背景側の見出しヘッダー
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-              child: Text(
-                '最近の履歴',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontSize:
-                      (theme.textTheme.titleMedium?.fontSize ?? 16) + 3, // +3pt
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-            const Divider(height: 1),
+            // タブバー
+            HistoryTabBar(tabController: _tabController),
 
             // 履歴リスト本体
             Expanded(
-              child: ValueListenableBuilder<List<HistoryItem>>(
-                valueListenable: HistoryStore.items,
-                builder: (_, list, __) {
-                  if (list.isEmpty) {
-                    return Center(
-                      child: Text(
-                        'まだ履歴がありません',
-                        style: theme.textTheme.bodyLarge,
-                      ),
-                    );
-                  }
-                  return ListView.separated(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: list.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1),
-                    itemBuilder: (_, i) {
-                      final item = list[i];
-                      return ListTile(
-                        leading: (item.imageFile != null)
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.file(
-                                  item.imageFile!,
-                                  width: 56,
-                                  height: 56,
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            : const Icon(Icons.image),
-                        title: Text(item.objectName),
-                        subtitle: Text('${item.molecules.length}個の分子候補'),
-                        // trailing の日時表示は削除
-                      );
-                    },
-                  );
-                },
+              child: TabBarView(
+                controller: _tabController,
+                children: const [
+                  // お気に入りタブ
+                  HistoryList(targetFilter: HistoryFilter.favorites),
+                  // すべてタブ
+                  HistoryList(targetFilter: HistoryFilter.all),
+                ],
               ),
             ),
           ],

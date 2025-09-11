@@ -8,7 +8,6 @@ import 'package:image_picker/image_picker.dart';
 import '../../models/detection_result.dart';
 import '../../services/api_service.dart';
 import '../services/history_store.dart';
-import '../../widgets/nav.dart';
 import '../result/result_screen.dart';
 
 class CameraScreen extends StatefulWidget {
@@ -73,6 +72,7 @@ class _CameraScreenState extends State<CameraScreen> {
           viewedAt: DateTime.now(),
           molecules: result.molecules,
           imageFile: file,
+          topMolecule: result.molecules.isNotEmpty ? result.molecules.first : null,
         ),
       );
 
@@ -113,9 +113,15 @@ class _CameraScreenState extends State<CameraScreen> {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('chemilens')),
-      // Homeをタップしたら必ずHomeへ戻る（常に遷移）
-      bottomNavigationBar: buildBottomNav(context, 1, alwaysNavigate: true),
+      appBar: AppBar(
+        title: const Text('カメラ撮影'),
+        leading: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),

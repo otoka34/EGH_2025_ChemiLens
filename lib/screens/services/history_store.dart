@@ -6,7 +6,6 @@ class HistoryItem {
   final String objectName; // 物体名
   final DateTime viewedAt;
   final List<Molecule> molecules; // 推定分子一覧（3〜5）
-  final Molecule? topMolecule; // ★ 追加：最有力（confidence最大）の分子
   final File? imageFile;
 
   HistoryItem({
@@ -14,7 +13,6 @@ class HistoryItem {
     required this.viewedAt,
     required this.molecules,
     required this.imageFile,
-    required this.topMolecule, // ★ 追加
   });
 }
 

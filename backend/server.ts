@@ -2,7 +2,8 @@
 
 import express from "express";
 import multer from "multer";
-import { analyzeImage, type Result } from "./gemini/gemini.js";
+import { analyzeImage } from "./gemini/gemini.js";
+import type { Result } from "./types/types.js";
 import { getMoleculeInfo } from "./pubchemi/pubchem.js";
 
 const app = express()

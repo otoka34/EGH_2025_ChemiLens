@@ -1,17 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import type { Result } from "../types/types.js";
 
 const apiKey = process.env.GEMINI_API_KEY!;
 const genAI = new GoogleGenerativeAI(apiKey);
-
-// Geminiからのレスポンスの型定義
-export interface Result {
-    objectName: string;
-    molecules: {
-        name: string;
-        description: string;
-        confidence: number;
-    }[];
-}
 
 /**
  * 画像を分析し、写っている物体とそれに含まれる分子を特定する

@@ -26,7 +26,7 @@ class ResultScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(12),
             child: Text(
-              "物体: ${detection.objectName}（${detection.objectCategory}）",
+              "物体: ${detection.objectName}",
               style: Theme.of(context).textTheme.titleMedium,
             ),
           ),
@@ -37,7 +37,7 @@ class ResultScreen extends StatelessWidget {
               itemBuilder: (context, i) {
                 final m = mols[i];
                 return ListTile(
-                  title: Text("${m.nameJp} / ${m.nameEn}  （${m.formula}）"),
+                  title: Text(m.name),
                   subtitle: Text(m.description),
                   trailing: Text("${(m.confidence * 100).toStringAsFixed(0)}%"),
                 );

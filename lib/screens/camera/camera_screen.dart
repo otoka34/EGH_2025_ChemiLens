@@ -3,11 +3,10 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image/image.dart' as img;
 
-import '../../models/molecule.dart';
+
 import '../../models/detection_result.dart';
-import '../services/openai_service.dart';
+import '../../services/api_service.dart';
 import '../services/history_store.dart';
 import '../../widgets/nav.dart';
 import '../result/result_screen.dart';
@@ -58,36 +57,22 @@ class _CameraScreenState extends State<CameraScreen> {
     try {
       final file = File(picked.path);
 
-      // 読み込み → デコード → PNGエンコード（HEIC対策）
-      final bytes = await file.readAsBytes();
-      final decoded = img.decodeImage(bytes);
-      if (decoded == null) {
-        throw Exception('画像のデコードに失敗しました（HEIC 等の可能性）。PNG/JPEGでお試しください。');
-      }
-      final Uint8List pngBytes = Uint8List.fromList(
-        img.encodePng(decoded, level: 6),
+      // 元画像のバイトデータを直接読み込む
+      final Uint8List imageBytes = await picked.readAsBytes();
+
+      // バックエンドへ解析リクエスト（元画像のバイト列とMIMEタイプ）
+      final DetectionResult result = await ApiService.analyzeImage(
+        imageBytes,
+        picked.mimeType,
       );
 
-      // GPTへ解析（PNGバイト列）
-      final DetectionResult result = await OpenAIService.analyzePngBytes(
-        pngBytes,
-      );
-
-      // 最有力（confidence最大）の分子を算出
-      final Molecule? top = (result.molecules.isEmpty)
-          ? null
-          : result.molecules.reduce(
-              (a, b) => a.confidence >= b.confidence ? a : b,
-            );
-
-      // 履歴へ追加（画像・最有力分子つき）
+      // 履歴へ追加
       HistoryStore.add(
         HistoryItem(
           objectName: result.objectName,
           viewedAt: DateTime.now(),
           molecules: result.molecules,
           imageFile: file,
-          topMolecule: top,
         ),
       );
 
@@ -155,8 +140,8 @@ class _CameraScreenState extends State<CameraScreen> {
                     const SizedBox(height: 12),
                     // ギャラリーから選ぶ
                     SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
                         style: buttonStyle,
                         onPressed: () => _pickFrom(ImageSource.gallery),
                         icon: const Icon(Icons.photo_library),

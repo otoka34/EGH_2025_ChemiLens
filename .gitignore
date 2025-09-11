@@ -90,3 +90,17 @@ config.dart
 
 # FVM Version Cache
 .fvm/
+
+# Flutter ephemeral files (自動生成される一時ファイル)
+**/Flutter/ephemeral/
+**/Flutter/Generated.xcconfig
+**/flutter/ephemeral/
+**/flutter_export_environment.sh
+
+# Flutter plugin registrant files (自動生成されるプラグイン登録ファイル)
+**/generated_plugin_registrant.*
+**/GeneratedPluginRegistrant.*
+**/flutter/generated_plugin_registrant.h
+**/flutter/generated_plugin_registrant.cc
+**/Flutter/GeneratedPluginRegistrant.h
+**/Flutter/GeneratedPluginRegistrant.m

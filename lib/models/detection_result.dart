@@ -2,26 +2,31 @@ import 'molecule.dart';
 
 class DetectionResult {
   final String objectName;
-  final String objectCategory;
   final List<Molecule> molecules;
 
   DetectionResult({
     required this.objectName,
-    required this.objectCategory,
     required this.molecules,
   });
 
-  factory DetectionResult.fromJson(Map<String, dynamic> json) => DetectionResult(
-        objectName: json['object_name'] ?? '',
-        objectCategory: json['object_category'] ?? '',
-        molecules: (json['molecules'] as List<dynamic>? ?? [])
-            .map((e) => Molecule.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      );
+  factory DetectionResult.fromJson(Map<String, dynamic> json) {
+    var moleculeList = <Molecule>[];
+    if (json['molecules'] != null) {
+      json['molecules'].forEach((v) {
+        moleculeList.add(Molecule.fromJson(v));
+      });
+    }
 
+    return DetectionResult(
+      // 'object' キーを 'objectName' にマッピング
+      objectName: json['object'] ?? '',
+      molecules: moleculeList,
+    );
+  }
+
+  // toJsonは履歴保存などで使う可能性があるので残しておく
   Map<String, dynamic> toJson() => {
-        'object_name': objectName,
-        'object_category': objectCategory,
+        'object': objectName,
         'molecules': molecules.map((e) => e.toJson()).toList(),
       };
 }

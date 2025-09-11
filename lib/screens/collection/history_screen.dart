@@ -49,7 +49,6 @@ class HistoryScreen extends StatelessWidget {
                     separatorBuilder: (_, __) => const Divider(height: 1),
                     itemBuilder: (_, i) {
                       final item = list[i];
-                      final top = item.topMolecule;
                       return ListTile(
                         leading: (item.imageFile != null)
                             ? ClipRRect(
@@ -63,12 +62,7 @@ class HistoryScreen extends StatelessWidget {
                               )
                             : const Icon(Icons.image),
                         title: Text(item.objectName),
-                        subtitle: (top == null)
-                            ? const Text('最有力分子：—')
-                            : Text(
-                                '最有力分子：${top.nameJp} / ${top.nameEn}（${top.formula}）'
-                                '  •  ${(top.confidence * 100).toStringAsFixed(0)}%',
-                              ),
+                        subtitle: Text('${item.molecules.length}個の分子候補'),
                         // trailing の日時表示は削除
                       );
                     },

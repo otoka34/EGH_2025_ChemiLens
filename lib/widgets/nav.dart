@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../screens/home_screen.dart';
 import '../screens/collection/history_screen.dart';
-import '../screens/search/search_screen.dart';
 
 BottomNavigationBar buildBottomNav(
   BuildContext context,
@@ -22,9 +21,6 @@ BottomNavigationBar buildBottomNav(
         case 1:
           screen = const HomeScreen();
           break;
-        case 2:
-          screen = const SearchScreen();
-          break;
         default:
           screen = const HomeScreen();
       }
@@ -41,7 +37,6 @@ BottomNavigationBar buildBottomNav(
     items: const [
       BottomNavigationBarItem(icon: Icon(Icons.star_border), label: 'History'),
       BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
-      BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
     ],
   );
 }

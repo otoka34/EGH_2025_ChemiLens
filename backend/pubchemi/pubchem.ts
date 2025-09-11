@@ -1,10 +1,5 @@
 import fetch from "node-fetch";
-
-// 返却する分子情報の型定義
-export interface MoleculeInfo {
-  cid: number;
-  sdf: string;
-}
+import type { MoleculeInfo } from "../types/types.js";
 
 // moleculeName 分子名 (例: "glucose")
 // returns CIDとSDFデータを含むオブジェクト、またはnull

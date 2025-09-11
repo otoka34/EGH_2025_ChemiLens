@@ -57,6 +57,32 @@ app.*.map.json
 # その他のAPIキー
 **/api_keys/
 **/secrets/
+openai_api_key.txt
+config.dart
+
+# Flutter関連の一時ファイル
+.flutter-plugins-dependencies
+.flutter-plugins
+.packages
+.metadata
+
+# Xcode関連
+**/ios/Podfile.lock
+**/ios/Pods/
+**/ios/Runner.xcworkspace/xcshareddata/
+**/ios/.symlinks/
+
+# Android関連
+**/android/.gradle/
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.*
+
+# Web関連
+**/web/icons/
+**/web/manifest.json
 
 ## 不要なマークダウン
 *.md

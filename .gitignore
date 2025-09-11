@@ -87,3 +87,6 @@ config.dart
 ## 不要なマークダウン
 *.md
 !README.md
+
+# FVM Version Cache
+.fvm/

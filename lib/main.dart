@@ -40,12 +40,6 @@ class ChemiLensApp extends StatelessWidget {
           foregroundColor: AppColors.surface,
           centerTitle: true,
           elevation: 0,
-          titleTextStyle: TextStyle(
-            fontFamily: 'Noto Serif JP',
-            color: AppColors.surface,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(

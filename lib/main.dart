@@ -1,5 +1,7 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'routes/app_routes.dart';
 
 void main() {
@@ -18,11 +20,18 @@ class ChemiLensApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0F1A2B)),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF0F1A2B), // ← ネイビー
+        fontFamily: GoogleFonts.notoSerifJp().fontFamily,
+        textTheme: GoogleFonts.notoSerifJpTextTheme(),
+        appBarTheme: AppBarTheme(
+          backgroundColor: const Color(0xFF0F1A2B), // ← ネイビー
           foregroundColor: Colors.white,
           centerTitle: true,
           elevation: 0,
+          titleTextStyle: GoogleFonts.notoSerifJp(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: Colors.white,
@@ -33,6 +42,16 @@ class ChemiLensApp extends StatelessWidget {
         ),
       ),
       routerConfig: appRouter,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('ja', 'JP'),
+        Locale('en', 'US'),
+      ],
+      locale: const Locale('ja', 'JP'),
     );
   }
 }

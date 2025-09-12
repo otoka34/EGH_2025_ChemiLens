@@ -8,6 +8,7 @@ import '../screens/collection/history_screen.dart';
 import '../screens/detail/detail_screen.dart';
 import '../screens/result/result_screen.dart';
 import '../screens/splash/splash_screen.dart';
+import '../screens/ar_viewer/ar_viewer_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/splash',
@@ -74,6 +75,21 @@ final GoRouter appRouter = GoRouter(
         }
 
         return ResultScreen(imageFile: imageFile, detection: detection);
+      },
+    ),
+
+    // AR Viewer画面
+    GoRoute(
+      path: '/ar_viewer',
+      name: 'ar_viewer',
+      builder: (context, state) {
+        final glbModelUrl = state.extra as String?;
+        if (glbModelUrl == null) {
+          return const Scaffold(
+            body: Center(child: Text('ARモデルのURLが指定されていません')),
+          );
+        }
+        return ARViewerScreen(glbModelUrl: glbModelUrl);
       },
     ),
 

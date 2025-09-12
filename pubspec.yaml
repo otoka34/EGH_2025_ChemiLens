@@ -27,6 +27,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   model_viewer_plus: ^1.9.3
+  ar_flutter_plugin: ^0.7.3
 
 dev_dependencies:
   flutter_test:

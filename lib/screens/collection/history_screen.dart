@@ -2,9 +2,12 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:team_25_app/screens/collection/widgets/history_list.dart';
+import 'package:team_25_app/screens/collection/widgets/history_tab_bar.dart';
+import 'package:team_25_app/screens/services/history_store.dart';
 
 import '../../models/detection_result.dart';
 import '../../services/api_service.dart';
@@ -47,7 +50,7 @@ class _HistoryScreenState extends State<HistoryScreen>
     HistoryStore.setFilter(filter);
   }
 
-
+  Future<void> _pickFrom(ImageSource source) async {
     if (_isLoading) return;
 
     final picker = ImagePicker();
@@ -55,18 +58,17 @@ class _HistoryScreenState extends State<HistoryScreen>
 
     try {
       picked = await picker.pickImage(
-
+        source: source,
         imageQuality: 80,
         maxWidth: 1024,
         maxHeight: 1024,
       );
     } catch (e) {
       if (!mounted) return;
-
       return;
     }
 
-    if (picked == null) {
+    if (picked == null) return;
 
     if (_isLoading) return;
     setState(() => _isLoading = true);
@@ -80,19 +82,28 @@ class _HistoryScreenState extends State<HistoryScreen>
         picked.mimeType,
       );
 
-
       HistoryStore.add(
         HistoryItem(
           objectName: result.objectName,
           viewedAt: DateTime.now(),
           molecules: result.molecules,
           imageFile: file,
-
+          topMolecule: result.molecules.isNotEmpty ? result.molecules.first : null,
         ),
       );
 
       if (!mounted) return;
-
+      
+      // 結果画面へ
+      context.push('/result', extra: {
+        'imageFile': file,
+        'detection': result,
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('解析に失敗しました: $e')),
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -101,7 +112,17 @@ class _HistoryScreenState extends State<HistoryScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
+      appBar: AppBar(
+        title: Row(
+          children: [
+            SvgPicture.asset(
+              'assets/images/app_bar_icon.svg',
+              height: 32,
+              width: 32,
+            ),
+          ],
+        ),
+        elevation: 0,
       ),
       floatingActionButton: _isLoading
           ? const CircularProgressIndicator()

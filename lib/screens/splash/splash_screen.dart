@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -36,10 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
           duration: const Duration(milliseconds: 800),
           curve: Curves.easeOut,
           opacity: _opacity,
-          child: SvgPicture.asset(
-            'assets/images/Chemilens.svg',
-            width: 240,
-          ),
+          child: SvgPicture.asset('assets/images/Chemilens.svg', width: 240),
         ),
       ),
     );

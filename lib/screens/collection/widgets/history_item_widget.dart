@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:team_25_app/models/molecule.dart';
 import 'package:team_25_app/screens/services/history_store.dart';
+import 'package:team_25_app/theme/app_colors.dart';
 
 class HistoryItemWidget extends StatelessWidget {
   final HistoryItem item;
@@ -114,7 +115,7 @@ class HistoryItemWidget extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         child: Icon(
           item.isFavorite ? Icons.star : Icons.star_border,
-          color: item.isFavorite ? Colors.blue : Colors.grey,
+          color: item.isFavorite ? AppColors.textSecondary : Colors.grey,
           size: 24,
         ),
       ),

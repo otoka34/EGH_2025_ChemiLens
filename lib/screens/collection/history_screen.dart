@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:team_25_app/screens/services/history_store.dart';
 import 'package:team_25_app/screens/collection/widgets/history_list.dart';
 import 'package:team_25_app/screens/collection/widgets/history_tab_bar.dart';
-import 'package:team_25_app/screens/camera/camera_screen.dart';
-import 'package:team_25_app/screens/album/album_screen.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -53,10 +52,7 @@ class _HistoryScreenState extends State<HistoryScreen>
           FloatingActionButton(
             heroTag: "album",
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const AlbumScreen()),
-              );
+              context.push('/album');
             },
             child: const Icon(Icons.photo_library),
           ),
@@ -65,10 +61,7 @@ class _HistoryScreenState extends State<HistoryScreen>
           FloatingActionButton(
             heroTag: "camera",
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const CameraScreen()),
-              );
+              context.push('/camera');
             },
             child: const Icon(Icons.camera_alt),
           ),

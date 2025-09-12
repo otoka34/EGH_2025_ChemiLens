@@ -76,6 +76,7 @@ final GoRouter appRouter = GoRouter(
         return ResultScreen(imageFile: imageFile, detection: detection);
       },
     ),
+
   ],
 
   // エラーハンドリング

@@ -11,12 +11,20 @@ class ApiService {
 
   static Future<DetectionResult> analyzeImage(Uint8List imageBytes, String? mimeType) async {
     try {
+      // MIMEタイプを確実に設定
+      String finalMimeType = mimeType ?? 'image/jpeg';
+      if (finalMimeType == 'application/octet-stream') {
+        finalMimeType = 'image/jpeg';
+      }
+      
+      print('Sending image with MIME type: $finalMimeType');
+      
       // FormDataを作成して画像を添付
       final formData = FormData.fromMap({
         'image': MultipartFile.fromBytes(
           imageBytes,
-          filename: 'upload',
-          contentType: mimeType != null ? MediaType.parse(mimeType) : null,
+          filename: 'upload.jpg',
+          contentType: MediaType.parse(finalMimeType),
         ),
       });
 
@@ -39,6 +47,32 @@ class ApiService {
     } catch (e) {
       // その他のエラー
       throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  // SDFデータをGLBに変換するメソッド
+  static Future<Uint8List> convertSdfToGlb(String sdfData) async {
+    try {
+      final response = await _dio.post<List<int>>(
+        '$_baseUrl/convert-to-glb',
+        data: sdfData,
+        options: Options(
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+          responseType: ResponseType.bytes,
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        return Uint8List.fromList(response.data!);
+      } else {
+        throw Exception('Failed to convert SDF to GLB: ${response.statusMessage}');
+      }
+    } on DioException catch (e) {
+      throw Exception('Failed to connect to the server for conversion: $e');
+    } catch (e) {
+      throw Exception('An unexpected error occurred during conversion: $e');
     }
   }
 }

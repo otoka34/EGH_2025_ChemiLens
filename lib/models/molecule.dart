@@ -4,6 +4,7 @@ class Molecule {
   final double confidence;
   final int? cid;
   final String? sdf;
+  final String? formula;
 
   Molecule({
     required this.name,
@@ -11,6 +12,7 @@ class Molecule {
     required this.confidence,
     this.cid,
     this.sdf,
+    this.formula,
   });
 
   factory Molecule.fromJson(Map<String, dynamic> json) {
@@ -24,6 +26,7 @@ class Molecule {
       confidence: confidence,
       cid: json['cid'] as int?,
       sdf: json['sdf'] as String?,
+      formula: json['formula'] as String?,
     );
   }
 
@@ -33,5 +36,6 @@ class Molecule {
         'confidence': confidence,
         'cid': cid,
         'sdf': sdf,
+        'formula': formula,
       };
 }

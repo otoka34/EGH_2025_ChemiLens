@@ -4,6 +4,7 @@ import '../../models/detection_result.dart';
 import '../../models/molecule.dart';
 import '../../services/api_service.dart';
 import '../ar/ar_viewer_screen.dart';
+import '../molecule_viewer/molecule_viewer_screen.dart';
 
 class ResultScreen extends StatelessWidget {
   final File imageFile;
@@ -38,6 +39,8 @@ class ResultScreen extends StatelessWidget {
               itemCount: mols.length,
               itemBuilder: (context, i) {
                 final m = mols[i];
+                final hasSdf = m.sdf != null && m.sdf!.isNotEmpty;
+
                 return ListTile(
                   title: Text(m.name),
                   subtitle: Text(m.description),
@@ -46,10 +49,29 @@ class ResultScreen extends StatelessWidget {
                     children: [
                       Text("${(m.confidence * 100).toStringAsFixed(0)}%"),
                       const SizedBox(width: 8),
+                      // 3D Viewer Button
+                      IconButton(
+                        icon: const Icon(Icons.threed_rotation),
+                        tooltip: '3Dで見る',
+                        onPressed: !hasSdf
+                            ? null
+                            : () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => MoleculeViewerScreen(
+                                      sdfData: m.sdf!,
+                                      moleculeName: m.name,
+                                    ),
+                                  ),
+                                );
+                              },
+                      ),
+                      // AR Viewer Button
                       IconButton(
                         icon: const Icon(Icons.view_in_ar),
                         tooltip: 'ARで見る',
-                        onPressed: (m.sdf == null || m.sdf!.isEmpty)
+                        onPressed: !hasSdf
                             ? null
                             : () async {
                                 showDialog(

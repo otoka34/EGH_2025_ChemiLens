@@ -19,6 +19,7 @@ dependencies:
 
   image: ^4.1.7
   go_router: ^16.2.1
+  flutter_svg: ^2.0.10+1
   flutter_localizations:
     sdk: flutter
   flutter_svg: ^2.0.7
@@ -35,3 +36,14 @@ flutter:
   assets:
     - assets/images/app_icon.svg
     - assets/images/app_bar_icon.svg
+    - assets/fonts/
+    - assets/images/
+
+  fonts:
+    - family: Fredoka
+      fonts:
+        - asset: assets/fonts/Fredoka-Regular.ttf
+        - asset: assets/fonts/Fredoka-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Fredoka-Bold.ttf
+          weight: 700

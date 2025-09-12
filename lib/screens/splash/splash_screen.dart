@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -35,26 +36,9 @@ class _SplashScreenState extends State<SplashScreen> {
           duration: const Duration(milliseconds: 800),
           curve: Curves.easeOut,
           opacity: _opacity,
-          // 見出し＋サブコピー（必要なら調整）
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'chemilens', // ご指定どおり小文字
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 2,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Find molecules in everyday life',
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: cs.onSurface.withValues(alpha: 0.6),
-                ),
-              ),
-            ],
+          child: SvgPicture.asset(
+            'assets/images/Chemilens.svg',
+            width: 240,
           ),
         ),
       ),

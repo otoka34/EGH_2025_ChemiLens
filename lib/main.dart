@@ -33,7 +33,7 @@ class ChemiLensApp extends StatelessWidget {
           error: Colors.red,
           onError: Colors.white,
         ),
-        fontFamily: 'Noto Serif JP',
+        fontFamily: 'Fredoka',
         scaffoldBackgroundColor: AppColors.background,
         appBarTheme: const AppBarTheme(
           backgroundColor: AppColors.primaryDark,

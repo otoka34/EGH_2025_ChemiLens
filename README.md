@@ -16,14 +16,19 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 
 # ここにチーム番号とチーム名を入れてください
+
 このリポジトリはハッカソン提出用の雛形です。以下の項目をすべて埋めてください。
 
-チーム情報
-チーム番号: （ここに記入）
-チーム名: （ここに記入）
-プロダクト名: （ここに記入）
-メンバー: （GitHubアカウントまたは名前を列挙）
+---
 
-デモ　/ プレゼン資料
-デモURL:
-プレゼンURL：
+## チーム情報
+- チーム番号: 25
+- チーム名: （ここに記入）
+- プロダクト名: ChemiLens
+- メンバー: （GitHubアカウントまたは名前を列挙）
+
+---
+
+## デモ　/ プレゼン資料
+- デモURL: 
+- プレゼンURL：

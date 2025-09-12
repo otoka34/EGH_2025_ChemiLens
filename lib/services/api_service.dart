@@ -41,4 +41,30 @@ class ApiService {
       throw Exception('An unexpected error occurred: $e');
     }
   }
+
+  // 追加: SDFデータをGLBに変換するメソッド
+  static Future<Uint8List> convertSdfToGlb(String sdfData) async {
+    try {
+      final response = await _dio.post<Uint8List>( // レスポンスの型をUint8Listに指定
+        '$_baseUrl/convert-to-glb',
+        data: sdfData,
+        options: Options(
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+          responseType: ResponseType.bytes, // レスポンスをバイト配列として受け取る
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        return response.data!;
+      } else {
+        throw Exception('Failed to convert SDF to GLB: ${response.statusMessage}');
+      }
+    } on DioException catch (e) {
+      throw Exception('Failed to connect to the server for conversion: $e');
+    } catch (e) {
+      throw Exception('An unexpected error occurred during conversion: $e');
+    }
+  }
 }

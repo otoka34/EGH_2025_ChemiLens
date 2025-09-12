@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../models/detection_result.dart';
 import '../../models/molecule.dart';
+import '../../services/api_service.dart';
+import '../ar/ar_viewer_screen.dart';
 
 class ResultScreen extends StatelessWidget {
   final File imageFile;
@@ -39,7 +41,51 @@ class ResultScreen extends StatelessWidget {
                 return ListTile(
                   title: Text(m.name),
                   subtitle: Text(m.description),
-                  trailing: Text("${(m.confidence * 100).toStringAsFixed(0)}%"),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text("${(m.confidence * 100).toStringAsFixed(0)}%"),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        icon: const Icon(Icons.view_in_ar),
+                        tooltip: 'ARで見る',
+                        onPressed: (m.sdf == null || m.sdf!.isEmpty)
+                            ? null
+                            : () async {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (BuildContext context) {
+                                    return const Center(child: CircularProgressIndicator());
+                                  },
+                                );
+
+                                try {
+                                  final glbData = await ApiService.convertSdfToGlb(m.sdf!);
+                                  
+                                  if (!context.mounted) return;
+                                  Navigator.pop(context);
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => ARViewerScreen(
+                                        glbData: glbData,
+                                        moleculeName: m.name,
+                                      ),
+                                    ),
+                                  );
+                                } catch (e) {
+                                  if (!context.mounted) return;
+                                  Navigator.pop(context);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('ARモデルの生成に失敗しました: $e')),
+                                  );
+                                }
+                              },
+                      ),
+                    ],
+                  ),
                 );
               },
             ),

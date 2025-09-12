@@ -1,21 +1,4 @@
-# team_25_app
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-# ここにチーム番号とチーム名を入れてください
+# 25 プリングルス
 
 このリポジトリはハッカソン提出用の雛形です。以下の項目をすべて埋めてください。
 
@@ -23,12 +6,12 @@ samples, guidance on mobile development, and a full API reference.
 
 ## チーム情報
 - チーム番号: 25
-- チーム名: （ここに記入）
+- チーム名: プリングルス
 - プロダクト名: ChemiLens
-- メンバー: （GitHubアカウントまたは名前を列挙）
+- メンバー: @r-sei @HaruyaFujii @otoka34 @ShuutoSakai
 
 ---
 
 ## デモ　/ プレゼン資料
 - デモURL: 
-- プレゼンURL：
+- プレゼンURL：https://docs.google.com/presentation/d/1xktWpMcLTVfbuUH-7l0PBTnW63hFembZe00ITWrRFtk/edit?slide=id.p#slide=id.p

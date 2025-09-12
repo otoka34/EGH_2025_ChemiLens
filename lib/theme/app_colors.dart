@@ -5,8 +5,8 @@ class AppColors {
   AppColors._();
 
   // プライマリカラー
-  static const Color color1 = Color(0xFFe5e5e1);
-  static const Color color2 = Color(0xFF091d30);
+  static const Color color1 = Color(0xFFececed);
+  static const Color color2 = Color(0xFF2a2c2b);
   static const Color color3 = Color(0xFF53CBF6);
   static const Color color4 = Color(0xFFE3579D);
 

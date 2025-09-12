@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:team_25_app/theme/app_colors.dart';
 
 class HistoryTabBar extends StatelessWidget {
   final TabController tabController;
@@ -11,11 +12,11 @@ class HistoryTabBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: TabBar(
         controller: tabController,
-        indicatorColor: const Color(0xFF0F1A2B), // 紺色の下線
+        indicatorColor: AppColors.primaryDark,
         indicatorWeight: 2,
         indicatorSize: TabBarIndicatorSize.tab,
         dividerColor: Colors.transparent,
-        labelColor: const Color(0xFF0F1A2B), // 選択時は紺色
+        labelColor: AppColors.primaryDark, // 選択時は紺色
         unselectedLabelColor: Colors.grey[600], // 未選択時は灰色
         labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
         unselectedLabelStyle: const TextStyle(

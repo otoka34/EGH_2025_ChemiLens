@@ -2,8 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../models/detection_result.dart';
 import '../../models/molecule.dart';
-import '../../services/api_service.dart';
-import '../ar/ar_viewer_screen.dart';
+import '../model_viewer/simple_molecular_viewer_screen.dart';
 
 class ResultScreen extends StatelessWidget {
   final File imageFile;
@@ -38,53 +37,111 @@ class ResultScreen extends StatelessWidget {
               itemCount: mols.length,
               itemBuilder: (context, i) {
                 final m = mols[i];
-                return ListTile(
-                  title: Text(m.name),
-                  subtitle: Text(m.description),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text("${(m.confidence * 100).toStringAsFixed(0)}%"),
-                      const SizedBox(width: 8),
-                      IconButton(
-                        icon: const Icon(Icons.view_in_ar),
-                        tooltip: 'ARで見る',
-                        onPressed: (m.sdf == null || m.sdf!.isEmpty)
-                            ? null
-                            : () async {
-                                showDialog(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (BuildContext context) {
-                                    return const Center(child: CircularProgressIndicator());
-                                  },
-                                );
-
-                                try {
-                                  final glbData = await ApiService.convertSdfToGlb(m.sdf!);
-                                  
-                                  if (!context.mounted) return;
-                                  Navigator.pop(context);
-
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => ARViewerScreen(
-                                        glbData: glbData,
-                                        moleculeName: m.name,
+                return Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    m.name,
+                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  if (m.formula != null && m.formula!.isNotEmpty) ...[
+                                    const SizedBox(height: 4),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(4),
+                                        border: Border.all(
+                                          color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        m.formula!,
+                                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                          color: Theme.of(context).colorScheme.primary,
+                                          fontWeight: FontWeight.w600,
+                                          fontFamily: 'monospace',
+                                        ),
                                       ),
                                     ),
-                                  );
-                                } catch (e) {
-                                  if (!context.mounted) return;
-                                  Navigator.pop(context);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('ARモデルの生成に失敗しました: $e')),
-                                  );
-                                }
-                              },
-                      ),
-                    ],
+                                  ],
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    m.description,
+                                    style: Theme.of(context).textTheme.bodyMedium,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Column(
+                              children: [
+                                Text(
+                                  "${(m.confidence * 100).toStringAsFixed(0)}%",
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                ElevatedButton(
+                                  onPressed: (m.sdf == null || m.sdf!.isEmpty)
+                                      ? null
+                                      : () async {
+                                          showDialog(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            builder: (BuildContext context) {
+                                              return const Center(child: CircularProgressIndicator());
+                                            },
+                                          );
+
+                                          try {
+                                            // SDFデータをそのまま使用して3D表示画面へ
+                                            if (!context.mounted) return;
+                                            Navigator.pop(context);
+
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (_) => SimpleMolecularViewerScreen(
+                                                  sdfData: m.sdf!,
+                                                  moleculeName: m.name,
+                                                  formula: m.formula,
+                                                ),
+                                              ),
+                                            );
+                                          } catch (e) {
+                                            if (!context.mounted) return;
+                                            Navigator.pop(context);
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(content: Text('3Dモデルの表示に失敗しました: $e')),
+                                            );
+                                          }
+                                        },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Theme.of(context).colorScheme.primary,
+                                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  ),
+                                  child: const Text('ARで表示'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },

@@ -70,6 +70,7 @@ final GoRouter appRouter = GoRouter(
         );
       },
     ),
+
   ],
   
   // エラーハンドリング

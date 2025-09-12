@@ -5,6 +5,7 @@ export interface Result {
         name: string;
         description: string;
         confidence: number;
+        formula?: string;
     }[];
 }
 

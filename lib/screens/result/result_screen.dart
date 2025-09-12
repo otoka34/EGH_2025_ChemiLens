@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../models/detection_result.dart';
 import '../../models/molecule.dart';
-import '../molecule_viewer/molecule_viewer_screen.dart';
 import '../model_viewer/simple_molecular_viewer_screen.dart';
 
 class ResultScreen extends StatelessWidget {
@@ -48,28 +47,8 @@ class ResultScreen extends StatelessWidget {
                     children: [
                       Text("${(m.confidence * 100).toStringAsFixed(0)}%"),
                       const SizedBox(width: 8),
-                      // 3D Viewer Button
-                      IconButton(
-                        icon: const Icon(Icons.threed_rotation),
-                        tooltip: '3Dで見る',
-                        onPressed: !hasSdf
-                            ? null
-                            : () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => MoleculeViewerScreen(
-                                      sdfData: m.sdf!,
-                                      moleculeName: m.name,
-                                    ),
-                                  ),
-                                );
-                              },
-                      ),
-                      // AR Viewer Button (using SimpleMolecularViewerScreen for now)
-                      IconButton(
-                        icon: const Icon(Icons.view_in_ar),
-                        tooltip: 'ARで見る',
+                      // AR Viewer Button
+                      ElevatedButton(
                         onPressed: !hasSdf
                             ? null
                             : () {
@@ -84,6 +63,12 @@ class ResultScreen extends StatelessWidget {
                                   ),
                                 );
                               },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).colorScheme.primary,
+                          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        ),
+                        child: const Text('ARで見る'),
                       ),
                     ],
                   ),

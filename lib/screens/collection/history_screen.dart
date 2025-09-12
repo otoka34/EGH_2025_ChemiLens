@@ -44,7 +44,10 @@ class _HistoryScreenState extends State<HistoryScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('chemilens')),
+      appBar: AppBar(title: const Text(
+          'ChemiLens',
+          style: TextStyle(fontWeight: FontWeight.w800),
+        )),
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

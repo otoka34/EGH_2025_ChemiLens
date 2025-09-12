@@ -64,23 +64,23 @@ class HistoryStore {
         viewedAt: now.subtract(const Duration(hours: 2)),
         molecules: [
           Molecule(
-            name: 'フルクトース (C6H12O6)',
+            name: 'フルクトース',
             description: '果糖',
             confidence: 0.92,
           ),
           Molecule(
-            name: 'グルコース (C6H12O6)',
+            name: 'グルコース',
             description: 'ブドウ糖',
             confidence: 0.88,
           ),
           Molecule(
-            name: 'スクロース (C12H22O11)',
+            name: 'スクロース',
             description: 'ショ糖',
             confidence: 0.75,
           ),
         ],
         topMolecule: Molecule(
-          name: 'フルクトース (C6H12O6)',
+          name: 'フルクトース',
           description: '果糖',
           confidence: 0.92,
         ),
@@ -94,23 +94,23 @@ class HistoryStore {
         viewedAt: now.subtract(const Duration(hours: 4)),
         molecules: [
           Molecule(
-            name: '水 (H2O)',
+            name: '水',
             description: '水分子',
             confidence: 0.99,
           ),
           Molecule(
-            name: '過酸化水素 (H2O2)',
+            name: '過酸化水素',
             description: 'オキシドール',
             confidence: 0.15,
           ),
           Molecule(
-            name: '重水 (D2O)',
+            name: '重水',
             description: '重水素水',
             confidence: 0.08,
           ),
         ],
         topMolecule: Molecule(
-          name: '水 (H2O)',
+          name: '水',
           description: '水分子',
           confidence: 0.99,
         ),
@@ -125,23 +125,23 @@ class HistoryStore {
         viewedAt: now.subtract(const Duration(days: 1, hours: 8)),
         molecules: [
           Molecule(
-            name: '塩化ナトリウム (NaCl)',
+            name: '塩化ナトリウム',
             description: '食塩',
             confidence: 0.96,
           ),
           Molecule(
-            name: '塩化カリウム (KCl)',
+            name: '塩化カリウム',
             description: '塩化カリ',
             confidence: 0.12,
           ),
           Molecule(
-            name: '塩化マグネシウム (MgCl2)',
+            name: '塩化マグネシウム',
             description: '苦汁の成分',
             confidence: 0.08,
           ),
         ],
         topMolecule: Molecule(
-          name: '塩化ナトリウム (NaCl)',
+          name: '塩化ナトリウム',
           description: '食塩',
           confidence: 0.96,
         ),
@@ -155,23 +155,23 @@ class HistoryStore {
         viewedAt: now.subtract(const Duration(days: 1, hours: 12)),
         molecules: [
           Molecule(
-            name: 'クエン酸 (C6H8O7)',
+            name: 'クエン酸',
             description: '有機酸',
             confidence: 0.94,
           ),
           Molecule(
-            name: 'ビタミンC (C6H8O6)',
+            name: 'ビタミンC',
             description: 'アスコルビン酸',
             confidence: 0.87,
           ),
           Molecule(
-            name: 'リモネン (C10H16)',
+            name: 'リモネン',
             description: 'テルペン化合物',
             confidence: 0.79,
           ),
         ],
         topMolecule: Molecule(
-          name: 'クエン酸 (C6H8O7)',
+          name: 'クエン酸',
           description: '有機酸',
           confidence: 0.94,
         ),
@@ -186,23 +186,23 @@ class HistoryStore {
         viewedAt: now.subtract(const Duration(days: 2, hours: 6)),
         molecules: [
           Molecule(
-            name: 'カフェイン (C8H10N4O2)',
+            name: 'カフェイン',
             description: 'アルカロイド',
             confidence: 0.91,
           ),
           Molecule(
-            name: 'クロロゲン酸 (C16H18O9)',
+            name: 'クロロゲン酸',
             description: 'ポリフェノール',
             confidence: 0.83,
           ),
           Molecule(
-            name: 'カフェオール (C17H26O)',
+            name: 'カフェオール',
             description: '香気成分',
             confidence: 0.72,
           ),
         ],
         topMolecule: Molecule(
-          name: 'カフェイン (C8H10N4O2)',
+          name: 'カフェイン',
           description: 'アルカロイド',
           confidence: 0.91,
         ),
@@ -216,23 +216,23 @@ class HistoryStore {
         viewedAt: now.subtract(const Duration(days: 2, hours: 14)),
         molecules: [
           Molecule(
-            name: 'アセチルサリチル酸 (C9H8O4)',
+            name: 'アセチルサリチル酸',
             description: '解熱鎮痛剤',
             confidence: 0.98,
           ),
           Molecule(
-            name: 'サリチル酸 (C7H6O3)',
+            name: 'サリチル酸',
             description: '代謝産物',
             confidence: 0.76,
           ),
           Molecule(
-            name: '酢酸 (C2H4O2)',
+            name: '酢酸',
             description: '加水分解産物',
             confidence: 0.45,
           ),
         ],
         topMolecule: Molecule(
-          name: 'アセチルサリチル酸 (C9H8O4)',
+          name: 'アセチルサリチル酸',
           description: '解熱鎮痛剤',
           confidence: 0.98,
         ),

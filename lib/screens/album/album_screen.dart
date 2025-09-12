@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../models/detection_result.dart';
 import '../../services/api_service.dart';
 import '../services/history_store.dart';
-import '../result/result_screen.dart';
 
 class AlbumScreen extends StatefulWidget {
   const AlbumScreen({super.key});
@@ -71,12 +71,10 @@ class _AlbumScreenState extends State<AlbumScreen> {
       );
 
       if (!mounted) return;
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ResultScreen(imageFile: file, detection: result),
-        ),
-      );
+      context.push('/result', extra: {
+        'imageFile': file,
+        'detection': result,
+      });
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -95,7 +93,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
         leading: IconButton(
           icon: const Icon(Icons.home),
           onPressed: () {
-            Navigator.pop(context);
+            context.pop();
           },
         ),
       ),

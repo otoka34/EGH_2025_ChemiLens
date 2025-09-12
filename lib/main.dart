@@ -1,6 +1,6 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
-import 'package:team_25_app/screens/splash/splash_screen.dart';
+import 'routes/app_routes.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,7 +12,7 @@ class ChemiLensApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'ChemiLens',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -32,7 +32,7 @@ class ChemiLensApp extends StatelessWidget {
           showUnselectedLabels: false,
         ),
       ),
-      home: const SplashScreen(),
+      routerConfig: appRouter,
     );
   }
 }

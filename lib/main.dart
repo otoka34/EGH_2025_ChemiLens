@@ -33,19 +33,13 @@ class ChemiLensApp extends StatelessWidget {
           error: Colors.red,
           onError: Colors.white,
         ),
-        fontFamily: 'Noto Serif JP',
+        fontFamily: 'Fredoka',
         scaffoldBackgroundColor: AppColors.background,
         appBarTheme: const AppBarTheme(
           backgroundColor: AppColors.primaryDark,
           foregroundColor: AppColors.surface,
           centerTitle: true,
           elevation: 0,
-          titleTextStyle: TextStyle(
-            fontFamily: 'Noto Serif JP',
-            color: AppColors.surface,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(

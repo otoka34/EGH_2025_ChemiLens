@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:team_25_app/models/molecule.dart';
 import 'package:team_25_app/screens/services/history_store.dart';
 import 'package:team_25_app/theme/app_colors.dart';
@@ -25,13 +26,34 @@ class HistoryItemWidget extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 撮影画像
-              _buildImage(),
+              // タップ可能なメインエリア（画像とコンテンツ）
+              Expanded(
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      // 詳細画面へ遷移
+                      context.push('/detail/$originalIndex');
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // 撮影画像
+                          _buildImage(),
+                          const SizedBox(width: 12),
+                          // コンテンツ部分
+                          Expanded(child: _buildContent(theme, topThreeMolecules)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
 
-              // コンテンツ部分
-              Expanded(child: _buildContent(theme, topThreeMolecules)),
-
-              // お気に入りアイコン
+              // お気に入りアイコン（独立してタップ可能）
               _buildFavoriteIcon(),
             ],
           ),
@@ -47,10 +69,9 @@ class HistoryItemWidget extends StatelessWidget {
   }
 
   Widget _buildImage() {
-    return Container(
+    return SizedBox(
       width: 80,
       height: 80,
-      margin: const EdgeInsets.only(right: 16),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: item.imageFile != null
@@ -114,7 +135,7 @@ class HistoryItemWidget extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(8),
         child: Icon(
-          item.isFavorite ? Icons.star : Icons.star_border,
+          item.isFavorite ? Icons.favorite : Icons.favorite_border,
           color: item.isFavorite ? AppColors.textSecondary : Colors.grey,
           size: 24,
         ),

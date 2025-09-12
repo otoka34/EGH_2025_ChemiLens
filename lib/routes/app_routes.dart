@@ -1,12 +1,13 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../screens/splash/splash_screen.dart';
-import '../screens/collection/history_screen.dart';
-import '../screens/camera/camera_screen.dart';
-import '../screens/album/album_screen.dart';
-import '../screens/result/result_screen.dart';
+
 import '../models/detection_result.dart';
+import '../screens/collection/history_screen.dart';
+import '../screens/detail/detail_screen.dart';
+import '../screens/result/result_screen.dart';
+import '../screens/splash/splash_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/splash',
@@ -17,28 +18,40 @@ final GoRouter appRouter = GoRouter(
       name: 'splash',
       builder: (context, state) => const SplashScreen(),
     ),
-    
+
     // ホーム画面（履歴画面）
     GoRoute(
       path: '/',
       name: 'home',
       builder: (context, state) => const HistoryScreen(),
     ),
-    
-    // カメラ画面
+
+    // 詳細画面
     GoRoute(
-      path: '/camera',
-      name: 'camera',
-      builder: (context, state) => const CameraScreen(),
+      path: '/detail/:index',
+      builder: (context, state) {
+        final indexStr = state.pathParameters['index'];
+        
+        if (indexStr == null) {
+          return const Scaffold(
+            appBar: null,
+            body: Center(child: Text('無効なパラメータです')),
+          );
+        }
+
+        final index = int.tryParse(indexStr);
+        
+        if (index == null) {
+          return const Scaffold(
+            appBar: null,
+            body: Center(child: Text('無効なインデックスです')),
+          );
+        }
+
+        return DetailScreen(historyIndex: index);
+      },
     ),
-    
-    // アルバム画面
-    GoRoute(
-      path: '/album',
-      name: 'album',
-      builder: (context, state) => const AlbumScreen(),
-    ),
-    
+
     // 結果画面
     GoRoute(
       path: '/result',
@@ -47,32 +60,25 @@ final GoRouter appRouter = GoRouter(
         final extra = state.extra as Map<String, dynamic>?;
         if (extra == null) {
           return const Scaffold(
-            body: Center(
-              child: Text('Invalid parameters for result screen'),
-            ),
+            body: Center(child: Text('Invalid parameters for result screen')),
           );
         }
-        
+
         final imageFile = extra['imageFile'] as File?;
         final detection = extra['detection'] as DetectionResult?;
-        
+
         if (imageFile == null || detection == null) {
           return const Scaffold(
-            body: Center(
-              child: Text('Missing required parameters'),
-            ),
+            body: Center(child: Text('Missing required parameters')),
           );
         }
-        
-        return ResultScreen(
-          imageFile: imageFile,
-          detection: detection,
-        );
+
+        return ResultScreen(imageFile: imageFile, detection: detection);
       },
     ),
 
   ],
-  
+
   // エラーハンドリング
   errorBuilder: (context, state) => Scaffold(
     body: Center(

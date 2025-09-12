@@ -2,7 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../models/detection_result.dart';
 import '../../models/molecule.dart';
-import '../model_viewer/simple_molecular_viewer_screen.dart';
+import '../../services/api_service.dart';
+import '../ar/ar_viewer_screen.dart';
+import '../molecule_viewer/molecule_viewer_screen.dart';
 
 class ResultScreen extends StatelessWidget {
   final File imageFile;
@@ -38,7 +40,10 @@ class ResultScreen extends StatelessWidget {
               itemBuilder: (context, i) {
                 final m = mols[i];
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
@@ -52,35 +57,52 @@ class ResultScreen extends StatelessWidget {
                                 children: [
                                   Text(
                                     m.name,
-                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(fontWeight: FontWeight.bold),
                                   ),
-                                  if (m.formula != null && m.formula!.isNotEmpty) ...[
+                                  if (m.formula != null &&
+                                      m.formula!.isNotEmpty) ...[
                                     const SizedBox(height: 4),
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 2,
+                                      ),
                                       decoration: BoxDecoration(
-                                        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary.withOpacity(0.1),
                                         borderRadius: BorderRadius.circular(4),
                                         border: Border.all(
-                                          color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                              .withOpacity(0.3),
                                         ),
                                       ),
                                       child: Text(
                                         m.formula!,
-                                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                          color: Theme.of(context).colorScheme.primary,
-                                          fontWeight: FontWeight.w600,
-                                          fontFamily: 'monospace',
-                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.primary,
+                                              fontWeight: FontWeight.w600,
+                                              fontFamily: 'monospace',
+                                            ),
                                       ),
                                     ),
                                   ],
                                   const SizedBox(height: 6),
                                   Text(
                                     m.description,
-                                    style: Theme.of(context).textTheme.bodyMedium,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium,
                                   ),
                                 ],
                               ),
@@ -89,9 +111,8 @@ class ResultScreen extends StatelessWidget {
                               children: [
                                 Text(
                                   "${(m.confidence * 100).toStringAsFixed(0)}%",
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 8),
                                 ElevatedButton(
@@ -102,7 +123,10 @@ class ResultScreen extends StatelessWidget {
                                             context: context,
                                             barrierDismissible: false,
                                             builder: (BuildContext context) {
-                                              return const Center(child: CircularProgressIndicator());
+                                              return const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              );
                                             },
                                           );
 
@@ -114,25 +138,39 @@ class ResultScreen extends StatelessWidget {
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (_) => SimpleMolecularViewerScreen(
-                                                  sdfData: m.sdf!,
-                                                  moleculeName: m.name,
-                                                  formula: m.formula,
-                                                ),
+                                                builder: (_) =>
+                                                    SimpleMolecularViewerScreen(
+                                                      sdfData: m.sdf!,
+                                                      moleculeName: m.name,
+                                                      formula: m.formula,
+                                                    ),
                                               ),
                                             );
                                           } catch (e) {
                                             if (!context.mounted) return;
                                             Navigator.pop(context);
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(content: Text('3Dモデルの表示に失敗しました: $e')),
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  '3Dモデルの表示に失敗しました: $e',
+                                                ),
+                                              ),
                                             );
                                           }
                                         },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Theme.of(context).colorScheme.primary,
-                                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                    backgroundColor: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
+                                    foregroundColor: Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimary,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8,
+                                    ),
                                   ),
                                   child: const Text('ARで表示'),
                                 ),

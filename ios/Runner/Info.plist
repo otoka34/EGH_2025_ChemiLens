@@ -45,5 +45,17 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>このアプリは、写真から化学物質を分析するために写真ライブラリへのアクセスが必要です。</string>
+	<key>NSCameraUsageDescription</key>
+	<string>このアプリは、物体を撮影して化学物質を分析するためにカメラへのアクセスが必要です。</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>このアプリは、分析結果の画像を保存するために写真ライブラリへの書き込みアクセスが必要です。</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>このアプリは、カメラ撮影時にマイクへのアクセスが必要です。</string>
+	<key>UIRequiresFullScreen</key>
+	<true/>
+	<key>UIStatusBarHidden</key>
+	<false/>
 </dict>
 </plist>

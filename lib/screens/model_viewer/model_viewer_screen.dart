@@ -32,8 +32,12 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
 
   Future<void> _loadModel() async {
     try {
+      print('ModelViewerScreen: Starting to convert SDF to GLB');
+      print('ModelViewerScreen: SDF Data length: ${widget.sdfData.length}');
+      
       // SDFデータをGLBに変換
       final glbData = await ApiService.convertSdfToGlb(widget.sdfData);
+      print('ModelViewerScreen: GLB Data received, size: ${glbData.length} bytes');
       
       // GLBファイルを一時ディレクトリに保存
       final tempDir = await getTemporaryDirectory();
@@ -47,6 +51,7 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
         });
       }
     } catch (e) {
+      print('ModelViewerScreen: Error loading model: $e');
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -97,7 +102,7 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
                         ar: false, // ARは使用せず、通常の3D表示のみ
                         autoRotate: true,
                         cameraControls: true,
-                        backgroundColor: const Color(0xFFF5F5F5),
+                        backgroundColor: const Color(0xFFE0E0E0),
                         loading: Loading.lazy,
                         touchAction: TouchAction.panY,
                       ),

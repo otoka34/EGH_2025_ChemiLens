@@ -54,7 +54,7 @@ class ApiService {
   static Future<Uint8List> convertSdfToGlb(String sdfData) async {
     try {
       final response = await _dio.post<List<int>>(
-        '$_baseUrl/convert-to-glb',
+        '$_baseUrl/convert',
         data: sdfData,
         options: Options(
           headers: {

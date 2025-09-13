@@ -25,6 +25,8 @@ class _SimpleMolecularViewerScreenState extends State<SimpleMolecularViewerScree
   @override
   void initState() {
     super.initState();
+    print('SimpleMolecularViewerScreen: SDF Data length: ${widget.sdfData.length}');
+    print('SimpleMolecularViewerScreen: Molecule name: ${widget.moleculeName}');
     _initializeWebView();
   }
 
@@ -34,6 +36,7 @@ class _SimpleMolecularViewerScreenState extends State<SimpleMolecularViewerScree
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageFinished: (String url) {
+            print('WebView page finished loading: $url');
             if (mounted) {
               setState(() {
                 _isLoading = false;
@@ -41,7 +44,16 @@ class _SimpleMolecularViewerScreenState extends State<SimpleMolecularViewerScree
             }
             _loadMolecule();
           },
+          onWebResourceError: (WebResourceError error) {
+            print('WebView error: ${error.description}');
+          },
         ),
+      )
+      ..addJavaScriptChannel(
+        'ConsoleLog',
+        onMessageReceived: (JavaScriptMessage message) {
+          print('WebView Console: ${message.message}');
+        },
       )
       ..loadHtmlString(_generateSimpleHTML());
   }
@@ -325,6 +337,22 @@ class _SimpleMolecularViewerScreenState extends State<SimpleMolecularViewerScree
     <script>
         let viewer;
         let currentZoom = 1;
+        
+        // Redirect console.log to Flutter
+        const originalLog = console.log;
+        const originalError = console.error;
+        console.log = function(...args) {
+          originalLog.apply(console, args);
+          if (window.ConsoleLog) {
+            window.ConsoleLog.postMessage(args.join(' '));
+          }
+        };
+        console.error = function(...args) {
+          originalError.apply(console, args);
+          if (window.ConsoleLog) {
+            window.ConsoleLog.postMessage('ERROR: ' + args.join(' '));
+          }
+        };
         
         function initializeViewer() {
           try {

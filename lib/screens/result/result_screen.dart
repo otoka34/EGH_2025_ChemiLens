@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../models/detection_result.dart';
 import '../../models/molecule.dart';
-import '../model_viewer/simple_molecular_viewer_screen.dart';
+import '../model_viewer/model_viewer_screen.dart';
 
 class ResultScreen extends StatelessWidget {
   final File imageFile;
@@ -55,7 +55,7 @@ class ResultScreen extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => SimpleMolecularViewerScreen(
+                                    builder: (_) => ModelViewerScreen(
                                       sdfData: m.sdf!,
                                       moleculeName: m.name,
                                       formula: m.formula,

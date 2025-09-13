@@ -57,11 +57,17 @@ class _HistoryScreenState extends State<HistoryScreen>
 
     // シミュレーター環境での対応
     if (kDebugMode && Platform.isIOS) {
-      // 利用可能なテスト画像を探す
+      // 利用可能なテスト画像を探す（有機化合物系を優先）
       final List<String> testImagePaths = [
-        '/Users/ryousei/programing/hackathon/team-25-app/509012_3L2.jpg',
+        '/Users/ryousei/programing/hackathon/team-25-app/test_images/coffee_beans.jpg',  // 実際のコーヒー画像（カフェイン）
+        '/Users/ryousei/programing/hackathon/team-25-app/assets/images/coffee.jpeg',     // バックアップのコーヒー画像
+        '/Users/ryousei/programing/hackathon/team-25-app/test_images/aspirin_pill.jpg',  // アスピリン錠剤
+        '/Users/ryousei/programing/hackathon/team-25-app/test_images/wine_glass.jpg',    // ワイン（エタノール）
+        '/Users/ryousei/programing/hackathon/team-25-app/test_images/sugar_cube.jpg',    // 角砂糖（スクロース）
+        '/Users/ryousei/programing/hackathon/team-25-app/test_images/banana.jpg',        // バナナ（イソアミルアセテート）
+        '/Users/ryousei/programing/hackathon/team-25-app/test_images/olive_oil.jpg',     // オリーブオイル（オレイン酸）
+        '/Users/ryousei/programing/hackathon/team-25-app/509012_3L2.jpg',                // 予備：水
         '/Users/ryousei/programing/hackathon/team-25-app/assets/images/sample.jpg',
-        '/Users/ryousei/programing/hackathon/team-25-app/test_images/bottle.jpg',
       ];
 
       final List<File> availableImages = [];

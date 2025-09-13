@@ -102,7 +102,7 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
                         ar: false, // ARは使用せず、通常の3D表示のみ
                         autoRotate: true,
                         cameraControls: true,
-                        backgroundColor: const Color(0xFFF5F5F5),
+                        backgroundColor: const Color(0xFFE0E0E0),
                         loading: Loading.lazy,
                         touchAction: TouchAction.panY,
                       ),

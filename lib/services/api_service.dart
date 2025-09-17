@@ -1,11 +1,18 @@
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import '../models/detection_result.dart';
 
 class ApiService {
   // TODO: 環境変数などから取得するようにする
-  static const String _baseUrl = 'http://10.45.0.94:3000';
+  static String get _baseUrl {
+    if (kIsWeb) {
+      // Web環境では直接APIサーバーに接続（CORS対応）
+      return 'http://10.45.0.94:3000';
+    }
+    return 'http://10.45.0.94:3000';
+  }
 
   static final Dio _dio = Dio();
 

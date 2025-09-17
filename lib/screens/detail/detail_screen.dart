@@ -263,7 +263,7 @@ class DetailScreen extends StatelessWidget {
       child: const Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [Text('ARで見る', style: TextStyle(fontSize: 10))],
+        children: [Text('3Dで見る', style: TextStyle(fontSize: 10))],
       ),
     );
   }

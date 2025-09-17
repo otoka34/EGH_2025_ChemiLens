@@ -1,11 +1,12 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../../models/detection_result.dart';
 import '../../models/molecule.dart';
 import '../model_viewer/model_viewer_screen.dart';
 
 class ResultScreen extends StatelessWidget {
-  final File imageFile;
+  final dynamic imageFile; // File or String (blob URL for web)
   final DetectionResult detection;
 
   const ResultScreen({
@@ -23,7 +24,9 @@ class ResultScreen extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Image.file(imageFile, height: 200, fit: BoxFit.cover),
+          kIsWeb && imageFile is String
+              ? Image.network(imageFile, height: 200, fit: BoxFit.cover)
+              : Image.file(imageFile as File, height: 200, fit: BoxFit.cover),
           Padding(
             padding: const EdgeInsets.all(12),
             child: Text(
@@ -68,7 +71,7 @@ class ResultScreen extends StatelessWidget {
                           foregroundColor: Theme.of(context).colorScheme.onPrimary,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         ),
-                        child: const Text('ARで見る'),
+                        child: const Text('3Dで見る'),
                       ),
                     ],
                   ),

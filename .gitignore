@@ -53,6 +53,7 @@ app.*.map.json
 **/ios/Runner/GoogleService-Info.plist
 **/android/app/google-services.json
 **/macos/Runner/GoogleService-Info.plist
+lib/firebase_options.dart
 
 # その他のAPIキー
 **/api_keys/

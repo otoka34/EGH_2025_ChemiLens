@@ -25,8 +25,7 @@ class _SimpleMolecularViewerScreenState extends State<SimpleMolecularViewerScree
   @override
   void initState() {
     super.initState();
-    print('SimpleMolecularViewerScreen: SDF Data length: ${widget.sdfData.length}');
-    print('SimpleMolecularViewerScreen: Molecule name: ${widget.moleculeName}');
+    print('SimpleMolecularViewerScreen: Initializing ${widget.moleculeName} (${widget.sdfData.length} chars)');
     _initializeWebView();
   }
 
@@ -36,7 +35,7 @@ class _SimpleMolecularViewerScreenState extends State<SimpleMolecularViewerScree
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageFinished: (String url) {
-            print('WebView page finished loading: $url');
+            // print('WebView page finished loading: $url');
             if (mounted) {
               setState(() {
                 _isLoading = false;
@@ -45,16 +44,21 @@ class _SimpleMolecularViewerScreenState extends State<SimpleMolecularViewerScree
             _loadMolecule();
           },
           onWebResourceError: (WebResourceError error) {
-            print('WebView error: ${error.description}');
+            // Only print critical errors
+            if (error.errorType == WebResourceErrorType.hostLookup ||
+                error.errorType == WebResourceErrorType.timeout) {
+              print('WebView critical error: ${error.description}');
+            }
           },
         ),
       )
-      ..addJavaScriptChannel(
-        'ConsoleLog',
-        onMessageReceived: (JavaScriptMessage message) {
-          print('WebView Console: ${message.message}');
-        },
-      )
+      // Console logging disabled to reduce output
+      // ..addJavaScriptChannel(
+      //   'ConsoleLog',
+      //   onMessageReceived: (JavaScriptMessage message) {
+      //     print('WebView Console: ${message.message}');
+      //   },
+      // )
       ..loadHtmlString(_generateSimpleHTML());
   }
 
@@ -121,12 +125,12 @@ class _SimpleMolecularViewerScreenState extends State<SimpleMolecularViewerScree
           // 色分けレジェンドを更新
           updateAtomLegend($atomsJson);
           
-          console.log('Molecule loaded successfully');
+          // console.log('Molecule loaded successfully');
         } catch(e) {
-          console.error('Error loading molecule:', e);
+          // console.error('Error loading molecule:', e);
         }
       } else {
-        console.error('3Dmol.js not ready');
+        // console.error('3Dmol.js not ready');
         setTimeout(() => {
           if (typeof \$3Dmol !== 'undefined' && viewer) {
             _loadMolecule();
@@ -338,7 +342,9 @@ class _SimpleMolecularViewerScreenState extends State<SimpleMolecularViewerScree
         let viewer;
         let currentZoom = 1;
         
-        // Redirect console.log to Flutter
+        // Console logging disabled to reduce output
+        // Uncomment below lines if debugging is needed
+        /*
         const originalLog = console.log;
         const originalError = console.error;
         console.log = function(...args) {
@@ -353,6 +359,7 @@ class _SimpleMolecularViewerScreenState extends State<SimpleMolecularViewerScree
             window.ConsoleLog.postMessage('ERROR: ' + args.join(' '));
           }
         };
+        */
         
         function initializeViewer() {
           try {
@@ -371,13 +378,13 @@ class _SimpleMolecularViewerScreenState extends State<SimpleMolecularViewerScree
               viewer.enableMouse();
               viewer.enableTouch();
               
-              console.log('3Dmol.js viewer initialized successfully');
+              // console.log('3Dmol.js viewer initialized successfully');
             } else {
-              console.error('3Dmol.js not loaded');
+              // console.error('3Dmol.js not loaded');
               setTimeout(initializeViewer, 100);
             }
           } catch(e) {
-            console.error('Error initializing viewer:', e);
+            // console.error('Error initializing viewer:', e);
           }
         }
         
@@ -525,9 +532,10 @@ class _SimpleMolecularViewerScreenState extends State<SimpleMolecularViewerScree
         
         document.addEventListener('DOMContentLoaded', initializeViewer);
         
-        window.addEventListener('error', function(e) {
-            console.error('JavaScript error:', e.error);
-        });
+        // Error logging disabled to reduce output
+        // window.addEventListener('error', function(e) {
+        //     console.error('JavaScript error:', e.error);
+        // });
     </script>
 </body>
 </html>''';

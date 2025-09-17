@@ -33,12 +33,11 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
 
   Future<void> _loadModel() async {
     try {
-      print('ModelViewerScreen: Starting to convert SDF to GLB');
-      print('ModelViewerScreen: SDF Data length: ${widget.sdfData.length}');
+      print('ModelViewerScreen: Converting SDF to GLB (${widget.sdfData.length} chars)');
       
       // SDFデータをGLBに変換
       final glbData = await ApiService.convertSdfToGlb(widget.sdfData);
-      print('ModelViewerScreen: GLB Data received, size: ${glbData.length} bytes');
+      print('ModelViewerScreen: GLB conversion completed (${glbData.length} bytes)');
       
       if (kIsWeb) {
         // Web環境では単純にBase64文字列を使用
@@ -47,8 +46,7 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
           mimeType: 'model/gltf-binary',
         ).toString();
         
-        print('ModelViewerScreen: Base64 Data URL length: ${base64String.length}');
-        print('ModelViewerScreen: Base64 Data URL (first 100 chars): ${base64String.substring(0, 100)}');
+        print('ModelViewerScreen: Base64 Data URL ready (${base64String.length} chars)');
         
         if (mounted) {
           setState(() {
@@ -124,6 +122,7 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
                         backgroundColor: const Color(0xFFE0E0E0),
                         loading: Loading.lazy,
                         touchAction: TouchAction.panY,
+                        debugLogging: false, // デバッグログを無効化
                       ),
                     ),
                     Container(

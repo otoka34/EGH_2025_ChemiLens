@@ -65,9 +65,9 @@ class _WebViewMolecularViewerScreenState extends State<WebViewMolecularViewerScr
         });
         viewer.zoomTo();
         viewer.render();
-        console.log('Molecule loaded successfully');
+        // console.log('Molecule loaded successfully');
       } else {
-        console.error('3Dmol.js not ready');
+        // console.error('3Dmol.js not ready');
       }
     ''';
     _controller.runJavaScript(script);
@@ -141,15 +141,16 @@ class _WebViewMolecularViewerScreenState extends State<WebViewMolecularViewerScr
             if (typeof \$3Dmol !== 'undefined') {
                 viewer = \$3Dmol.createViewer(element, config);
                 viewer.setBackgroundColor('white');
-                console.log('3Dmol.js viewer initialized');
+                // console.log('3Dmol.js viewer initialized');
             } else {
-                console.error('3Dmol.js not loaded');
+                // console.error('3Dmol.js not loaded');
             }
         });
         
-        window.addEventListener('error', function(e) {
-            console.error('JavaScript error:', e.error);
-        });
+        // Error logging disabled to reduce output
+        // window.addEventListener('error', function(e) {
+        //     console.error('JavaScript error:', e.error);
+        // });
     </script>
 </body>
 </html>''';

@@ -79,6 +79,6 @@ app.post("/convert", express.text({ type: 'text/plain', limit: '1mb' }), async (
 });
 
 
-app.listen(3000, () => {
-    console.log("Server running on http://localhost:3000");
+app.listen(3000, '0.0.0.0', () => {
+    console.log("Server running on http://localhost:3000 and http://10.45.0.94:3000");
 });

@@ -5,7 +5,7 @@ import '../models/detection_result.dart';
 
 class ApiService {
   // TODO: 環境変数などから取得するようにする
-  static const String _baseUrl = 'http://localhost:3000';
+  static const String _baseUrl = 'http://10.45.0.94:3000';
 
   static final Dio _dio = Dio();
 

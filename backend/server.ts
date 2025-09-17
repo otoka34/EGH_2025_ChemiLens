@@ -174,9 +174,9 @@ app.post("/cidtosdf", async (req, res) => {
         return res.status(400).json({ error: "Request body must be an array of objects." });
     }
 
-    // 配列からCIDのみを抽出（nullやundefinedのcidは除外）
+    // 配列からCIDのみを抽出（nullやundefinedのcidsは除外）
     const cids = requestData
-        .map(item => item.cid)
+        .map(item => item.cids)
         .filter((cid): cid is number => cid != null && typeof cid === 'number');
 
     if (cids.length === 0) {
@@ -194,7 +194,7 @@ app.post("/cidtosdf", async (req, res) => {
 
         // 元のデータにSDFをマージ
         const responseData = requestData.map(item => {
-            const sdf = sdfMap.get(item.cid);
+            const sdf = sdfMap.get(item.cids);
             return {
                 ...item,
                 sdf: sdf || null, // SDFが見つからなかった場合はnullを設定

@@ -10,6 +10,19 @@ import { cleanupTempFiles, convertSdfToGlb } from "./converter/converter.js";
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
+// CORS設定
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
 app.post("/analyze", upload.single("image"), async (req, res) => {
     try {
         if (!req.file) {
@@ -79,6 +92,6 @@ app.post("/convert", express.text({ type: 'text/plain', limit: '1mb' }), async (
 });
 
 
-app.listen(3000, () => {
-    console.log("Server running on http://localhost:3000");
+app.listen(3000, '0.0.0.0', () => {
+    console.log("Server running on http://localhost:3000 and http://10.45.0.94:3000");
 });

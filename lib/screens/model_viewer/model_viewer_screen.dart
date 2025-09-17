@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:path_provider/path_provider.dart';
@@ -39,16 +40,34 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
       final glbData = await ApiService.convertSdfToGlb(widget.sdfData);
       print('ModelViewerScreen: GLB Data received, size: ${glbData.length} bytes');
       
-      // GLBファイルを一時ディレクトリに保存
-      final tempDir = await getTemporaryDirectory();
-      final file = File('${tempDir.path}/molecule_${DateTime.now().millisecondsSinceEpoch}.glb');
-      await file.writeAsBytes(glbData);
-      
-      if (mounted) {
-        setState(() {
-          _glbUrl = file.path;
-          _isLoading = false;
-        });
+      if (kIsWeb) {
+        // Web環境では単純にBase64文字列を使用
+        final base64String = Uri.dataFromBytes(
+          glbData,
+          mimeType: 'model/gltf-binary',
+        ).toString();
+        
+        print('ModelViewerScreen: Base64 Data URL length: ${base64String.length}');
+        print('ModelViewerScreen: Base64 Data URL (first 100 chars): ${base64String.substring(0, 100)}');
+        
+        if (mounted) {
+          setState(() {
+            _glbUrl = base64String;
+            _isLoading = false;
+          });
+        }
+      } else {
+        // モバイル環境では一時ファイルに保存
+        final tempDir = await getTemporaryDirectory();
+        final file = File('${tempDir.path}/molecule_${DateTime.now().millisecondsSinceEpoch}.glb');
+        await file.writeAsBytes(glbData);
+        
+        if (mounted) {
+          setState(() {
+            _glbUrl = file.path;
+            _isLoading = false;
+          });
+        }
       }
     } catch (e) {
       print('ModelViewerScreen: Error loading model: $e');
@@ -196,8 +215,8 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
 
   @override
   void dispose() {
-    // 一時ファイルをクリーンアップ
-    if (_glbUrl != null) {
+    // 一時ファイルをクリーンアップ（Web環境では不要）
+    if (_glbUrl != null && !kIsWeb) {
       try {
         File(_glbUrl!).deleteSync();
       } catch (e) {

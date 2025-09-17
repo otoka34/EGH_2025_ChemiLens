@@ -55,63 +55,93 @@ class _HistoryScreenState extends State<HistoryScreen>
 
     debugPrint('Starting image picker with source: $source');
 
-    // シミュレーター環境での対応
-    if (kDebugMode && Platform.isIOS) {
-      // 利用可能なテスト画像を探す（有機化合物系を優先）
-      final List<String> testImagePaths = [
-        '/Users/ryousei/programing/hackathon/team-25-app/test_images/coffee_beans.jpg',  // 実際のコーヒー画像（カフェイン）
-      ];
-
-      final List<File> availableImages = [];
-      for (final path in testImagePaths) {
-        final file = File(path);
-        if (await file.exists()) {
-          availableImages.add(file);
-        }
-      }
-
-      if (availableImages.isNotEmpty) {
+    // シミュレーター環境およびWeb環境での対応
+    if (kDebugMode && (kIsWeb || Platform.isIOS)) {
+      // Web環境の場合は警告を表示
+      if (kIsWeb && source == ImageSource.camera) {
         if (!mounted) return;
-        final selectedFile = await showDialog<File>(
+        final proceed = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('🔧 開発用画像選択'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'iOSシミュレーターではImagePickerが不安定です。\n開発用テスト画像を選択してください：',
-                ),
-                const SizedBox(height: 16),
-                ...availableImages.map(
-                  (file) => ListTile(
-                    title: Text(file.path.split('/').last),
-                    subtitle: Text(
-                      file.path.split('/').length > 1 
-                        ? file.path.split('/').skip(file.path.split('/').length - 2).join('/')
-                        : file.path,
-                    ),
-                    onTap: () => Navigator.of(context).pop(file),
-                  ),
-                ),
-                const Divider(),
-                ListTile(
-                  leading: const Icon(Icons.warning, color: Colors.orange),
-                  title: const Text('ImagePickerを試行'),
-                  subtitle: const Text('フリーズするかもしれません'),
-                  onTap: () => Navigator.of(context).pop(null),
-                ),
-              ],
+            title: const Text('📸 カメラ機能について'),
+            content: const Text(
+              'Webブラウザでは、カメラボタンを押してもファイル選択画面が開きます。\n'
+              'これはブラウザのセキュリティ制限によるものです。\n'
+              'カメラで撮影した画像を選択してください。',
             ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('キャンセル'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('続行'),
+              ),
+            ],
           ),
         );
+        if (proceed != true) return;
+      } else if (!kIsWeb && Platform.isIOS) {
+        // iOSシミュレーター用のテスト画像
+        final List<String> testImagePaths = [
+          '/Users/ryousei/programing/hackathon/team-25-app/test_images/coffee_beans.jpg', // 実際のコーヒー画像（カフェイン）
+        ];
 
-        if (selectedFile != null) {
-          debugPrint('Using selected test image: ${selectedFile.path}');
-          await _processTestImage(selectedFile);
-          return;
+        final List<File> availableImages = [];
+        for (final path in testImagePaths) {
+          final file = File(path);
+          if (await file.exists()) {
+            availableImages.add(file);
+          }
         }
-        // selectedFile が null の場合は ImagePicker を試行
+
+        if (availableImages.isNotEmpty) {
+          if (!mounted) return;
+          final selectedFile = await showDialog<File>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('🔧 開発用画像選択'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'iOSシミュレーターではImagePickerが不安定です。\n開発用テスト画像を選択してください：',
+                  ),
+                  const SizedBox(height: 16),
+                  ...availableImages.map(
+                    (file) => ListTile(
+                      title: Text(file.path.split('/').last),
+                      subtitle: Text(
+                        file.path.split('/').length > 1
+                            ? file.path
+                                  .split('/')
+                                  .skip(file.path.split('/').length - 2)
+                                  .join('/')
+                            : file.path,
+                      ),
+                      onTap: () => Navigator.of(context).pop(file),
+                    ),
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.warning, color: Colors.orange),
+                    title: const Text('ImagePickerを試行'),
+                    subtitle: const Text('フリーズするかもしれません'),
+                    onTap: () => Navigator.of(context).pop(null),
+                  ),
+                ],
+              ),
+            ),
+          );
+
+          if (selectedFile != null) {
+            debugPrint('Using selected test image: ${selectedFile.path}');
+            await _processTestImage(selectedFile);
+            return;
+          }
+          // selectedFile が null の場合は ImagePicker を試行
+        }
       } else {
         // テスト画像が見つからない場合
         if (!mounted) return;
@@ -146,25 +176,23 @@ class _HistoryScreenState extends State<HistoryScreen>
 
     try {
       debugPrint('Opening image picker...');
-      
+
       // シンプルな設定でImagePickerを呼び出し（記事の推奨通り）
-      picked = await picker.pickImage(
-        source: source,
-        imageQuality: 80,
-      );
-      
+      picked = await picker.pickImage(source: source, imageQuality: 80);
+
       debugPrint('Image picker returned: ${picked?.path}');
     } catch (e) {
       debugPrint('Image picker error: $e');
-      
+
       // 権限エラーの場合の詳細情報を表示
       String errorMessage = 'エラー: $e';
-      if (e.toString().contains('permission') || e.toString().contains('denied')) {
+      if (e.toString().contains('permission') ||
+          e.toString().contains('denied')) {
         errorMessage = '写真ライブラリへのアクセス権限が必要です。設定から権限を許可してください。';
       } else if (e.toString().contains('camera')) {
         errorMessage = 'カメラへのアクセス権限が必要です。設定から権限を許可してください。';
       }
-      
+
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -238,7 +266,9 @@ class _HistoryScreenState extends State<HistoryScreen>
 
     try {
       final Uint8List imageBytes = await pickedFile.readAsBytes();
-      final File imageFile = File(pickedFile.path);
+      
+      // Web環境では Blob URL を使用、その他では File を使用
+      final dynamic imageFile = kIsWeb ? pickedFile.path : File(pickedFile.path);
 
       debugPrint('Calling API with picked image...');
       final DetectionResult result = await ApiService.analyzeImage(
@@ -252,7 +282,7 @@ class _HistoryScreenState extends State<HistoryScreen>
           objectName: result.objectName,
           viewedAt: DateTime.now(),
           molecules: result.molecules,
-          imageFile: imageFile,
+          imageFile: imageFile is String ? File(imageFile) : imageFile as File,
           topMolecule: result.molecules.isNotEmpty
               ? result.molecules.first
               : null,

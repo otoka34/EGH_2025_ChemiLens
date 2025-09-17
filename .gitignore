@@ -72,6 +72,22 @@ config.dart
 **/ios/Runner.xcworkspace/xcshareddata/
 **/ios/.symlinks/
 
+# Xcodeユーザー固有ファイル（除外）
+**/ios/**/*.xcuserdata/
+**/ios/**/*.pbxuser
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.perspectivev3
+**/ios/**/xcuserdata/
+**/ios/**/DerivedData/
+
+# プロジェクトファイルは含める（コメント）
+# project.pbxproj と Info.plist は必須なので除外しない
+# これらはビルド設定とプロジェクト構造に必要
+
+# 環境固有の設定ファイル（各開発者が個別に設定）
+**/ios/Environment.xcconfig
+
 # Android関連
 **/android/.gradle/
 **/android/captures/

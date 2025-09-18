@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:team_25_app/models/molecule.dart';
-import 'package:team_25_app/screens/services/history_store.dart';
+import 'package:team_25_app/models/compound.dart';
+import 'package:team_25_app/models/history_item.dart';
+import 'package:team_25_app/services/history_service.dart';
 import 'package:team_25_app/theme/app_colors.dart';
 
-class HistoryItemWidget extends StatelessWidget {
+class HistoryItemWidget extends ConsumerWidget {
   final HistoryItem item;
-  final int originalIndex;
 
-  const HistoryItemWidget({
-    super.key,
-    required this.item,
-    required this.originalIndex,
-  });
+  const HistoryItemWidget({super.key, required this.item});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final topThreeMolecules = item.molecules.take(3).toList();
+    final topThreeCompounds = item.compounds.take(3).toList();
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -33,11 +30,14 @@ class HistoryItemWidget extends StatelessWidget {
                   child: InkWell(
                     onTap: () {
                       // 詳細画面へ遷移
-                      context.push('/detail/$originalIndex');
+                      context.push('/detail/${item.id}');
                     },
                     borderRadius: BorderRadius.circular(12),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 4,
+                      ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -45,7 +45,9 @@ class HistoryItemWidget extends StatelessWidget {
                           _buildImage(),
                           const SizedBox(width: 12),
                           // コンテンツ部分
-                          Expanded(child: _buildContent(theme, topThreeMolecules)),
+                          Expanded(
+                            child: _buildContent(theme, topThreeCompounds),
+                          ),
                         ],
                       ),
                     ),
@@ -54,7 +56,7 @@ class HistoryItemWidget extends StatelessWidget {
               ),
 
               // お気に入りアイコン（独立してタップ可能）
-              _buildFavoriteIcon(),
+              _buildFavoriteIcon(ref),
             ],
           ),
 
@@ -74,8 +76,8 @@ class HistoryItemWidget extends StatelessWidget {
       height: 80,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        child: item.imageFile != null
-            ? Image.file(item.imageFile!, fit: BoxFit.cover)
+        child: item.imageUrl.isNotEmpty
+            ? Image.network(item.imageUrl, fit: BoxFit.cover)
             : Container(
                 color: Colors.grey[200],
                 child: const Icon(Icons.image, size: 40, color: Colors.grey),
@@ -84,7 +86,7 @@ class HistoryItemWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(ThemeData theme, List<Molecule> topThreeMolecules) {
+  Widget _buildContent(ThemeData theme, List<Compound> topThreeCompounds) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -98,25 +100,13 @@ class HistoryItemWidget extends StatelessWidget {
         ),
         const SizedBox(height: 4),
 
-        // カテゴリ
-        if (item.category.isNotEmpty) ...[
-          Text(
-            item.category,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[600],
-              fontSize: 14,
-            ),
-          ),
-          const SizedBox(height: 6),
-        ],
-
         // 成分3つ
-        if (topThreeMolecules.isNotEmpty) ...[
-          ...topThreeMolecules.map(
-            (molecule) => Padding(
+        if (topThreeCompounds.isNotEmpty) ...[
+          ...topThreeCompounds.map(
+            (compound) => Padding(
               padding: const EdgeInsets.only(bottom: 2),
               child: Text(
-                molecule.name,
+                compound.name,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: Colors.grey[700],
                   fontSize: 13,
@@ -129,9 +119,10 @@ class HistoryItemWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildFavoriteIcon() {
+  Widget _buildFavoriteIcon(WidgetRef ref) {
     return GestureDetector(
-      onTap: () => HistoryStore.toggleFavorite(originalIndex),
+      onTap: () =>
+          ref.read(historyServiceProvider.notifier).toggleFavorite(item.id),
       child: Container(
         padding: const EdgeInsets.all(8),
         child: Icon(

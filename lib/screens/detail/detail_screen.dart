@@ -1,29 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:team_25_app/models/compound.dart';
+import 'package:team_25_app/models/history_item.dart';
+import 'package:team_25_app/services/history_service.dart';
+import 'package:team_25_app/theme/app_colors.dart';
 
-import '../../models/molecule.dart';
-import '../../theme/app_colors.dart';
-import '../services/history_store.dart';
+class DetailScreen extends ConsumerWidget {
+  final String historyId;
 
-class DetailScreen extends StatelessWidget {
-  final int historyIndex;
-
-  const DetailScreen({super.key, required this.historyIndex});
+  const DetailScreen({super.key, required this.historyId});
 
   @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<List<HistoryItem>>(
-      valueListenable: HistoryStore.items,
-      builder: (context, items, _) {
-        if (historyIndex >= items.length) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('エラー')),
-            body: const Center(child: Text('指定された履歴アイテムが見つかりません')),
-          );
-        }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final historyAsync = ref.watch(historyServiceProvider);
 
-        final item = items[historyIndex];
+    return historyAsync.when(
+      data: (histories) {
+        final item = histories.firstWhere(
+          (h) => h.id == historyId,
+          orElse: () => throw Exception('History not found'),
+        );
         return _buildDetailContent(context, item);
       },
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (error, stack) => Scaffold(
+        appBar: AppBar(title: const Text('エラー')),
+        body: Center(child: Text('エラーが発生しました: $error')),
+      ),
     );
   }
 
@@ -42,7 +46,7 @@ class DetailScreen extends StatelessWidget {
             _buildObjectInfoSection(context, item),
 
             // 分子リストセクション
-            _buildMoleculeListSection(context, item.molecules),
+            _buildMoleculeListSection(context, item.compounds),
           ],
         ),
       ),
@@ -65,33 +69,22 @@ class DetailScreen extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
-        child: item.imageFile != null
-            ? Image.file(
-                item.imageFile!,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: AppColors.background,
-                    child: Center(
-                      child: Icon(
-                        Icons.broken_image,
-                        size: 64,
-                        color: AppColors.primaryDark.withValues(alpha: 0.5),
-                      ),
-                    ),
-                  );
-                },
-              )
-            : Container(
-                color: AppColors.background,
-                child: Center(
-                  child: Icon(
-                    Icons.image,
-                    size: 64,
-                    color: AppColors.primaryDark.withValues(alpha: 0.5),
-                  ),
+        child: Image.network(
+          item.imageUrl,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              color: AppColors.background,
+              child: Center(
+                child: Icon(
+                  Icons.broken_image,
+                  size: 64,
+                  color: AppColors.primaryDark.withValues(alpha: 0.5),
                 ),
               ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -125,12 +118,9 @@ class DetailScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           _buildInfoRow('物体名', item.objectName),
-          if (item.category.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            _buildInfoRow('カテゴリ', item.category),
-          ],
+          // カテゴリ情報は新しいモデルにはない
           const SizedBox(height: 8),
-          _buildInfoRow('撮影日時', _formatDateTime(item.viewedAt)),
+          _buildInfoRow('撮影日時', _formatDateTime(item.createdAt)),
         ],
       ),
     );
@@ -163,7 +153,7 @@ class DetailScreen extends StatelessWidget {
 
   Widget _buildMoleculeListSection(
     BuildContext context,
-    List<Molecule> molecules,
+    List<Compound> molecules,
   ) {
     final theme = Theme.of(context);
 
@@ -188,7 +178,7 @@ class DetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMoleculeCard(BuildContext context, Molecule molecule) {
+  Widget _buildMoleculeCard(BuildContext context, Compound molecule) {
     final theme = Theme.of(context);
 
     return Container(
@@ -242,7 +232,7 @@ class DetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildARButton(BuildContext context, Molecule molecule) {
+  Widget _buildARButton(BuildContext context, Compound molecule) {
     return OutlinedButton(
       onPressed: () {
         // TODO: AR画面への遷移実装

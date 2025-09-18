@@ -1,7 +1,9 @@
 import 'dart:typed_data';
-import 'package:flutter/foundation.dart' show kIsWeb;
+
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http_parser/http_parser.dart';
+
 import '../models/detection_result.dart';
 
 class ApiService {
@@ -16,16 +18,19 @@ class ApiService {
 
   static final Dio _dio = Dio();
 
-  static Future<DetectionResult> analyzeImage(Uint8List imageBytes, String? mimeType) async {
+  static Future<DetectionResult> analyzeImage(
+    Uint8List imageBytes,
+    String? mimeType,
+  ) async {
     try {
       // MIMEタイプを確実に設定
       String finalMimeType = mimeType ?? 'image/jpeg';
       if (finalMimeType == 'application/octet-stream') {
         finalMimeType = 'image/jpeg';
       }
-      
+
       print('Sending image with MIME type: $finalMimeType');
-      
+
       // FormDataを作成して画像を添付
       final formData = FormData.fromMap({
         'image': MultipartFile.fromBytes(
@@ -36,23 +41,27 @@ class ApiService {
       });
 
       // バックエンドの /analyze エンドポイントにPOSTリクエストを送信
-      final response = await _dio.post(
-        '$_baseUrl/analyze',
-        data: formData,
-      );
+      print('Sending POST request to: $_baseUrl/analyze');
+      final response = await _dio.post('$_baseUrl/analyze', data: formData);
 
       if (response.statusCode == 200) {
+        print('API Response: ${response.data}');
         // 成功レスポンスをDetectionResultに変換
-        return DetectionResult.fromJson(response.data);
+        return DetectionResult.fromApiResponse(response.data);
       } else {
         // エラーレスポンス
         throw Exception('Failed to analyze image: ${response.statusMessage}');
       }
     } on DioException catch (e) {
       // Dioのエラー（ネットワークエラーなど）
+      print('DioException: ${e.type}, ${e.message}');
+      if (e.response != null) {
+        print('Response status: ${e.response!.statusCode}');
+        print('Response data: ${e.response!.data}');
+      }
       throw Exception('Failed to connect to the server: $e');
     } catch (e) {
-      // その他のエラー
+      print('Unexpected error: $e');
       throw Exception('An unexpected error occurred: $e');
     }
   }
@@ -64,9 +73,7 @@ class ApiService {
         '$_baseUrl/convert',
         data: sdfData,
         options: Options(
-          headers: {
-            'Content-Type': 'text/plain',
-          },
+          headers: {'Content-Type': 'text/plain'},
           responseType: ResponseType.bytes,
         ),
       );
@@ -74,7 +81,9 @@ class ApiService {
       if (response.statusCode == 200 && response.data != null) {
         return Uint8List.fromList(response.data!);
       } else {
-        throw Exception('Failed to convert SDF to GLB: ${response.statusMessage}');
+        throw Exception(
+          'Failed to convert SDF to GLB: ${response.statusMessage}',
+        );
       }
     } on DioException catch (e) {
       throw Exception('Failed to connect to the server for conversion: $e');

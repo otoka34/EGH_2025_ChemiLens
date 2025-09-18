@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart' hide Element;
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:team_25_app/models/element.dart';
 import 'package:team_25_app/screens/encyclopedia/widgets/element_grid.dart';
 import 'package:team_25_app/data/element_data.dart'; // ElementDataをインポート
@@ -57,16 +58,20 @@ class _EncyclopediaScreenState extends State<EncyclopediaScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            SvgPicture.asset(
-              'assets/images/app_bar_icon.svg',
-              height: 32,
-              width: 32,
-            ),
-          ],
+        title: GestureDetector( // <-- GestureDetectorで囲む
+          onTap: () {
+            context.go('/'); // ホーム画面へ遷移
+          },
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                'assets/images/app_bar_icon.svg',
+                height: 32,
+                width: 32,
+              ),
+            ],
+          ),
         ),
-        elevation: 0,
       ),
       body: Stack(
         children: [

@@ -10,6 +10,7 @@ abstract class Element with _$Element {
     required String name, // 元素名（水素、炭素、酸素等）
     required int atomicNumber, // 原子番号
     String? iconUrl, // アイコン画像URL
+    @Default(false) bool discovered, // 発見済みフラグ
   }) = _Element;
 
   factory Element.fromJson(Map<String, dynamic> json) =>
@@ -29,5 +30,3 @@ abstract class UserElementProgress with _$UserElementProgress {
   factory UserElementProgress.fromJson(Map<String, dynamic> json) =>
       _$UserElementProgressFromJson(json);
 }
-
-  final String symbol

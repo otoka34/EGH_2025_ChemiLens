@@ -28,10 +28,13 @@ dependencies:
     sdk: flutter
   model_viewer_plus: ^1.9.3
   ar_flutter_plugin: ^0.7.3
-  firebase_core: ^4.1.0
+  firebase_core: ^3.15.2
+  cloud_firestore: ^5.6.12
+  firebase_storage: ^12.3.4
   json_annotation: ^4.9.0
   flutter_riverpod: ^3.0.0
   riverpod_annotation: ^3.0.0
+  freezed_annotation: ^3.1.0
 
 dev_dependencies:
   flutter_test:

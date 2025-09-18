@@ -121,3 +121,9 @@ config.dart
 **/flutter/generated_plugin_registrant.cc
 **/Flutter/GeneratedPluginRegistrant.h
 **/Flutter/GeneratedPluginRegistrant.m
+
+# Code generation files (コード生成ファイル)
+*.g.dart
+*.freezed.dart
+*.config.dart
+*.part.dart

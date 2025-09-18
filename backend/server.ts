@@ -210,5 +210,5 @@ app.post("/cidtosdf", async (req, res) => {
 });
 
 app.listen(3000, '0.0.0.0', () => {
-    console.log("Server running on http://localhost:3000 and http://10.45.0.94:3000");
+    console.log("Server running on http://localhost:3000 and http://10.127.19.196:3000");
 });

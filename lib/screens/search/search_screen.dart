@@ -140,12 +140,21 @@ class _SearchScreenState extends State<SearchScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        toolbarHeight: 90.0, // AppBar の高さを明示的に設定
         title: const Text('物体名で検索', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         iconTheme: const IconThemeData(color: Colors.white),
+        automaticallyImplyLeading: false, // 自動生成を無効化
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/'), // ホームに戻る
-          ),
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // iOS風の矢印
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/'); // pop できない場合はホームへ
+            }
+          },
+          tooltip: '前の画面に戻る',
+        ),
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(

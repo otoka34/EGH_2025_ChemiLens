@@ -9,6 +9,7 @@ import '../screens/detail/detail_screen.dart';
 import '../screens/result/result_screen.dart';
 import '../screens/splash/splash_screen.dart';
 import '../screens/ar_viewer/ar_viewer_screen.dart';
+import '../screens/search/search_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/splash',
@@ -93,6 +94,26 @@ final GoRouter appRouter = GoRouter(
       },
     ),
 
+    // 検索画面
+    GoRoute(
+      path: '/search',
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: const SearchScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0); // 右から
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+        );
+      },
+    ),
   ],
 
   // エラーハンドリング

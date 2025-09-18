@@ -10,13 +10,14 @@ const genAI = new GoogleGenerativeAI(apiKey);
  * @param mimeType 画像のMIMEタイプ (e.g., "image/jpeg")
  * @returns 分析結果のオブジェクト、またはnull
  */
+
 export async function analyzeImage(imageBuffer: Buffer, mimeType: string): Promise<Result | null> {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `
         Analyze the provided image.
         1. Identify the main object in the image.
-        2. List 3-5 major chemical compounds contained in that object.
+        2. List 5 major chemical compounds contained in that object.
 
         Return a single JSON object with the following structure:
         {
@@ -24,10 +25,7 @@ export async function analyzeImage(imageBuffer: Buffer, mimeType: string): Promi
           "molecules": [
             {
               "name": "<The precise, single, standard chemical name (e.g., 'Caffeine', 'Polyethylene terephthalate', 'Water'). Do not include formulas, abbreviations, or general categories like 'minerals'.>",
-              "description": "<name and brief description>",
-              "confidence": <percentage between 0-100>,
-              "formula": "<chemical formula (e.g., 'C8H10N4O2', 'C10H16N5O13P3', 'H2O')>"
-            }
+              "description": "<First, the Japanese name of the molecule, followed by a newline character, then a description of the substance in Japanese, approximately 20 words long.>",
           ]
         }
         Only return the JSON object, with no other text or markdown formatting.

@@ -29,3 +29,5 @@ abstract class UserElementProgress with _$UserElementProgress {
   factory UserElementProgress.fromJson(Map<String, dynamic> json) =>
       _$UserElementProgressFromJson(json);
 }
+
+  final String symbol

@@ -5,7 +5,7 @@ import 'widgets/compound_list.dart';
 import 'widgets/image_display_widget.dart';
 import 'widgets/object_info_widget.dart';
 
-class ResultScreen extends StatelessWidget {
+class ResultScreen extends StatefulWidget {
   final dynamic imageFile; // File or String (blob URL for web)
   final DetectionResult detection;
 
@@ -14,6 +14,21 @@ class ResultScreen extends StatelessWidget {
     required this.imageFile,
     required this.detection,
   });
+
+  @override
+  State<ResultScreen> createState() => _ResultScreenState();
+}
+
+class _ResultScreenState extends State<ResultScreen> {
+  late Map<int, bool> _isDescriptionVisible;
+
+  @override
+  void initState() {
+    super.initState();
+    _isDescriptionVisible = {
+      for (var i = 0; i < widget.detection.molecules.length; i++) i: false
+    };
+  }
 
   @override
   Widget build(BuildContext context) {

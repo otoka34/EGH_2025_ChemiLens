@@ -36,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
           duration: const Duration(milliseconds: 800),
           curve: Curves.easeOut,
           opacity: _opacity,
-          child: SvgPicture.asset('assets/images/app_icon.svg', width: 240),
+          child: SvgPicture.asset('assets/images/app_icon2.svg', width: 240),
         ),
       ),
     );

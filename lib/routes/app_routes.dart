@@ -10,6 +10,8 @@ import '../screens/result/result_screen.dart';
 import '../screens/splash/splash_screen.dart';
 import '../screens/ar_viewer/ar_viewer_screen.dart';
 import '../screens/search/search_screen.dart';
+import '../screens/home/home_screen.dart';
+import '../screens/encyclopedia/encyclopedia_screen.dart'; // <-- 追加
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/splash',
@@ -21,11 +23,25 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const SplashScreen(),
     ),
 
-    // ホーム画面（履歴画面）
+    // ホーム画面
     GoRoute(
       path: '/',
       name: 'home',
+      builder: (context, state) => HomeScreen(),
+    ),
+
+    // 履歴画面
+    GoRoute(
+      path: '/history',
+      name: 'history',
       builder: (context, state) => const HistoryScreen(),
+    ),
+
+    // 元素図鑑画面 <-- 追加
+    GoRoute(
+      path: '/encyclopedia',
+      name: 'encyclopedia',
+      builder: (context, state) => const EncyclopediaScreen(),
     ),
 
     // 詳細画面

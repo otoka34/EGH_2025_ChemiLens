@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart'; // GoRouterのインポート(検索画面遷移用)
 import 'package:image_picker/image_picker.dart';
 import 'package:team_25_app/screens/collection/widgets/history_list.dart';
 import 'package:team_25_app/screens/collection/widgets/history_tab_bar.dart';
@@ -329,6 +330,13 @@ class _HistoryScreenState extends State<HistoryScreen>
           : Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // 検索画面へ遷移するFAB
+                FloatingActionButton(
+                  heroTag: "search",
+                  onPressed: () => context.go('/search'),
+                  child: const Icon(Icons.search),
+                ),
+                const SizedBox(height: 12),
                 // アルバム選択用FAB
                 FloatingActionButton(
                   heroTag: "album",

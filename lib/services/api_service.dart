@@ -10,23 +10,26 @@ class ApiService {
   static String get _baseUrl {
     if (kIsWeb) {
       // Web環境では直接APIサーバーに接続（CORS対応）
-      return 'http://10.127.19.196:3000';
+      return 'http://10.45.0.104:3000';
     }
-    return 'http://10.127.19.196:3000';
+    return 'http://10.45.0.104:3000';
   }
 
   static final Dio _dio = Dio();
 
-  static Future<DetectionResult> analyzeImage(Uint8List imageBytes, String? mimeType) async {
+  static Future<DetectionResult> analyzeImage(
+    Uint8List imageBytes,
+    String? mimeType,
+  ) async {
     try {
       // MIMEタイプを確実に設定
       String finalMimeType = mimeType ?? 'image/jpeg';
       if (finalMimeType == 'application/octet-stream') {
         finalMimeType = 'image/jpeg';
       }
-      
+
       print('Sending image with MIME type: $finalMimeType');
-      
+
       // FormDataを作成して画像を添付
       final formData = FormData.fromMap({
         'image': MultipartFile.fromBytes(
@@ -37,10 +40,7 @@ class ApiService {
       });
 
       // バックエンドの /analyze エンドポイントにPOSTリクエストを送信
-      final response = await _dio.post(
-        '$_baseUrl/analyze',
-        data: formData,
-      );
+      final response = await _dio.post('$_baseUrl/analyze', data: formData);
 
       if (response.statusCode == 200) {
         // 成功レスポンスをDetectionResultに変換
@@ -65,9 +65,7 @@ class ApiService {
         '$_baseUrl/convert',
         data: sdfData,
         options: Options(
-          headers: {
-            'Content-Type': 'text/plain',
-          },
+          headers: {'Content-Type': 'text/plain'},
           responseType: ResponseType.bytes,
         ),
       );
@@ -75,7 +73,9 @@ class ApiService {
       if (response.statusCode == 200 && response.data != null) {
         return Uint8List.fromList(response.data!);
       } else {
-        throw Exception('Failed to convert SDF to GLB: ${response.statusMessage}');
+        throw Exception(
+          'Failed to convert SDF to GLB: ${response.statusMessage}',
+        );
       }
     } on DioException catch (e) {
       throw Exception('Failed to connect to the server for conversion: $e');
@@ -96,11 +96,14 @@ class ApiService {
         final List<dynamic> data = response.data;
         return data.map((item) => CompoundInfo.fromJson(item)).toList();
       } else {
-        throw Exception('Failed to search compounds: ${response.statusMessage}');
+        throw Exception(
+          'Failed to search compounds: ${response.statusMessage}',
+        );
       }
     } on DioException catch (e) {
       if (e.response != null && e.response?.data != null) {
-        final errorMessage = e.response?.data['error'] ?? 'Unknown error from server';
+        final errorMessage =
+            e.response?.data['error'] ?? 'Unknown error from server';
         throw Exception(errorMessage);
       }
       throw Exception('Failed to connect to the server');

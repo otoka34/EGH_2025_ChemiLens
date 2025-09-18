@@ -44,6 +44,8 @@ flutter:
     - assets/images/app_bar_icon.svg
     - assets/fonts/
     - assets/images/
+    - assets/images/app_icon2.svg
+    - assets/images/camera_icon.svg
 
   fonts:
     - family: Fredoka

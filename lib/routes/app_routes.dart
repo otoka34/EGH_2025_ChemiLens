@@ -46,27 +46,18 @@ final GoRouter appRouter = GoRouter(
 
     // 詳細画面
     GoRoute(
-      path: '/detail/:index',
+      path: '/detail/:historyId',
       builder: (context, state) {
-        final indexStr = state.pathParameters['index'];
-
-        if (indexStr == null) {
+        final historyId = state.pathParameters['historyId'];
+        
+        if (historyId == null) {
           return const Scaffold(
             appBar: null,
             body: Center(child: Text('無効なパラメータです')),
           );
         }
 
-        final index = int.tryParse(indexStr);
-
-        if (index == null) {
-          return const Scaffold(
-            appBar: null,
-            body: Center(child: Text('無効なインデックスです')),
-          );
-        }
-
-        return DetailScreen(historyIndex: index);
+        return DetailScreen(historyId: historyId);
       },
     ),
 
@@ -103,7 +94,7 @@ final GoRouter appRouter = GoRouter(
         final glbModelUrl = state.extra as String?;
         if (glbModelUrl == null) {
           return const Scaffold(
-            body: Center(child: Text('ARモデルのURLが指定されていません')),
+            body: Center(child: Text('3DモデルのURLが指定されていません')),
           );
         }
         return ARViewerScreen(glbModelUrl: glbModelUrl);

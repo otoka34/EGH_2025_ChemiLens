@@ -1,7 +1,9 @@
 import 'dart:typed_data';
-import 'package:flutter/foundation.dart' show kIsWeb;
+
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http_parser/http_parser.dart';
+
 import '../models/detection_result.dart';
 import '../screens/search/search_screen.dart'; // CompoundInfoをインポート
 
@@ -40,20 +42,27 @@ class ApiService {
       });
 
       // バックエンドの /analyze エンドポイントにPOSTリクエストを送信
+      print('Sending POST request to: $_baseUrl/analyze');
       final response = await _dio.post('$_baseUrl/analyze', data: formData);
 
       if (response.statusCode == 200) {
+        print('API Response: ${response.data}');
         // 成功レスポンスをDetectionResultに変換
-        return DetectionResult.fromJson(response.data);
+        return DetectionResult.fromApiResponse(response.data);
       } else {
         // エラーレスポンス
         throw Exception('Failed to analyze image: ${response.statusMessage}');
       }
     } on DioException catch (e) {
       // Dioのエラー（ネットワークエラーなど）
+      print('DioException: ${e.type}, ${e.message}');
+      if (e.response != null) {
+        print('Response status: ${e.response!.statusCode}');
+        print('Response data: ${e.response!.data}');
+      }
       throw Exception('Failed to connect to the server: $e');
     } catch (e) {
-      // その他のエラー
+      print('Unexpected error: $e');
       throw Exception('An unexpected error occurred: $e');
     }
   }

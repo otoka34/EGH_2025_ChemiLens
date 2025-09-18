@@ -53,6 +53,7 @@ app.*.map.json
 **/ios/Runner/GoogleService-Info.plist
 **/android/app/google-services.json
 **/macos/Runner/GoogleService-Info.plist
+lib/firebase_options.dart
 
 # その他のAPIキー
 **/api_keys/
@@ -120,3 +121,11 @@ config.dart
 **/flutter/generated_plugin_registrant.cc
 **/Flutter/GeneratedPluginRegistrant.h
 **/Flutter/GeneratedPluginRegistrant.m
+**/Flutter/GeneratedPluginRegistrant.swift
+**/generated_plugins.cmake
+
+# Code generation files (コード生成ファイル)
+*.g.dart
+*.freezed.dart
+*.config.dart
+*.part.dart

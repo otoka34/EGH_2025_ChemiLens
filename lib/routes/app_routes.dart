@@ -33,7 +33,7 @@ final GoRouter appRouter = GoRouter(
       path: '/detail/:index',
       builder: (context, state) {
         final indexStr = state.pathParameters['index'];
-        
+
         if (indexStr == null) {
           return const Scaffold(
             appBar: null,
@@ -42,7 +42,7 @@ final GoRouter appRouter = GoRouter(
         }
 
         final index = int.tryParse(indexStr);
-        
+
         if (index == null) {
           return const Scaffold(
             appBar: null,

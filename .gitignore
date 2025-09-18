@@ -121,6 +121,8 @@ config.dart
 **/flutter/generated_plugin_registrant.cc
 **/Flutter/GeneratedPluginRegistrant.h
 **/Flutter/GeneratedPluginRegistrant.m
+**/Flutter/GeneratedPluginRegistrant.swift
+**/generated_plugins.cmake
 
 # Code generation files (コード生成ファイル)
 *.g.dart

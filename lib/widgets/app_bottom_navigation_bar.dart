@@ -26,8 +26,6 @@ class AppBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final colorScheme = Theme.of(context).colorScheme; // 削除
-
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -80,10 +78,10 @@ class AppBottomNavigationBar extends StatelessWidget {
             child: Container(
               width: 80,
               height: 80,
-              decoration: BoxDecoration(
-                color: Color(0xFFFFA1ED), // <-- AppColors.color4に変更
+              decoration: const BoxDecoration(
+                color: Colors.lightBlue,
                 shape: BoxShape.circle,
-                boxShadow: const [
+                boxShadow: [
                   BoxShadow(
                     color: Colors.black26,
                     offset: Offset(0, 2),
@@ -117,7 +115,7 @@ class AppBottomNavigationBar extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: () => _onTap(context, index),
-        child: SizedBox(
+        child: Container(
           height: 80,
           child: Center(
             child: Icon(

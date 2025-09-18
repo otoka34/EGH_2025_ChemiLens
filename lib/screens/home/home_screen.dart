@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:team_25_app/models/element.dart' as my_element;
 import 'package:team_25_app/screens/encyclopedia/widgets/element_grid.dart';
 import 'package:team_25_app/data/element_data.dart';
-import 'package:team_25_app/widgets/app_bottom_navigation_bar.dart'; // <-- 追加
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -18,28 +17,21 @@ class HomeScreen extends StatelessWidget {
     final appBarHeight = AppBar().preferredSize.height;
     final statusBarHeight = MediaQuery.of(context).padding.top;
 
-    final bottomNavBarHeight = 80.0; // AppBottomNavigationBarの高さ
-
-    final availableHeight = screenHeight - appBarHeight - statusBarHeight - bottomNavBarHeight;
-    final gridHeight = availableHeight * (1 / 2); 
+    final availableHeight = screenHeight - appBarHeight - statusBarHeight;
+    final gridHeight = availableHeight * (1 / 3);
 
     return Scaffold(
-      extendBody: true, // <-- 追加: bodyがbottomNavigationBarの領域まで広がるようにする
       appBar: AppBar(
-        title: GestureDetector( // <-- GestureDetectorで囲む
-          onTap: () {
-            context.go('/'); // ホーム画面へ遷移
-          },
-          child: Row(
-            children: [
-              SvgPicture.asset(
-                'assets/images/app_bar_icon.svg',
-                height: 32,
-                width: 32,
-              ),
-            ],
-          ),
+        title: Row(
+          children: [
+            SvgPicture.asset(
+              'assets/images/app_bar_icon.svg',
+              height: 32,
+              width: 32,
+            ),
+          ],
         ),
+        elevation: 0,
       ),
       body: Column(
         children: [
@@ -47,7 +39,7 @@ class HomeScreen extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.all(20.0),
             child: Text(
-              '元素ずかん',
+              'ホーム',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
@@ -68,7 +60,7 @@ class HomeScreen extends StatelessWidget {
                   onElementTap: (index) {
                     // ホーム画面では個別のタップイベントは処理しない
                   },
-                  childAspectRatio: 1.3, // <-- ホーム画面用の値を設定
+                  childAspectRatio: 2.0, // <-- ホーム画面用の値を設定
                 ),
               ),
             ),
@@ -89,7 +81,6 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: const AppBottomNavigationBar(currentIndex: 0), // <-- 追加
     );
   }
 }

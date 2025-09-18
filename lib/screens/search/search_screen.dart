@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:team_25_app/services/api_service.dart';
 import 'package:team_25_app/theme/app_colors.dart';
+import 'package:flutter_svg/flutter_svg.dart'; // SvgPicture を使うために追加
 
 // 元素情報のデータモデル（クイック検索用）
 class ElementInfo {
@@ -44,8 +45,7 @@ class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   bool _isLoading = false;
   String _searchQuery = '';
-  
-  // 検索が実行されたかどうかを管理するフラグ
+
   bool _hasSearched = false;
 
   final List<ElementInfo> _quickSearchElements = [
@@ -64,11 +64,10 @@ class _SearchScreenState extends State<SearchScreen> {
     super.initState();
     _searchController.addListener(() {
       final newQuery = _searchController.text;
-      // クエリが空になったら、検索結果もクリアする
       if (newQuery.isEmpty && _searchQuery.isNotEmpty) {
         setState(() {
           _searchResults = [];
-          _hasSearched = false; // 検索状態をリセット
+          _hasSearched = false;
           _isLoading = false;
         });
       }
@@ -97,7 +96,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     setState(() {
       _isLoading = true;
-      _hasSearched = true; // 検索が実行されたことを記録
+      _hasSearched = true;
       _searchResults = [];
     });
 
@@ -111,13 +110,10 @@ class _SearchScreenState extends State<SearchScreen> {
       if (!mounted) return;
 
       final errorMessage = e.toString();
-      // "Invalid element" が含まれるエラーは、UI上で「見つかりませんでした」と表示されるので、SnackBarは出さない
       if (errorMessage.contains('Invalid element')) {
-        // 何もしない
         return;
       }
 
-      // それ以外の予期せぬエラー（ネットワークエラーなど）はSnackBarで表示する
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage.replaceFirst('Exception: ', '')),
@@ -138,41 +134,36 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFF0F172A), // ホーム画面と同じ背景色
         elevation: 0,
-        toolbarHeight: 90.0, // AppBar の高さを明示的に設定
-        title: const Text('物体名で検索', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        iconTheme: const IconThemeData(color: Colors.white),
-        automaticallyImplyLeading: false, // 自動生成を無効化
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white), // iOS風の矢印
-          onPressed: () {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.go('/'); // pop できない場合はホームへ
-            }
+        title: GestureDetector(
+          onTap: () {
+            context.go('/'); // ホーム画面へ遷移
           },
-          tooltip: '前の画面に戻る',
-        ),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [AppColors.primary, const Color(0xFF2A93D5)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                'assets/images/app_bar_icon.svg',
+                height: 32,
+                width: 32,
+              ),
+            ],
           ),
         ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(90.0),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(24.0, 8.0, 24.0, 20.0),
+        // toolbarHeight, flexibleSpace, bottom を削除
+      ),
+      body: Column(
+        children: [
+          // 検索バーをbodyの先頭に移動
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 20.0), // 上部のパディングを調整
             child: _buildSearchBar(),
           ),
-        ),
+          Expanded(
+            child: _buildBody(),
+          ),
+        ],
       ),
-      body: _buildBody(),
     );
   }
 
@@ -181,22 +172,22 @@ class _SearchScreenState extends State<SearchScreen> {
     return TextField(
       controller: _searchController,
       autofocus: true,
-      style: const TextStyle(color: Colors.white, fontSize: 16),
-      textInputAction: TextInputAction.search, // キーボードのアクションボタンを「検索」に
+      style: const TextStyle(color: Colors.black, fontSize: 16), // テキスト色を黒に変更
+      textInputAction: TextInputAction.search,
       decoration: InputDecoration(
         hintText: '元素名を入力してください（例：酸素）',
-        hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
-        prefixIcon: Icon(Icons.search, color: Colors.white.withOpacity(0.9)),
+        hintStyle: TextStyle(color: Colors.black.withOpacity(0.7)), // ヒント色を黒に変更
+        prefixIcon: Icon(Icons.search, color: Colors.black.withOpacity(0.9)), // アイコン色を黒に変更
         suffixIcon: _searchQuery.isNotEmpty
             ? IconButton(
-                icon: Icon(Icons.clear, color: Colors.white.withOpacity(0.9)),
+                icon: Icon(Icons.clear, color: Colors.black.withOpacity(0.9)), // アイコン色を黒に変更
                 onPressed: () {
                   _searchController.clear();
                 },
               )
             : null,
         filled: true,
-        fillColor: Colors.white.withOpacity(0.2),
+        fillColor: Colors.grey.withOpacity(0.2), // 塗りつぶし色を調整
         contentPadding: const EdgeInsets.symmetric(vertical: 15.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
@@ -204,10 +195,10 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.8), width: 1.5),
+          borderSide: BorderSide(color: Colors.grey.withOpacity(0.8), width: 1.5),
         ),
       ),
-      onSubmitted: _performSearch, // エンターキーで検索を実行
+      onSubmitted: _performSearch,
     );
   }
 
@@ -216,17 +207,14 @@ class _SearchScreenState extends State<SearchScreen> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    // 検索が実行されて、かつ結果が0件の場合のみ「見つかりませんでした」を表示
     if (_hasSearched && _searchResults.isEmpty) {
       return _buildNoResults();
     }
 
-    // 検索結果があれば表示
     if (_searchResults.isNotEmpty) {
       return _buildResultsList();
     }
 
-    // 上記以外（初期状態や、検索前）はクイック検索を表示
     return _buildQuickSearch();
   }
 
@@ -284,7 +272,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-// 検索結果が1件以上ある場合に表示するウィジェット
   Widget _buildResultsList() {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
@@ -324,7 +311,6 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-// 検索結果が0件の場合に表示するウィジェット
   Widget _buildNoResults() {
     return Center(
       child: Column(

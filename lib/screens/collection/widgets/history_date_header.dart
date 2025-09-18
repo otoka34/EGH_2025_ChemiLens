@@ -16,7 +16,7 @@ class HistoryDateHeader extends StatelessWidget {
             dateLabel,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF0F1A2B), // アプリのメインカラー
+              color: const Color(0xFF0F172A), // アプリのメインカラー
             ),
           ),
         ),

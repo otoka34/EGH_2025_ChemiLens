@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:team_25_app/theme/app_colors.dart';
-import 'package:team_25_app/theme/text_styles.dart';
 import 'package:team_25_app/widgets/base/base_card.dart';
 import 'package:team_25_app/widgets/expandable_text.dart'; // Add this import
 

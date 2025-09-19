@@ -5,7 +5,7 @@ import multer from "multer";
 import { analyzeImage } from "./gemini/gemini.js";
 import type { Result } from "./types/types.js";
 import { getMoleculeInfo } from "./pubchem/pubchem.js";
-import { cleanupTempFiles, convertSdfToGlb } from "./converter/converter.js";
+import { convertSdfToGlb } from "./converter/converter.js";
 import { searchCompoundsByElement } from "./gemini/search.js";
 import { cidsToSdfs } from "./pubchem/cidtosdf.js";
 
@@ -29,7 +29,7 @@ app.use((req, res, next) => {
   }
 });
 
-app.post("/analyze", upload.single("image"), async (req, res) => {
+app.post("/api/analyze", upload.single("image"), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ error: "No file provided" });
@@ -51,6 +51,7 @@ app.post("/analyze", upload.single("image"), async (req, res) => {
                     ...molecule,
                     cid: moleculeInfo?.cid ?? null,
                     sdf: moleculeInfo?.sdf ?? null,
+                    formula: molecule.formula || '', // Geminiから取得した分子式を追加
                 };
             })
         );
@@ -67,32 +68,28 @@ app.post("/analyze", upload.single("image"), async (req, res) => {
 });
 
 // SDFデータ(text/plain)を受け取り、GLBファイルを返すエンドポイント
-app.post("/convert", express.text({ type: 'text/plain', limit: '1mb' }), async (req, res) => {
+app.post("/api/convert", express.text({ type: 'text/plain', limit: '1mb' }), async (req, res) => {
     const sdfData = req.body;
     if (typeof sdfData !== 'string' || !sdfData) {
         return res.status(400).json({ error: "SDF data (string) is required" });
     }
 
-    let glbPath: string | undefined;
     try {
-        glbPath = await convertSdfToGlb(sdfData);
+        const glbBuffer = await convertSdfToGlb(sdfData);
 
-        res.download(glbPath, 'molecule.glb', async (err) => {
-            // 送信後に一時ファイルを削除
-            await cleanupTempFiles([glbPath!]);
-            if (err) {
-                console.error('Error sending file:', err);
-            }
+        // GLBファイルをバイナリとして直接返す
+        res.set({
+            'Content-Type': 'model/gltf-binary',
+            'Content-Disposition': 'attachment; filename="molecule.glb"',
+            'Content-Length': glbBuffer.length.toString()
         });
+
+        res.send(glbBuffer);
 
     } catch (error) {
         console.error('Request to /convert failed:', error);
         if (!res.headersSent) {
             res.status(500).json({ error: 'Failed to convert SDF to GLB' });
-        }
-        // エラー時にもクリーンアップを試みる
-        if (glbPath) {
-            await cleanupTempFiles([glbPath]);
         }
     }
 });
@@ -125,7 +122,7 @@ Object.values(elementSymbolMap).forEach(symbol => {
 });
 
 // 元素記号による化合物検索エンドポイント
-app.get("/search", async (req, res) => {
+app.get("/api/search", async (req, res) => {
     const userInput = (req.query.element as string) || '';
 
     // デバッグ用に受け取った値をログに出力
@@ -155,7 +152,7 @@ app.get("/search", async (req, res) => {
 });
 
 // 複数のCIDを含むオブジェクト配列を受け取り、それぞれにSDFデータを付与して返すエンドポイント
-app.post("/cidtosdf", async (req, res) => {
+app.post("/api/cidtosdf", async (req, res) => {
     const requestData = req.body;
 
     // リクエストボディが配列であるかを検証

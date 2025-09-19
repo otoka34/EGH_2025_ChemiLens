@@ -94,7 +94,6 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,6 +139,16 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
                         loading: Loading.lazy,
                         touchAction: TouchAction.panY,
                         debugLogging: false, // デバッグログを無効化
+                        // ズーム感度を改善
+                        minCameraOrbit: "auto auto 5%", // 最小距離を近くに
+                        maxCameraOrbit: "auto auto 500%", // 最大距離をさらに遠くに
+                        cameraOrbit: "45deg 75deg 120%", // 初期カメラ位置を遠くに
+                        // 追加のカメラ設定
+                        fieldOfView: "45deg", // 視野角を広くしてモデル全体が見えるように
+                        // 透明度問題を解決するための設定
+                        shadowIntensity: 0.3,
+                        shadowSoftness: 0.5,
+                        environmentImage: null, // 環境マッピングを無効化
                       ),
                       // 元の写真（右下最前面）
                       if (widget.originalImageUrl != null)

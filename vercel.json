@@ -4,12 +4,23 @@
     {
       "src": "backend/server.ts",
       "use": "@vercel/node"
+    },
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "outputDirectory": "build/web"
+      }
     }
   ],
   "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "/backend/server.ts"
+      "source": "/api/(.*)",
+      "destination": "/backend/server.ts"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }

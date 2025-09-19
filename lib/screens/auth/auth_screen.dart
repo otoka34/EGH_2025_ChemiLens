@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:team_25_app/widgets/common_bottom_navigation_bar.dart';
 
 import '../../services/firebase_auth_service.dart';
@@ -79,8 +80,16 @@ class _AuthScreenState extends State<AuthScreen> {
       if (user != null && !user.emailVerified) {
         _showSnackBar('メールの認証が完了していません。受信箱を確認してください。');
         // ログインは成功しているが、メイン画面には遷移させない
+      } else if (user != null && user.emailVerified) {
+        // ログイン成功かつメール認証済みの場合
+        _showSnackBar('ログインに成功しました！');
+        // 少し遅延してからメイン画面（履歴画面）へ遷移
+        Future.delayed(const Duration(milliseconds: 100), () {
+          if (mounted) {
+            context.go('/history');
+          }
+        });
       }
-      // ログイン成功かつメール認証済の場合、後ほどここで画面遷移を実装します
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found' || e.code == 'wrong-password') {
         _showSnackBar('アカウントがありません。ユーザー登録をお願いします。');

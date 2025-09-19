@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:team_25_app/models/compound.dart';
 import 'package:team_25_app/models/history_item.dart';
-import 'package:team_25_app/services/history_service.dart';
 import 'package:team_25_app/services/api_service.dart';
+import 'package:team_25_app/services/history_service.dart';
 import 'package:team_25_app/theme/app_colors.dart';
 
 class DetailScreen extends ConsumerWidget {
@@ -48,7 +48,7 @@ class DetailScreen extends ConsumerWidget {
             _buildObjectInfoSection(context, item),
 
             // 分子リストセクション
-            _buildMoleculeListSection(context, item.compounds),
+            _buildMoleculeListSection(context, item.compounds, item),
           ],
         ),
       ),
@@ -156,6 +156,7 @@ class DetailScreen extends ConsumerWidget {
   Widget _buildMoleculeListSection(
     BuildContext context,
     List<Compound> molecules,
+    HistoryItem item,
   ) {
     final theme = Theme.of(context);
 
@@ -174,13 +175,19 @@ class DetailScreen extends ConsumerWidget {
               ),
             ),
           ),
-          ...molecules.map((molecule) => _buildMoleculeCard(context, molecule)),
+          ...molecules.map(
+            (molecule) => _buildMoleculeCard(context, molecule, item),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildMoleculeCard(BuildContext context, Compound molecule) {
+  Widget _buildMoleculeCard(
+    BuildContext context,
+    Compound molecule,
+    HistoryItem item,
+  ) {
     final theme = Theme.of(context);
 
     return Container(
@@ -227,28 +234,31 @@ class DetailScreen extends ConsumerWidget {
             ),
             const SizedBox(width: 16),
             // 右側：ARボタン
-            SizedBox(width: 80, child: _buildARButton(context, molecule)),
+            SizedBox(width: 80, child: _buildARButton(context, molecule, item)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildARButton(BuildContext context, Compound molecule) {
+  Widget _buildARButton(
+    BuildContext context,
+    Compound molecule,
+    HistoryItem item,
+  ) {
     return OutlinedButton(
       onPressed: () async {
         // ローディングダイアログを表示
         showDialog(
           context: context,
           barrierDismissible: false,
-          builder: (context) => const Center(
-            child: CircularProgressIndicator(),
-          ),
+          builder: (context) =>
+              const Center(child: CircularProgressIndicator()),
         );
 
         try {
           String? sdfData;
-          
+
           // CIDからSDFデータを取得
           if (molecule.cid.isNotEmpty) {
             final cidInt = int.tryParse(molecule.cid);
@@ -256,7 +266,7 @@ class DetailScreen extends ConsumerWidget {
               sdfData = await ApiService.getSdfDataByCid(cidInt);
             }
           }
-          
+
           // ローディングダイアログを閉じる
           if (context.mounted) {
             Navigator.of(context).pop();
@@ -270,6 +280,7 @@ class DetailScreen extends ConsumerWidget {
                 'sdfData': sdfData,
                 'moleculeName': molecule.name,
                 'moleculeFormula': molecule.description,
+                'originalImageUrl': item.imageUrl, // 履歴の元画像URL
               },
             );
           } else {
@@ -287,7 +298,7 @@ class DetailScreen extends ConsumerWidget {
           if (context.mounted) {
             Navigator.of(context).pop();
           }
-          
+
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

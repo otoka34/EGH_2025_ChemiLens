@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:team_25_app/services/api_service.dart';
 import 'package:team_25_app/theme/app_colors.dart';
+import 'package:team_25_app/widgets/common_bottom_navigation_bar.dart';
 
 import '/widgets/common_app_bar.dart';
-import 'package:team_25_app/widgets/common_bottom_navigation_bar.dart';
 
 // 元素情報のデータモデル（クイック検索用）
 class ElementInfo {
@@ -165,7 +165,10 @@ class _SearchScreenState extends State<SearchScreen> {
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(
         hintText: '元素名を入力してください（例：酸素）',
-        hintStyle: TextStyle(color: Colors.black.withValues(alpha: 0.7)), // ヒント色を黒に変更
+        hintStyle: TextStyle(
+          color: Colors.black.withValues(alpha: 0.7),
+          fontSize: 12,
+        ), // ヒント色を黒に変更
         prefixIcon: Icon(
           Icons.search,
           color: Colors.black.withValues(alpha: 0.9),
@@ -220,53 +223,53 @@ class _SearchScreenState extends State<SearchScreen> {
     return ListView(
       padding: const EdgeInsets.all(24.0),
       children: [
-          const Text(
-            'よく検索される元素',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
+        const Text(
+          'よく検索される元素',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
           ),
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 12.0,
-            runSpacing: 12.0,
-            children: _quickSearchElements.map((element) {
-              return ActionChip(
-                onPressed: () {
-                  _searchController.text = element.name;
-                  _performSearch(element.name);
-                },
-                avatar: CircleAvatar(
-                  backgroundColor: AppColors.primaryDark,
-                  child: Text(
-                    element.symbol,
-                    style: const TextStyle(
-                      color: AppColors.surface,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                label: Text(
-                  element.name,
+        ),
+        const SizedBox(height: 16),
+        Wrap(
+          spacing: 12.0,
+          runSpacing: 12.0,
+          children: _quickSearchElements.map((element) {
+            return ActionChip(
+              onPressed: () {
+                _searchController.text = element.name;
+                _performSearch(element.name);
+              },
+              avatar: CircleAvatar(
+                backgroundColor: AppColors.primaryDark,
+                child: Text(
+                  element.symbol,
                   style: const TextStyle(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w600,
+                    color: AppColors.surface,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
                   ),
                 ),
-                backgroundColor: AppColors.surface,
-                shape: StadiumBorder(
-                  side: BorderSide(color: AppColors.primary.withValues(alpha: 0.7)),
+              ),
+              label: Text(
+                element.name,
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w600,
                 ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 10,
+              ),
+              backgroundColor: AppColors.surface,
+              shape: StadiumBorder(
+                side: BorderSide(
+                  color: AppColors.primary.withValues(alpha: 0.7),
                 ),
-              );
-            }).toList(),
-          ),
-        ],
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 

@@ -71,8 +71,9 @@ class _EncyclopediaScreenState extends State<EncyclopediaScreen> {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                    // 新しいタイトル位置
-                    const Padding(
+                  // 新しいタイトル位置
+                  Center(
+                    child: const Padding(
                       padding: EdgeInsets.only(top: 20.0, bottom: 10.0),
                       child: Text(
                         '元素ずかん',
@@ -83,130 +84,120 @@ class _EncyclopediaScreenState extends State<EncyclopediaScreen> {
                         ),
                       ),
                     ),
-                    // Progress Bar
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20.0,
-                        vertical: 10.0,
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                '$discoveredCount / $totalElements',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Color(0xFF666666),
-                                ),
+                  ),
+                  // Progress Bar
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0,
+                      vertical: 10.0,
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              '$discoveredCount / $totalElements',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Color(0xFF666666),
                               ),
-                              const SizedBox(width: 10),
-                              Container(
-                                width: 200,
-                                height: 8,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFE9ECEF),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: FractionallySizedBox(
-                                    widthFactor:
-                                        discoveredCount / totalElements,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.centerLeft,
-                                          end: Alignment.centerRight,
-                                          colors: [
-                                            colorScheme.primary,
-                                            Color(0xFFE3579D),
-                                          ], // プライマリカラーに変更
-                                        ),
-                                        borderRadius: const BorderRadius.all(
-                                          Radius.circular(4),
-                                        ),
+                            ),
+                            const SizedBox(width: 10),
+                            Container(
+                              width: 200,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE9ECEF),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: FractionallySizedBox(
+                                  widthFactor: discoveredCount / totalElements,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                        colors: [
+                                          colorScheme.primary,
+                                          Color(0xFFE3579D),
+                                        ], // プライマリカラーに変更
+                                      ),
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(4),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Bingo Grid (ElementGridを使用)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: SizedBox(
-                        height:
-                            MediaQuery.of(context).size.height *
-                            0.5, // 画面高さの50%
-                        child: ElementGrid(
-                          elements: _elements,
-                          onElementTap: (index) =>
-                              _toggleElementDiscovered(index),
-                        ),
-                      ),
-                    ),
-                    // Stats
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                        20.0,
-                        20.0,
-                        20.0,
-                        15.0,
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.all(12.0),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF8F9FA),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            _buildStatItem(
-                              context,
-                              '$discoveredCount',
-                              '発見済み',
-                              colorScheme.primary,
-                            ),
-                            _buildStatItem(
-                              context,
-                              '$completionRate%',
-                              '達成率',
-                              colorScheme.primary,
                             ),
                           ],
                         ),
+                      ],
+                    ),
+                  ),
+                  // Bingo Grid (ElementGridを使用)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: SizedBox(
+                      height:
+                          MediaQuery.of(context).size.height * 0.5, // 画面高さの50%
+                      child: ElementGrid(
+                        elements: _elements,
+                        onElementTap: (index) =>
+                            _toggleElementDiscovered(index),
                       ),
                     ),
-                    // Legend
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0),
+                  ),
+                  // Stats
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 15.0),
+                    child: Container(
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF8F9FA),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          _buildLegendItem(
+                          _buildStatItem(
                             context,
+                            '$discoveredCount',
                             '発見済み',
                             colorScheme.primary,
                           ),
-                          const SizedBox(width: 20),
-                          _buildLegendItem(
+                          _buildStatItem(
                             context,
-                            '未発見',
-                            const Color(0xFFBDBDBD),
+                            '$completionRate%',
+                            '達成率',
+                            colorScheme.primary,
                           ),
                         ],
                       ),
                     ),
-                    // BottomNavigationBar分の余白
-                    const SizedBox(height: 100),
-                  ],
+                  ),
+                  // Legend
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildLegendItem(context, '発見済み', colorScheme.primary),
+                        const SizedBox(width: 20),
+                        _buildLegendItem(
+                          context,
+                          '未発見',
+                          const Color(0xFFBDBDBD),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // BottomNavigationBar分の余白
+                  const SizedBox(height: 100),
+                ],
               ),
             ),
           ),

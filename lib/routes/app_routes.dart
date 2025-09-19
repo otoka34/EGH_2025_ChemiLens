@@ -4,12 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../models/detection_result.dart';
-import '../screens/ar_viewer/ar_viewer_screen.dart';
 import '../screens/camera/camera_screen.dart';
 import '../screens/collection/history_screen.dart';
 import '../screens/detail/detail_screen.dart';
 import '../screens/encyclopedia/encyclopedia_screen.dart';
-import '../screens/home/home_screen.dart';
 import '../screens/model_viewer/model_viewer_screen.dart';
 import '../screens/result/result_screen.dart';
 import '../screens/search/search_screen.dart';
@@ -24,9 +22,6 @@ final GoRouter appRouter = GoRouter(
       name: 'splash',
       builder: (context, state) => const SplashScreen(),
     ),
-
-    // ホーム画面
-    GoRoute(path: '/', name: 'home', builder: (context, state) => HomeScreen()),
 
     // 履歴画面
     GoRoute(
@@ -91,21 +86,6 @@ final GoRouter appRouter = GoRouter(
       },
     ),
 
-    // AR Viewer画面
-    GoRoute(
-      path: '/ar_viewer',
-      name: 'ar_viewer',
-      builder: (context, state) {
-        final glbModelUrl = state.extra as String?;
-        if (glbModelUrl == null) {
-          return const Scaffold(
-            body: Center(child: Text('3DモデルのURLが指定されていません')),
-          );
-        }
-        return ARViewerScreen(glbModelUrl: glbModelUrl);
-      },
-    ),
-
     // 検索画面
     GoRoute(
       path: '/search',
@@ -166,7 +146,7 @@ final GoRouter appRouter = GoRouter(
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () => context.go('/'),
+            onPressed: () => context.go('/history'),
             child: const Text('Go Home'),
           ),
         ],

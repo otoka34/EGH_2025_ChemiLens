@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:team_25_app/screens/search/widgets/search_result_tile.dart';
 import 'package:team_25_app/services/api_service.dart';
 import 'package:team_25_app/theme/app_colors.dart';
 import 'package:team_25_app/widgets/common_bottom_navigation_bar.dart';
+import 'package:team_25_app/widgets/common_loading.dart';
 
 import '/widgets/common_app_bar.dart';
 
@@ -205,7 +207,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Widget _buildBody() {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return CommonLoading.fullScreen(message: '検索中...');
     }
 
     if (_hasSearched && _searchResults.isEmpty) {
@@ -274,37 +276,18 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _buildResultsList() {
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       itemCount: _searchResults.length,
-      separatorBuilder: (context, index) =>
-          Divider(color: AppColors.primary.withValues(alpha: 0.3), height: 1),
       itemBuilder: (context, index) {
         final compound = _searchResults[index];
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                compound.name,
-                style: const TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                compound.description,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.textPrimary.withValues(alpha: 0.8),
-                  height: 1.5,
-                ),
-              ),
-            ],
-          ),
+        return SearchResultTile(
+          title: compound.name,
+          description: compound.description,
+          onTap: () {
+            // TODO: 検索結果タップ時の処理
+            print('Tapped: ${compound.name}');
+          },
         );
       },
     );

@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:team_25_app/services/api_service.dart';
+import 'package:team_25_app/widgets/common_loading.dart';
+
 import '/theme/app_colors.dart';
 
 class ModelViewerScreen extends StatefulWidget {
@@ -106,21 +108,10 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
         ),
         backgroundColor: AppColors.primaryDark,
         elevation: 0,
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: _isLoading
-          ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('3Dモデルを読み込み中...'),
-                ],
-              ),
-            )
+          ? CommonLoading.fullScreen(message: '3Dモデルを読み込み中...')
           : _glbUrl == null
           ? const Center(
               child: Column(

@@ -5,6 +5,7 @@ import 'package:team_25_app/models/compound.dart';
 import 'package:team_25_app/models/history_item.dart';
 import 'package:team_25_app/services/history_service.dart';
 import 'package:team_25_app/theme/app_colors.dart';
+import 'package:team_25_app/theme/text_styles.dart';
 
 class HistoryItemWidget extends ConsumerWidget {
   final HistoryItem item;
@@ -55,14 +56,16 @@ class HistoryItemWidget extends ConsumerWidget {
                 ),
               ),
 
-              // お気に入りアイコン（独立してタップ可能）
-              _buildFavoriteIcon(ref),
+              // お気に入りアイコン
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [_buildFavoriteIcon(ref)],
+              ),
             ],
           ),
 
-          // 境界線
           Padding(
-            padding: const EdgeInsets.only(top: 16),
+            padding: const EdgeInsets.only(top: 8),
             child: Divider(height: 1, color: Colors.grey[300]),
           ),
         ],
@@ -90,11 +93,11 @@ class HistoryItemWidget extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 物体名（太字タイトル）
+        // 物体名
         Text(
           item.objectName,
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
             fontSize: 16,
           ),
         ),
@@ -107,10 +110,7 @@ class HistoryItemWidget extends ConsumerWidget {
               padding: const EdgeInsets.only(bottom: 2),
               child: Text(
                 compound.name,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[700],
-                  fontSize: 13,
-                ),
+                style: TextStyleContext.moleculeDescription,
               ),
             ),
           ),

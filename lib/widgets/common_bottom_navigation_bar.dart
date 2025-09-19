@@ -109,7 +109,7 @@ class CommonBottomNavigationBar extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: AppColors.textSecondary,
+                color: Color(0xFFFFA1ED),
                 shape: BoxShape.circle,
                 boxShadow: const [
                   BoxShadow(

@@ -100,15 +100,11 @@ app.post("/convert", express.text({ type: 'text/plain', limit: '1mb' }), async (
 // 日本語・ひらがなの元素名と元素記号の対応表
 const elementSymbolMap: { [key: string]: string } = {
     'すいそ': 'H', '水素': 'H',
-    'ヘリウム': 'He',
-    'リチウム': 'Li',
-    'ベリリウム': 'Be',
     'ほうそ': 'B', 'ホウ素': 'B',
     'たんそ': 'C', '炭素': 'C',
     'ちっそ': 'N', '窒素': 'N',
     'さんそ': 'O', '酸素': 'O',
     'ふっそ': 'F', 'フッ素': 'F',
-    'ネオン': 'Ne',
     'ナトリウム': 'Na',
     'マグネシウム': 'Mg',
     'アルミニウム': 'Al',
@@ -116,15 +112,8 @@ const elementSymbolMap: { [key: string]: string } = {
     'りん': 'P', 'リン': 'P',
     'いおう': 'S', '硫黄': 'S',
     'えんそ': 'Cl', '塩素': 'Cl',
-    'アルゴン': 'Ar', 'あるごん': 'Ar',
     'カリウム': 'K',
     'カルシウム': 'Ca',
-    'てつ': 'Fe', '鉄': 'Fe',
-    'どう': 'Cu', '銅': 'Cu',
-    'あえん': 'Zn', '亜鉛': 'Zn',
-    'ぎん': 'Ag', '銀': 'Ag',
-    'きん': 'Au', '金': 'Au',
-    'なまり': 'Pb', '鉛': 'Pb',
     'ヨウ素': 'I', 'ようそ': 'I', 'ヨウソ': 'I',
 };
 
@@ -209,6 +198,4 @@ app.post("/cidtosdf", async (req, res) => {
     }
 });
 
-app.listen(3000, '0.0.0.0', () => {
-    console.log("Server running on http://localhost:3000 and http://10.127.19.196:3000");
-});
+export default app;

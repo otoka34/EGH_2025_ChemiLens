@@ -8,13 +8,14 @@ import '../models/detection_result.dart';
 import '../screens/search/search_screen.dart'; // CompoundInfoをインポート
 
 class ApiService {
-  // TODO: 環境変数などから取得するようにする
   static String get _baseUrl {
-    if (kIsWeb) {
-      // Web環境では直接APIサーバーに接続（CORS対応）
-      return 'http://10.45.0.94:3000';
-    }
-    return 'http://10.45.0.94:3000';
+    // ビルド時に --dart-define で指定された環境変数を読み込む
+    // Vercelのrewrites設定に合わせて、パスに /api を含める
+    const baseUrl = String.fromEnvironment(
+      'API_BASE_URL',
+      defaultValue: 'http://127.0.0.1:3000', // ローカル開発用のデフォルト値
+    );
+    return baseUrl.endsWith('/api') ? baseUrl : '$baseUrl/api';
   }
 
   static final Dio _dio = Dio();

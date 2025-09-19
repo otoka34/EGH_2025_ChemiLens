@@ -36,6 +36,8 @@ dependencies:
   riverpod_annotation: ^3.0.0
   freezed_annotation: ^3.1.0
   webview_flutter_web: ^0.2.3+4
+  firebase_auth: ^5.7.0
+  google_sign_in: ^7.2.0
 
 dev_dependencies:
   flutter_test:

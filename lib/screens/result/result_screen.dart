@@ -6,7 +6,7 @@ import 'widgets/image_display_widget.dart';
 import 'widgets/object_info_widget.dart';
 
 class ResultScreen extends StatelessWidget {
-  final dynamic imageFile; // File or String (blob URL for web)
+  final dynamic imageFile; // File or String
   final DetectionResult detection;
 
   const ResultScreen({
@@ -25,7 +25,7 @@ class ResultScreen extends StatelessWidget {
           ImageDisplayWidget(imageFile: imageFile),
           ObjectInfoWidget(objectName: detection.objectName),
           const Divider(height: 1),
-          CompoundList(compounds: detection.molecules),
+          CompoundList(compounds: detection.molecules, imageFile: imageFile),
         ],
       ),
     );

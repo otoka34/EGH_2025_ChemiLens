@@ -1,12 +1,23 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:team_25_app/models/compound.dart';
 import 'package:team_25_app/services/api_service.dart';
+import 'package:team_25_app/services/image_compression_service.dart';
 
 class CompoundListItem extends StatelessWidget {
   final Compound compound;
+  final dynamic imageFile; // File, String, or XFile
 
-  const CompoundListItem({super.key, required this.compound});
+  const CompoundListItem({
+    super.key,
+    required this.compound,
+    required this.imageFile,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +35,8 @@ class CompoundListItem extends StatelessWidget {
                     showDialog(
                       context: context,
                       barrierDismissible: false,
-                      builder: (context) => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                      builder: (context) =>
+                          const Center(child: CircularProgressIndicator()),
                     );
 
                     try {
@@ -37,13 +47,60 @@ class CompoundListItem extends StatelessWidget {
                       }
 
                       final sdfData = await ApiService.getSdfDataByCid(cidInt);
-                      
+
                       // ローディングダイアログを閉じる
                       if (context.mounted) {
                         Navigator.of(context).pop();
                       }
 
                       if (sdfData != null && context.mounted) {
+                        String? originalImageUrl;
+                        if (imageFile is String) {
+                          // String型のURL（履歴からの遷移）
+                          originalImageUrl = imageFile as String;
+                        } else if (imageFile is XFile) {
+                          // XFile型の場合
+                          if (kIsWeb) {
+                            // Web環境ではXFile.pathがblob URLとして機能
+                            originalImageUrl = (imageFile as XFile).path;
+                          } else {
+                            // モバイル環境の場合、File変換してBase64エンコード
+                            try {
+                              final fileBytes = await File(
+                                (imageFile as XFile).path,
+                              ).readAsBytes();
+                              final compressedBytes =
+                                  await ImageCompressionService.compressImage(
+                                    fileBytes,
+                                  );
+                              final base64Image = base64Encode(compressedBytes);
+                              originalImageUrl =
+                                  'data:image/jpeg;base64,$base64Image';
+                            } catch (e) {
+                              print('Error converting XFile to data URL: $e');
+                              originalImageUrl = null;
+                            }
+                          }
+                        } else if (imageFile is File) {
+                          // File型の場合、Uint8Listに変換してからBase64エンコード
+                          try {
+                            final fileBytes = await (imageFile as File)
+                                .readAsBytes();
+                            final compressedBytes =
+                                await ImageCompressionService.compressImage(
+                                  fileBytes,
+                                );
+                            final base64Image = base64Encode(compressedBytes);
+                            originalImageUrl =
+                                'data:image/jpeg;base64,$base64Image';
+                          } catch (e) {
+                            print('Error converting file to data URL: $e');
+                            originalImageUrl = null;
+                          }
+                        } else {
+                          originalImageUrl = null;
+                        }
+
                         // 3Dビューアー画面に遷移
                         context.pushNamed(
                           'molecular_viewer',
@@ -51,6 +108,7 @@ class CompoundListItem extends StatelessWidget {
                             'sdfData': sdfData,
                             'moleculeName': compound.name,
                             'moleculeFormula': compound.description,
+                            'originalImageUrl': originalImageUrl,
                           },
                         );
                       } else {
@@ -67,7 +125,7 @@ class CompoundListItem extends StatelessWidget {
                       if (context.mounted) {
                         Navigator.of(context).pop();
                       }
-                      
+
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(

@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../models/detection_result.dart';
+import '../screens/ar_viewer/ar_viewer_screen.dart';
+import '../screens/camera/camera_screen.dart';
 import '../screens/collection/history_screen.dart';
 import '../screens/detail/detail_screen.dart';
-import '../screens/result/result_screen.dart';
-import '../screens/splash/splash_screen.dart';
-import '../screens/ar_viewer/ar_viewer_screen.dart';
-import '../screens/search/search_screen.dart';
-import '../screens/home/home_screen.dart';
 import '../screens/encyclopedia/encyclopedia_screen.dart';
-import '../screens/camera/camera_screen.dart'; // <-- 追加
+import '../screens/home/home_screen.dart';
 import '../screens/model_viewer/model_viewer_screen.dart';
+import '../screens/result/result_screen.dart';
+import '../screens/search/search_screen.dart';
+import '../screens/splash/splash_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/splash',
@@ -26,11 +26,7 @@ final GoRouter appRouter = GoRouter(
     ),
 
     // ホーム画面
-    GoRoute(
-      path: '/',
-      name: 'home',
-      builder: (context, state) => HomeScreen(),
-    ),
+    GoRoute(path: '/', name: 'home', builder: (context, state) => HomeScreen()),
 
     // 履歴画面
     GoRoute(
@@ -58,7 +54,7 @@ final GoRouter appRouter = GoRouter(
       path: '/detail/:historyId',
       builder: (context, state) {
         final historyId = state.pathParameters['historyId'];
-        
+
         if (historyId == null) {
           return const Scaffold(
             appBar: null,
@@ -134,23 +130,23 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>?;
         if (extra == null) {
-          return const Scaffold(
-            body: Center(child: Text('分子データが指定されていません')),
-          );
+          return const Scaffold(body: Center(child: Text('分子データが指定されていません')));
         }
 
         final sdfData = extra['sdfData'] as String?;
         final moleculeName = extra['moleculeName'] as String?;
+        final moleculeFormula = extra['moleculeFormula'] as String?;
+        final originalImageUrl = extra['originalImageUrl'] as String?;
 
         if (sdfData == null) {
-          return const Scaffold(
-            body: Center(child: Text('SDFデータが見つかりません')),
-          );
+          return const Scaffold(body: Center(child: Text('SDFデータが見つかりません')));
         }
 
         return ModelViewerScreen(
           sdfData: sdfData,
           moleculeName: moleculeName ?? '不明な化合物',
+          formula: moleculeFormula,
+          originalImageUrl: originalImageUrl,
         );
       },
     ),

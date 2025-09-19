@@ -3,9 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:team_25_app/models/compound.dart';
 import 'package:team_25_app/models/history_item.dart';
+import 'package:team_25_app/screens/detail/widgets/image_card.dart';
+import 'package:team_25_app/screens/detail/widgets/info_section_card.dart';
+import 'package:team_25_app/screens/detail/widgets/molecule_card.dart';
 import 'package:team_25_app/services/api_service.dart';
 import 'package:team_25_app/services/history_service.dart';
 import 'package:team_25_app/theme/app_colors.dart';
+import 'package:team_25_app/theme/text_styles.dart';
+import 'package:team_25_app/widgets/common_loading.dart';
 
 class DetailScreen extends ConsumerWidget {
   final String historyId;
@@ -25,9 +30,21 @@ class DetailScreen extends ConsumerWidget {
         return _buildDetailContent(context, item);
       },
       loading: () =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
+          Scaffold(body: CommonLoading.fullScreen(message: '読み込み中...')),
       error: (error, stack) => Scaffold(
-        appBar: AppBar(title: const Text('エラー')),
+        appBar: AppBar(
+          title: const Text(
+            'エラー',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          backgroundColor: AppColors.primaryDark,
+          elevation: 0,
+          iconTheme: const IconThemeData(color: Colors.white),
+        ),
         body: Center(child: Text('エラーが発生しました: $error')),
       ),
     );
@@ -35,7 +52,19 @@ class DetailScreen extends ConsumerWidget {
 
   Widget _buildDetailContent(BuildContext context, HistoryItem item) {
     return Scaffold(
-      appBar: AppBar(title: Text(item.objectName)),
+      appBar: AppBar(
+        title: Text(
+          item.objectName,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        backgroundColor: AppColors.primaryDark,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
       backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         child: Column(
@@ -56,72 +85,17 @@ class DetailScreen extends ConsumerWidget {
   }
 
   Widget _buildImageSection(HistoryItem item) {
-    return Container(
-      height: 300,
-      margin: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primaryDark.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Image.network(
-          item.imageUrl,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              color: AppColors.background,
-              child: Center(
-                child: Icon(
-                  Icons.broken_image,
-                  size: 64,
-                  color: AppColors.primaryDark.withValues(alpha: 0.5),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
+    return ImageCard(imageUrl: item.imageUrl, height: 300);
   }
 
   Widget _buildObjectInfoSection(BuildContext context, HistoryItem item) {
-    final theme = Theme.of(context);
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primaryDark.withValues(alpha: 0.08),
-            blurRadius: 6,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
+    return InfoSectionCard(
+      title: 'オブジェクト情報',
+      icon: Icons.info_outline,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'オブジェクト情報',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppColors.primaryDark,
-            ),
-          ),
-          const SizedBox(height: 12),
           _buildInfoRow('物体名', item.objectName),
-          // カテゴリ情報は新しいモデルにはない
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           _buildInfoRow('撮影日時', _formatDateTime(item.createdAt)),
         ],
       ),
@@ -134,21 +108,9 @@ class DetailScreen extends ConsumerWidget {
       children: [
         SizedBox(
           width: 100,
-          child: Text(
-            label,
-            style: TextStyle(color: Colors.grey[600], fontSize: 14),
-          ),
+          child: Text(label, style: TextStyleContext.infoLabel),
         ),
-        Expanded(
-          child: Text(
-            value,
-            style: const TextStyle(
-              color: AppColors.primaryDark,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
+        Expanded(child: Text(value, style: TextStyleContext.infoValue)),
       ],
     );
   }
@@ -158,28 +120,17 @@ class DetailScreen extends ConsumerWidget {
     List<Compound> molecules,
     HistoryItem item,
   ) {
-    final theme = Theme.of(context);
-
-    return Container(
-      margin: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Text(
-              '検出された化合物',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppColors.primaryDark,
-              ),
-            ),
-          ),
-          ...molecules.map(
-            (molecule) => _buildMoleculeCard(context, molecule, item),
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Text('検出された化合物', style: TextStyleContext.sectionTitle),
+        ),
+        ...molecules.map(
+          (molecule) => _buildMoleculeCard(context, molecule, item),
+        ),
+      ],
     );
   }
 
@@ -188,56 +139,10 @@ class DetailScreen extends ConsumerWidget {
     Compound molecule,
     HistoryItem item,
   ) {
-    final theme = Theme.of(context);
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primaryDark.withValues(alpha: 0.08),
-            blurRadius: 6,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 左側：分子情報
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    molecule.name,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryDark,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    molecule.description,
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 13,
-                      height: 1.4,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 16),
-            // 右側：ARボタン
-            SizedBox(width: 80, child: _buildARButton(context, molecule, item)),
-          ],
-        ),
-      ),
+    return MoleculeCard(
+      name: molecule.name,
+      description: molecule.description,
+      actionButton: _buildARButton(context, molecule, item),
     );
   }
 
@@ -249,12 +154,7 @@ class DetailScreen extends ConsumerWidget {
     return OutlinedButton(
       onPressed: () async {
         // ローディングダイアログを表示
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) =>
-              const Center(child: CircularProgressIndicator()),
-        );
+        CommonLoading.showLoadingDialog(context, message: '3Dモデルを読み込み中...');
 
         try {
           String? sdfData;
@@ -269,7 +169,7 @@ class DetailScreen extends ConsumerWidget {
 
           // ローディングダイアログを閉じる
           if (context.mounted) {
-            Navigator.of(context).pop();
+            CommonLoading.hideLoadingDialog(context);
           }
 
           if (sdfData != null && context.mounted) {
@@ -280,7 +180,7 @@ class DetailScreen extends ConsumerWidget {
                 'sdfData': sdfData,
                 'moleculeName': molecule.name,
                 'moleculeFormula': molecule.description,
-                'originalImageUrl': item.imageUrl, // 履歴の元画像URL
+                'originalImageUrl': item.imageUrl,
               },
             );
           } else {
@@ -296,7 +196,7 @@ class DetailScreen extends ConsumerWidget {
         } catch (e) {
           // ローディングダイアログを閉じる
           if (context.mounted) {
-            Navigator.of(context).pop();
+            CommonLoading.hideLoadingDialog(context);
           }
 
           if (context.mounted) {

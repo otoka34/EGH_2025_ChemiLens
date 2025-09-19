@@ -5,7 +5,7 @@ import 'package:team_25_app/screens/encyclopedia/widgets/element_card.dart';
 class ElementGrid extends StatelessWidget {
   final List<my_element.Element> elements;
   final Function(int index) onElementTap;
-  final double childAspectRatio; // <-- 追加
+  final double childAspectRatio;
 
   const ElementGrid({
     super.key,

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:team_25_app/screens/search/widgets/search_result_tile.dart';
 import 'package:team_25_app/services/api_service.dart';
 import 'package:team_25_app/theme/app_colors.dart';
-import 'package:flutter_svg/flutter_svg.dart'; // SvgPicture を使うために追加
+import 'package:team_25_app/widgets/common_bottom_navigation_bar.dart';
+import 'package:team_25_app/widgets/common_loading.dart';
+
+import '/widgets/common_app_bar.dart';
 
 // 元素情報のデータモデル（クイック検索用）
 class ElementInfo {
@@ -133,41 +136,29 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF0F172A), // ホーム画面と同じ背景色
-        elevation: 0,
-        title: GestureDetector(
-          onTap: () {
-            context.go('/'); // ホーム画面へ遷移
-          },
-          child: Row(
-            children: [
-              SvgPicture.asset(
-                'assets/images/app_bar_icon.svg',
-                height: 32,
-                width: 32,
-              ),
-            ],
-          ),
-        ),
-        // toolbarHeight, flexibleSpace, bottom を削除
-      ),
+      appBar: const CommonAppBar(),
       body: Column(
         children: [
           // 検索バーをbodyの先頭に移動
           Padding(
-            padding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 20.0), // 上部のパディングを調整
+            padding: const EdgeInsets.fromLTRB(
+              24.0,
+              20.0,
+              24.0,
+              20.0,
+            ), // 上部のパディングを調整
             child: _buildSearchBar(),
           ),
-          Expanded(
-            child: _buildBody(),
-          ),
+          Expanded(child: _buildBody()),
         ],
+      ),
+      bottomNavigationBar: const CommonBottomNavigationBar(
+        currentIndex: 1, // 検索画面のインデックス
       ),
     );
   }
 
-// 検索バーのウィジェット
+  // 検索バーのウィジェット
   Widget _buildSearchBar() {
     return TextField(
       controller: _searchController,
@@ -176,18 +167,27 @@ class _SearchScreenState extends State<SearchScreen> {
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(
         hintText: '元素名を入力してください（例：酸素）',
-        hintStyle: TextStyle(color: Colors.black.withOpacity(0.7)), // ヒント色を黒に変更
-        prefixIcon: Icon(Icons.search, color: Colors.black.withOpacity(0.9)), // アイコン色を黒に変更
+        hintStyle: TextStyle(
+          color: Colors.black.withValues(alpha: 0.7),
+          fontSize: 12,
+        ), // ヒント色を黒に変更
+        prefixIcon: Icon(
+          Icons.search,
+          color: Colors.black.withValues(alpha: 0.9),
+        ), // アイコン色を黒に変更
         suffixIcon: _searchQuery.isNotEmpty
             ? IconButton(
-                icon: Icon(Icons.clear, color: Colors.black.withOpacity(0.9)), // アイコン色を黒に変更
+                icon: Icon(
+                  Icons.clear,
+                  color: Colors.black.withValues(alpha: 0.9),
+                ), // アイコン色を黒に変更
                 onPressed: () {
                   _searchController.clear();
                 },
               )
             : null,
         filled: true,
-        fillColor: Colors.grey.withOpacity(0.2), // 塗りつぶし色を調整
+        fillColor: Colors.grey.withValues(alpha: 0.2), // 塗りつぶし色を調整
         contentPadding: const EdgeInsets.symmetric(vertical: 15.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
@@ -195,7 +195,10 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
-          borderSide: BorderSide(color: Colors.grey.withOpacity(0.8), width: 1.5),
+          borderSide: BorderSide(
+            color: Colors.grey.withValues(alpha: 0.8),
+            width: 1.5,
+          ),
         ),
       ),
       onSubmitted: _performSearch,
@@ -204,7 +207,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Widget _buildBody() {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return CommonLoading.fullScreen(message: '検索中...');
     }
 
     if (_hasSearched && _searchResults.isEmpty) {
@@ -219,93 +222,72 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _buildQuickSearch() {
-    return SingleChildScrollView(
+    return ListView(
       padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'よく検索される元素',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
+      children: [
+        const Text(
+          'よく検索される元素',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
           ),
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 12.0,
-            runSpacing: 12.0,
-            children: _quickSearchElements.map((element) {
-              return ActionChip(
-                onPressed: () {
-                  _searchController.text = element.name;
-                  _performSearch(element.name);
-                },
-                avatar: CircleAvatar(
-                  backgroundColor: AppColors.primaryDark,
-                  child: Text(
-                    element.symbol,
-                    style: const TextStyle(
-                      color: AppColors.surface,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                label: Text(
-                  element.name,
+        ),
+        const SizedBox(height: 16),
+        Wrap(
+          spacing: 12.0,
+          runSpacing: 12.0,
+          children: _quickSearchElements.map((element) {
+            return ActionChip(
+              onPressed: () {
+                _searchController.text = element.name;
+                _performSearch(element.name);
+              },
+              avatar: CircleAvatar(
+                backgroundColor: AppColors.primaryDark,
+                child: Text(
+                  element.symbol,
                   style: const TextStyle(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w600,
+                    color: AppColors.surface,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
                   ),
                 ),
-                backgroundColor: AppColors.surface,
-                shape: StadiumBorder(
-                  side: BorderSide(color: AppColors.primary.withOpacity(0.7)),
+              ),
+              label: Text(
+                element.name,
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w600,
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
+              ),
+              backgroundColor: AppColors.surface,
+              shape: StadiumBorder(
+                side: BorderSide(
+                  color: AppColors.primary.withValues(alpha: 0.7),
+                ),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 
   Widget _buildResultsList() {
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       itemCount: _searchResults.length,
-      separatorBuilder: (context, index) => Divider(
-        color: AppColors.primary.withOpacity(0.3),
-        height: 1,
-      ),
       itemBuilder: (context, index) {
         final compound = _searchResults[index];
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                compound.name,
-                style: const TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                compound.description,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.textPrimary.withOpacity(0.8),
-                  height: 1.5,
-                ),
-              ),
-            ],
-          ),
+        return SearchResultTile(
+          title: compound.name,
+          description: compound.description,
+          onTap: () {
+            // TODO: 検索結果タップ時の処理
+            print('Tapped: ${compound.name}');
+          },
         );
       },
     );
@@ -319,22 +301,19 @@ class _SearchScreenState extends State<SearchScreen> {
           Icon(
             Icons.search_off,
             size: 80,
-            color: AppColors.textSecondary.withOpacity(0.5),
+            color: AppColors.textSecondary.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 20),
           const Text(
             '見つかりませんでした',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
             '元素名を確認してもう一度検索してください。',
             style: TextStyle(
               fontSize: 16,
-              color: AppColors.textPrimary.withOpacity(0.7),
+              color: AppColors.textPrimary.withValues(alpha: 0.7),
             ),
             textAlign: TextAlign.center,
           ),

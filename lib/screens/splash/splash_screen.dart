@@ -15,14 +15,14 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // 表示 → 少し待って → フェードアウト → Homeにフェード遷移
+    // 表示 → ちょい待機 → フェードアウト → 履歴画面にフェード遷移
     Future.microtask(() async {
       await Future.delayed(const Duration(milliseconds: 1600));
       if (!mounted) return;
       setState(() => _opacity = 0.0); // フェードアウト開始
       await Future.delayed(const Duration(milliseconds: 900));
       if (!mounted) return;
-      context.go('/');
+      context.go('/history');
     });
   }
 
@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: cs.surface, // テーマに馴染む背景
+      backgroundColor: cs.surface,
       body: Center(
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 800),

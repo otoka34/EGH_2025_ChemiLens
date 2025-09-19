@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:team_25_app/screens/collection/widgets/app_bar_with_icon.dart';
 import 'package:team_25_app/screens/collection/widgets/camera_floating_action_buttons.dart';
 import 'package:team_25_app/screens/collection/widgets/history_list.dart';
 import 'package:team_25_app/screens/collection/widgets/history_tab_bar.dart';
@@ -9,6 +8,8 @@ import 'package:team_25_app/screens/result/result_screen.dart';
 import 'package:team_25_app/services/api_service.dart';
 import 'package:team_25_app/services/history_filter_providers.dart';
 import 'package:team_25_app/services/history_service.dart';
+import '/widgets/common_app_bar.dart';
+import 'package:team_25_app/widgets/common_bottom_navigation_bar.dart';
 
 class HistoryScreen extends ConsumerStatefulWidget {
   const HistoryScreen({super.key});
@@ -117,7 +118,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppBarWithIcon(),
+      appBar: const CommonAppBar(navigateToHistoryOnTap: false),
       floatingActionButton: CameraFloatingActionButtons(
         isLoading: _isLoading,
         onPickImage: _pickFrom,
@@ -138,6 +139,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: const CommonBottomNavigationBar(
+        currentIndex: 0, // 履歴画面のインデックス
       ),
     );
   }

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:team_25_app/theme/app_colors.dart';
 
-class AppBottomNavigationBar extends StatelessWidget {
+class CommonBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
 
-  const AppBottomNavigationBar({
-    super.key,
-    required this.currentIndex,
-  });
+  const CommonBottomNavigationBar({super.key, required this.currentIndex});
 
   void _onTap(BuildContext context, int index) {
     switch (index) {
@@ -22,7 +20,7 @@ class AppBottomNavigationBar extends StatelessWidget {
         context.go('/camera');
         break;
       case 3:
-        context.go('/book');
+        context.go('/encyclopedia');
         break;
       case 4:
         context.go('/profile');
@@ -41,7 +39,7 @@ class AppBottomNavigationBar extends StatelessWidget {
         Container(
           height: 80,
           decoration: BoxDecoration(
-            color: Colors.grey[300],
+            color: AppColors.surface,
             boxShadow: const [
               BoxShadow(
                 color: Colors.black12,
@@ -59,7 +57,7 @@ class AppBottomNavigationBar extends StatelessWidget {
                   index: 0,
                   selectedIcon: Icons.history,
                   unselectedIcon: Icons.history_outlined,
-                  label: '履歴',
+                  label: 'りれき',
                   isSelected: currentIndex == 0,
                 ),
               ),
@@ -70,7 +68,7 @@ class AppBottomNavigationBar extends StatelessWidget {
                   index: 1,
                   selectedIcon: Icons.search,
                   unselectedIcon: Icons.search_outlined,
-                  label: '検索',
+                  label: 'けんさく',
                   isSelected: currentIndex == 1,
                 ),
               ),
@@ -83,7 +81,7 @@ class AppBottomNavigationBar extends StatelessWidget {
                   index: 3,
                   selectedIcon: Icons.menu_book,
                   unselectedIcon: Icons.menu_book_outlined,
-                  label: '図鑑',
+                  label: 'ずかん',
                   isSelected: currentIndex == 3,
                 ),
               ),
@@ -94,7 +92,7 @@ class AppBottomNavigationBar extends StatelessWidget {
                   index: 4,
                   selectedIcon: Icons.manage_accounts,
                   unselectedIcon: Icons.manage_accounts_outlined,
-                  label: 'プロフィール',
+                  label: 'とうろく',
                   isSelected: currentIndex == 4,
                 ),
               ),
@@ -103,7 +101,7 @@ class AppBottomNavigationBar extends StatelessWidget {
         ),
         // カメラボタン（上にはみ出し）
         Positioned(
-          top: -20,
+          top: -10,
           left: MediaQuery.of(context).size.width / 2 - 40,
           child: GestureDetector(
             onTap: () => _onTap(context, 2),
@@ -111,7 +109,7 @@ class AppBottomNavigationBar extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: Color(0xFFFFA1ED), // <-- AppColors.color4に変更
+                color: Color(0xFFFFA1ED),
                 shape: BoxShape.circle,
                 boxShadow: const [
                   BoxShadow(
@@ -126,7 +124,10 @@ class AppBottomNavigationBar extends StatelessWidget {
                   'assets/images/camera_icon.svg',
                   width: 40,
                   height: 40,
-                  colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+                  colorFilter: const ColorFilter.mode(
+                    Colors.black,
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
             ),
@@ -144,18 +145,32 @@ class AppBottomNavigationBar extends StatelessWidget {
     required String label,
     required bool isSelected,
   }) {
+    final color = isSelected ? AppColors.primary : AppColors.primaryDark;
+    
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: () => _onTap(context, index),
         child: SizedBox(
           height: 80,
-          child: Center(
-            child: Icon(
-              isSelected ? selectedIcon : unselectedIcon,
-              size: 40,
-              color: Colors.black,
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                isSelected ? selectedIcon : unselectedIcon,
+                size: 24,
+                color: color,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: color,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                ),
+              ),
+            ],
           ),
         ),
       ),

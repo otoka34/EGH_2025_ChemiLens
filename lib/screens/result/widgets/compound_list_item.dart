@@ -26,7 +26,7 @@ class CompoundListItem extends StatelessWidget {
     return CompoundTile(
       name: compound.name,
       description: compound.description,
-      trailing: ElevatedButton(
+      actionButton: ElevatedButton(
         onPressed: compound.cid.isEmpty ? null : () => _handle3DView(context),
         style: ElevatedButton.styleFrom(
           backgroundColor: Theme.of(context).colorScheme.primary,

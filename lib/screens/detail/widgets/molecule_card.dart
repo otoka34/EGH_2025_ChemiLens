@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:team_25_app/theme/app_colors.dart';
 import 'package:team_25_app/theme/text_styles.dart';
 import 'package:team_25_app/widgets/base/base_card.dart';
+import 'package:team_25_app/widgets/expandable_text.dart'; // Add this import
 
 class MoleculeCard extends StatelessWidget {
   final String name;
@@ -71,11 +72,10 @@ class MoleculeCard extends StatelessWidget {
                   ),
                 ],
                 const SizedBox(height: 8),
-                Text(
-                  description,
-                  style: TextStyleContext.moleculeDescription,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 3,
+                // Use ExpandableText for description
+                ExpandableText(
+                  text: description,
+                  trimLines: 2, // Display only 1 line initially
                 ),
               ],
             ),

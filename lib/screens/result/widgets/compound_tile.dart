@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:team_25_app/theme/app_colors.dart';
 import 'package:team_25_app/theme/text_styles.dart';
 import 'package:team_25_app/widgets/base/base_card.dart';
+import 'package:team_25_app/widgets/expandable_text.dart'; // Add this import
 
 class CompoundTile extends StatelessWidget {
   final String name;
   final String description;
   final String? formula;
-  final Widget? trailing;
+  final Widget? actionButton;
   final VoidCallback? onTap;
   final bool enabled;
 
@@ -16,7 +17,7 @@ class CompoundTile extends StatelessWidget {
     required this.name,
     required this.description,
     this.formula,
-    this.trailing,
+    this.actionButton,
     this.onTap,
     this.enabled = true,
   });
@@ -72,16 +73,18 @@ class CompoundTile extends StatelessWidget {
                   ),
                 ],
                 const SizedBox(height: 8),
-                Text(
-                  description,
-                  style: TextStyleContext.moleculeDescription,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 3,
+                // Use ExpandableText for description
+                ExpandableText(
+                  text: description,
+                  trimLines: 2, // Display only 1 line initially
                 ),
               ],
             ),
           ),
-          if (trailing != null) ...[const SizedBox(width: 12), trailing!],
+          if (actionButton != null) ...[
+            const SizedBox(width: 12),
+            actionButton!,
+          ],
         ],
       ),
     );

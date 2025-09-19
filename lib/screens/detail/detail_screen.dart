@@ -152,7 +152,7 @@ class DetailScreen extends ConsumerWidget {
     HistoryItem item,
   ) {
     return ElevatedButton( // Changed from OutlinedButton
-      onPressed: () async {
+      onPressed: molecule.cid.isEmpty ? null : () async {
         // ローディングダイアログを表示
         CommonLoading.showLoadingDialog(context, message: '3Dモデルを読み込み中...');
 

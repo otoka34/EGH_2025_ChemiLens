@@ -122,17 +122,19 @@ class EncyclopediaService extends _$EncyclopediaService {
         }
       }
 
-      if (hasChanges) {
-        // Update the local state
-        state = AsyncData(updatedElements);
+if (hasChanges) {
+  // Firestore 書き込み
+  await _saveProgressToFirestore(updatedElements);
 
-        // Save to Firestore
-        await _saveProgressToFirestore(updatedElements);
-      }
+  // Provider がまだ生きていれば state 更新
+  if (ref.mounted) {
+    state = AsyncData(updatedElements);
+  }
+}
     } catch (e) {
       print('Error discovering elements: $e');
       rethrow;
-    }
+    } 
   }
 
   /// 進捗をFirestoreに保存

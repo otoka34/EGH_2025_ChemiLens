@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:team_25_app/widgets/common_bottom_navigation_bar.dart';
 
 import '../../services/firebase_auth_service.dart';
+import '/widgets/common_app_bar.dart'; // Add this import
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -104,57 +105,90 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ButtonStyle _buttonStyle = ElevatedButton.styleFrom(
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0), // Slightly rounded corners
+      ),
+      textStyle: const TextStyle(
+        fontSize: 16.0,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+
     return Scaffold(
-      appBar: AppBar(title: const Text('ログイン / 新規登録')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Email Input
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'メールアドレス'),
-              keyboardType: TextInputType.emailAddress,
-              autocorrect: false,
-              textCapitalization: TextCapitalization.none,
-            ),
-            const SizedBox(height: 8),
-            // Password Input
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: 'パスワード',
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _isPasswordVisible
-                        ? Icons.visibility
-                        : Icons.visibility_off,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
-                    });
-                  },
+      appBar: const CommonAppBar(), // Use CommonAppBar
+      body: Column( // Wrap existing body content in a Column
+        children: [
+          // New title in the body
+          const Center(
+            child: Padding(
+              padding: EdgeInsets.only(top: 20.0, bottom: 20.0), // Adjusted padding
+              child: Text(
+                'ログイン / 新規登録', // Changed title text
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF333333),
                 ),
               ),
-              obscureText: !_isPasswordVisible,
-              autocorrect: false,
-              textCapitalization: TextCapitalization.none,
             ),
-            const SizedBox(height: 24),
-            if (_isLoading)
-              const Center(child: CircularProgressIndicator())
-            else ...[
-              // Register Button
-              ElevatedButton(onPressed: _register, child: const Text('ユーザー登録')),
-              const SizedBox(height: 8),
-              // Login Button
-              ElevatedButton(onPressed: _signIn, child: const Text('ログイン')),
-            ],
-          ],
-        ),
+          ),
+          Expanded( // Wrap existing Padding with Expanded
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 60.0), // Adjusted padding
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start, // Adjusted alignment
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Email Input
+                  TextField(
+                    controller: _emailController,
+                    decoration: const InputDecoration(labelText: 'メールアドレス'),
+                    keyboardType: TextInputType.emailAddress,
+                    autocorrect: false,
+                    textCapitalization: TextCapitalization.none,
+                  ),
+                  const SizedBox(height: 8),
+                  // Password Input
+                  TextField(
+                    controller: _passwordController,
+                    decoration: InputDecoration(
+                      labelText: 'パスワード',
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          });
+                        },
+                      ),
+                    ),
+                    obscureText: !_isPasswordVisible,
+                    autocorrect: false,
+                    textCapitalization: TextCapitalization.none,
+                  ),
+                  const SizedBox(height: 40), // Increased spacing
+                  if (_isLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else ...[
+                    // Register Button
+                    ElevatedButton(onPressed: _register, style: _buttonStyle, child: const Text('ユーザー登録')),
+                    const SizedBox(height: 8),
+                    // Login Button
+                    ElevatedButton(onPressed: _signIn, style: _buttonStyle, child: const Text('ログイン')),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: CommonBottomNavigationBar(currentIndex: 4),
     );

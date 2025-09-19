@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:team_25_app/widgets/common_bottom_navigation_bar.dart';
+
 import '../../services/firebase_auth_service.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -27,9 +29,9 @@ class _AuthScreenState extends State<AuthScreen> {
 
   void _showSnackBar(String message) {
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     }
   }
 
@@ -38,7 +40,9 @@ class _AuthScreenState extends State<AuthScreen> {
       _showSnackBar('メールアドレスとパスワードを入力してください');
       return;
     }
-    setState(() { _isLoading = true; });
+    setState(() {
+      _isLoading = true;
+    });
     try {
       await _authService.createUserWithEmailAndPassword(
         email: _emailController.text,
@@ -54,7 +58,9 @@ class _AuthScreenState extends State<AuthScreen> {
         _showSnackBar('登録エラー: ${e.message}');
       }
     }
-    setState(() { _isLoading = false; });
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   Future<void> _signIn() async {
@@ -62,7 +68,9 @@ class _AuthScreenState extends State<AuthScreen> {
       _showSnackBar('メールアドレスとパスワードを入力してください');
       return;
     }
-    setState(() { _isLoading = true; });
+    setState(() {
+      _isLoading = true;
+    });
     try {
       final user = await _authService.signInWithEmailAndPassword(
         email: _emailController.text,
@@ -71,9 +79,8 @@ class _AuthScreenState extends State<AuthScreen> {
       if (user != null && !user.emailVerified) {
         _showSnackBar('メールの認証が完了していません。受信箱を確認してください。');
         // ログインは成功しているが、メイン画面には遷移させない
-      } 
+      }
       // ログイン成功かつメール認証済の場合、後ほどここで画面遷移を実装します
-
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found' || e.code == 'wrong-password') {
         _showSnackBar('アカウントがありません。ユーザー登録をお願いします。');
@@ -81,7 +88,9 @@ class _AuthScreenState extends State<AuthScreen> {
         _showSnackBar('ログインエラー: ${e.message}');
       }
     }
-    setState(() { _isLoading = false; });
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -110,7 +119,9 @@ class _AuthScreenState extends State<AuthScreen> {
                 labelText: 'パスワード',
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    _isPasswordVisible
+                        ? Icons.visibility
+                        : Icons.visibility_off,
                   ),
                   onPressed: () {
                     setState(() {
@@ -128,20 +139,15 @@ class _AuthScreenState extends State<AuthScreen> {
               const Center(child: CircularProgressIndicator())
             else ...[
               // Register Button
-              ElevatedButton(
-                onPressed: _register,
-                child: const Text('ユーザー登録'),
-              ),
+              ElevatedButton(onPressed: _register, child: const Text('ユーザー登録')),
               const SizedBox(height: 8),
               // Login Button
-              ElevatedButton(
-                onPressed: _signIn,
-                child: const Text('ログイン'),
-              ),
+              ElevatedButton(onPressed: _signIn, child: const Text('ログイン')),
             ],
           ],
         ),
       ),
+      bottomNavigationBar: CommonBottomNavigationBar(currentIndex: 4),
     );
   }
 }

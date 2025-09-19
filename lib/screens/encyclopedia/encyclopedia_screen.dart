@@ -1,47 +1,41 @@
 import 'package:flutter/material.dart' hide Element;
-import 'package:team_25_app/data/element_data.dart'; // ElementDataをインポート
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:team_25_app/models/element.dart';
 import 'package:team_25_app/screens/encyclopedia/widgets/element_grid.dart';
+import 'package:team_25_app/services/encyclopedia_service.dart';
 import 'package:team_25_app/widgets/common_bottom_navigation_bar.dart';
 
 import '/widgets/common_app_bar.dart';
 
-class EncyclopediaScreen extends StatefulWidget {
+class EncyclopediaScreen extends ConsumerStatefulWidget {
   const EncyclopediaScreen({super.key});
 
   @override
-  State<EncyclopediaScreen> createState() => _EncyclopediaScreenState();
+  ConsumerState<EncyclopediaScreen> createState() => _EncyclopediaScreenState();
 }
 
-class _EncyclopediaScreenState extends State<EncyclopediaScreen> {
-  // ダミーデータ (Elementモデルを使用)
-  // ElementDataから取得するように変更
-  List<Element> _elements = []; // 初期化を空リストに変更
-
-  @override
-  void initState() {
-    super.initState();
-    _elements = List.from(ElementData.allElements); // ElementDataからコピーして初期化
-  }
-
+class _EncyclopediaScreenState extends ConsumerState<EncyclopediaScreen> {
   bool _showCompleteOverlay = false;
 
-  void _toggleElementDiscovered(int index) {
-    setState(() {
-      _elements[index] = _elements[index].copyWith(
-        discovered: !_elements[index].discovered,
-      );
-      _checkCompletion();
-    });
+  void _toggleElementDiscovered(int index, List<Element> elements) {
+    if (index >= 0 && index < elements.length) {
+      final element = elements[index];
+      ref
+          .read(encyclopediaServiceProvider.notifier)
+          .toggleElementDiscovered(element.symbol);
+      _checkCompletion(elements);
+    }
   }
 
-  void _checkCompletion() {
-    final allDiscovered = _elements.every((element) => element.discovered);
-    if (allDiscovered) {
+  void _checkCompletion(List<Element> elements) {
+    final allDiscovered = elements.every((element) => element.discovered);
+    if (allDiscovered && !_showCompleteOverlay) {
       Future.delayed(const Duration(milliseconds: 500), () {
-        setState(() {
-          _showCompleteOverlay = true;
-        });
+        if (mounted) {
+          setState(() {
+            _showCompleteOverlay = true;
+          });
+        }
       });
     }
   }
@@ -54,10 +48,50 @@ class _EncyclopediaScreenState extends State<EncyclopediaScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final discoveredCount = _elements.where((e) => e.discovered).length;
-    final totalElements = _elements.length;
-    final completionRate = (discoveredCount / totalElements * 100).round();
+    final encyclopediaState = ref.watch(encyclopediaServiceProvider);
     final colorScheme = Theme.of(context).colorScheme;
+
+    return encyclopediaState.when(
+      data: (elements) => _buildContent(context, elements, colorScheme),
+      loading: () => Scaffold(
+        extendBody: true,
+        appBar: const CommonAppBar(),
+        body: const Center(child: CircularProgressIndicator()),
+        bottomNavigationBar: const CommonBottomNavigationBar(currentIndex: 3),
+      ),
+      error: (error, stack) => Scaffold(
+        extendBody: true,
+        appBar: const CommonAppBar(),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error, size: 64, color: Colors.red),
+              const SizedBox(height: 16),
+              Text('エラーが発生しました: $error'),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => ref.refresh(encyclopediaServiceProvider),
+                child: const Text('再試行'),
+              ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: const CommonBottomNavigationBar(currentIndex: 3),
+      ),
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    List<Element> elements,
+    ColorScheme colorScheme,
+  ) {
+    final discoveredCount = elements.where((e) => e.discovered).length;
+    final totalElements = elements.length;
+    final completionRate = totalElements > 0
+        ? (discoveredCount / totalElements * 100).round()
+        : 0;
 
     return Scaffold(
       extendBody: true,
@@ -72,8 +106,8 @@ class _EncyclopediaScreenState extends State<EncyclopediaScreen> {
                 padding: EdgeInsets.zero,
                 children: [
                   // 新しいタイトル位置
-                  Center(
-                    child: const Padding(
+                  const Center(
+                    child: Padding(
                       padding: EdgeInsets.only(top: 20.0, bottom: 10.0),
                       child: Text(
                         '元素ずかん',
@@ -114,7 +148,9 @@ class _EncyclopediaScreenState extends State<EncyclopediaScreen> {
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: FractionallySizedBox(
-                                  widthFactor: discoveredCount / totalElements,
+                                  widthFactor: totalElements > 0
+                                      ? discoveredCount / totalElements
+                                      : 0.0,
                                   child: Container(
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(
@@ -122,7 +158,7 @@ class _EncyclopediaScreenState extends State<EncyclopediaScreen> {
                                         end: Alignment.centerRight,
                                         colors: [
                                           colorScheme.primary,
-                                          Color(0xFFE3579D),
+                                          const Color(0xFFE3579D),
                                         ], // プライマリカラーに変更
                                       ),
                                       borderRadius: const BorderRadius.all(
@@ -145,9 +181,9 @@ class _EncyclopediaScreenState extends State<EncyclopediaScreen> {
                       height:
                           MediaQuery.of(context).size.height * 0.5, // 画面高さの50%
                       child: ElementGrid(
-                        elements: _elements,
+                        elements: elements,
                         onElementTap: (index) =>
-                            _toggleElementDiscovered(index),
+                            _toggleElementDiscovered(index, elements),
                       ),
                     ),
                   ),

@@ -473,18 +473,22 @@ function parseSdf(sdfData: string) {
 
 // ----------------- Element Data (CPK Colors) -----------------
 const atomData: { [element: string]: { radius: number; color: [number, number, number] } } = {
-    'H': { radius: 0.2, color: [1.0, 1.0, 1.0] }, // White (フロントエンド: Colors.white) - より小さく
-    'C': { radius: 0.4, color: [0.0, 0.0, 0.0] }, // Black (フロントエンド: Colors.black)
-    'N': { radius: 0.35, color: [0.0, 0.0, 1.0] }, // Blue (フロントエンド: Colors.blue)
-    'O': { radius: 0.35, color: [1.0, 0.0, 0.0] }, // Red (フロントエンド: Colors.red)
-    'P': { radius: 0.5, color: [1.0, 0.65, 0.0] }, // Orange (フロントエンド: Colors.orange)
-    'S': { radius: 0.45, color: [1.0, 1.0, 0.0] }, // Yellow (フロントエンド: Colors.yellow)
-    'F': { radius: 0.3, color: [0.0, 1.0, 0.0] }, // Green - フロントには表示されていないが一般的な色
-    'Cl': { radius: 0.5, color: [0.0, 1.0, 0.0] }, // Green
-    'Br': { radius: 0.55, color: [0.65, 0.16, 0.16] }, // Dark Red/Brown
-    'I': { radius: 0.6, color: [0.58, 0.0, 0.58] }, // Purple
-    'B': { radius: 0.4, color: [1.0, 0.71, 0.71] }, // Pink
-    'Si': { radius: 0.5, color: [0.78, 0.78, 0.86] }, // Light Grey
+    'H': { radius: 0.2, color: [1.0, 1.0, 1.0] }, // 水素 (White)
+    'B': { radius: 0.4, color: [0.925, 0.439, 0.388] }, // ホウ素 (ピンク)
+    'C': { radius: 0.4, color: [0.267, 0.267, 0.267] }, // 炭素 (黒グレー)
+    'N': { radius: 0.35, color: [0.180, 0.525, 0.757] }, // 窒素 (濃い青)
+    'O': { radius: 0.35, color: [1.0, 0.0, 0.0] }, // 酸素 (Red)
+    'F': { radius: 0.3, color: [0.180, 0.800, 0.443] }, // フッ素 (蛍光グリーン)
+    'Na': { radius: 0.6, color: [0.961, 0.690, 0.255] }, // ナトリウム (薄オレンジ)
+    'Mg': { radius: 0.6, color: [0.510, 0.878, 0.667] }, // マグネシウム (薄グリーン)
+    'Al': { radius: 0.5, color: [0.741, 0.765, 0.780] }, // アルミニウム (銀色グレー)
+    'Si': { radius: 0.5, color: [0.365, 0.427, 0.494] }, // ケイ素 (灰青)
+    'P': { radius: 0.5, color: [0.902, 0.494, 0.133] }, // リン (オレンジ)
+    'S': { radius: 0.45, color: [0.957, 0.816, 0.247] }, // 硫黄 (黄色)
+    'Cl': { radius: 0.5, color: [0.345, 0.839, 0.553] }, // 塩素 (黄緑)
+    'K': { radius: 0.7, color: [0.686, 0.478, 0.773] }, // カリウム (赤紫)
+    'Ca': { radius: 0.7, color: [0.463, 0.843, 0.769] }, // カルシウム (水色グリーン)
+    'I': { radius: 0.6, color: [0.557, 0.267, 0.678] }, // ヨウ素 (紫)
     'DEFAULT': { radius: 0.3, color: [0.8, 0.8, 0.8] }, // Light Gray
 };
 

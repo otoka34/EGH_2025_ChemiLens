@@ -256,33 +256,83 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
                         children: const [
                           _AtomColorChip(
                             element: 'H',
-                            color: Colors.white,
+                            color: Colors.white, // 水素 (White)
                             name: '水素',
                           ),
                           _AtomColorChip(
+                            element: 'B',
+                            color: Color(0xFFEC7063), // ピンク
+                            name: 'ホウ素',
+                          ),
+                          _AtomColorChip(
                             element: 'C',
-                            color: Colors.black,
+                            color: Color(0xFF444444), // 黒グレー
                             name: '炭素',
                           ),
                           _AtomColorChip(
                             element: 'N',
-                            color: Colors.blue,
+                            color: Color(0xFF2E86C1), // 濃い青
                             name: '窒素',
                           ),
                           _AtomColorChip(
                             element: 'O',
-                            color: Colors.red,
+                            color: Colors.red, // 酸素 (Red)
                             name: '酸素',
                           ),
                           _AtomColorChip(
+                            element: 'F',
+                            color: Color(0xFF2ECC71), // 蛍光グリーン
+                            name: 'フッ素',
+                          ),
+                          _AtomColorChip(
+                            element: 'Na',
+                            color: Color(0xFFF5B041), // 薄オレンジ
+                            name: 'ナトリウム',
+                          ),
+                          _AtomColorChip(
+                            element: 'Mg',
+                            color: Color(0xFF82E0AA), // 薄グリーン
+                            name: 'マグネシウム',
+                          ),
+                          _AtomColorChip(
+                            element: 'Al',
+                            color: Color(0xFFBDC3C7), // 銀色グレー
+                            name: 'アルミニウム',
+                          ),
+                          _AtomColorChip(
+                            element: 'Si',
+                            color: Color(0xFF5D6D7E), // 灰青
+                            name: 'ケイ素',
+                          ),
+                          _AtomColorChip(
                             element: 'P',
-                            color: Colors.orange,
+                            color: Color(0xFFE67E22), // オレンジ
                             name: 'リン',
                           ),
                           _AtomColorChip(
                             element: 'S',
-                            color: Colors.yellow,
+                            color: Color(0xFFF4D03F), // 黄色
                             name: '硫黄',
+                          ),
+                          _AtomColorChip(
+                            element: 'Cl',
+                            color: Color(0xFF58D68D), // 黄緑
+                            name: '塩素',
+                          ),
+                          _AtomColorChip(
+                            element: 'K',
+                            color: Color(0xFFAF7AC5), // 赤紫
+                            name: 'カリウム',
+                          ),
+                          _AtomColorChip(
+                            element: 'Ca',
+                            color: Color(0xFF76D7C4), // 水色グリーン
+                            name: 'カルシウム',
+                          ),
+                          _AtomColorChip(
+                            element: 'I',
+                            color: Color(0xFF8E44AD), // 紫
+                            name: 'ヨウ素',
                           ),
                         ],
                       ),

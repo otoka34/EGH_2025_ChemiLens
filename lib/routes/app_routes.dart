@@ -20,44 +20,95 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/splash',
       name: 'splash',
-      builder: (context, state) => const SplashScreen(),
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: const SplashScreen(),
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return child;
+          },
+        );
+      },
     ),
 
     // 履歴画面
     GoRoute(
       path: '/history',
       name: 'history',
-      builder: (context, state) => const HistoryScreen(),
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: const HistoryScreen(),
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return child;
+          },
+        );
+      },
     ),
 
     // 元素図鑑画面
     GoRoute(
       path: '/encyclopedia',
       name: 'encyclopedia',
-      builder: (context, state) => const EncyclopediaScreen(),
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: const EncyclopediaScreen(),
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return child;
+          },
+        );
+      },
     ),
 
     // カメラ画面
     GoRoute(
       path: '/camera',
       name: 'camera',
-      builder: (context, state) => const CameraScreen(),
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: const CameraScreen(),
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return child;
+          },
+        );
+      },
     ),
 
     // 詳細画面
     GoRoute(
       path: '/detail/:historyId',
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final historyId = state.pathParameters['historyId'];
 
+        Widget child;
         if (historyId == null) {
-          return const Scaffold(
+          child = const Scaffold(
             appBar: null,
             body: Center(child: Text('無効なパラメータです')),
           );
+        } else {
+          child = DetailScreen(historyId: historyId);
         }
 
-        return DetailScreen(historyId: historyId);
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: child,
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return child;
+          },
+        );
       },
     ),
 
@@ -65,24 +116,36 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/result',
       name: 'result',
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final extra = state.extra as Map<String, dynamic>?;
+
+        Widget child;
         if (extra == null) {
-          return const Scaffold(
+          child = const Scaffold(
             body: Center(child: Text('Invalid parameters for result screen')),
           );
+        } else {
+          final imageFile = extra['imageFile'] as File?;
+          final detection = extra['detection'] as DetectionResult?;
+
+          if (imageFile == null || detection == null) {
+            child = const Scaffold(
+              body: Center(child: Text('Missing required parameters')),
+            );
+          } else {
+            child = ResultScreen(imageFile: imageFile, detection: detection);
+          }
         }
 
-        final imageFile = extra['imageFile'] as File?;
-        final detection = extra['detection'] as DetectionResult?;
-
-        if (imageFile == null || detection == null) {
-          return const Scaffold(
-            body: Center(child: Text('Missing required parameters')),
-          );
-        }
-
-        return ResultScreen(imageFile: imageFile, detection: detection);
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: child,
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return child;
+          },
+        );
       },
     ),
 
@@ -107,26 +170,38 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/molecular_viewer',
       name: 'molecular_viewer',
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final extra = state.extra as Map<String, dynamic>?;
+
+        Widget child;
         if (extra == null) {
-          return const Scaffold(body: Center(child: Text('分子データが指定されていません')));
+          child = const Scaffold(body: Center(child: Text('分子データが指定されていません')));
+        } else {
+          final sdfData = extra['sdfData'] as String?;
+          final moleculeName = extra['moleculeName'] as String?;
+          final moleculeFormula = extra['moleculeFormula'] as String?;
+          final originalImageUrl = extra['originalImageUrl'] as String?;
+
+          if (sdfData == null) {
+            child = const Scaffold(body: Center(child: Text('SDFデータが見つかりません')));
+          } else {
+            child = ModelViewerScreen(
+              sdfData: sdfData,
+              moleculeName: moleculeName ?? '不明な化合物',
+              formula: moleculeFormula,
+              originalImageUrl: originalImageUrl,
+            );
+          }
         }
 
-        final sdfData = extra['sdfData'] as String?;
-        final moleculeName = extra['moleculeName'] as String?;
-        final moleculeFormula = extra['moleculeFormula'] as String?;
-        final originalImageUrl = extra['originalImageUrl'] as String?;
-
-        if (sdfData == null) {
-          return const Scaffold(body: Center(child: Text('SDFデータが見つかりません')));
-        }
-
-        return ModelViewerScreen(
-          sdfData: sdfData,
-          moleculeName: moleculeName ?? '不明な化合物',
-          formula: moleculeFormula,
-          originalImageUrl: originalImageUrl,
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: child,
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return child;
+          },
         );
       },
     ),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:team_25_app/models/compound.dart';
 import 'package:team_25_app/models/history_item.dart';
 import 'package:team_25_app/services/history_service.dart';
+import 'package:team_25_app/services/api_service.dart';
 import 'package:team_25_app/theme/app_colors.dart';
 
 class DetailScreen extends ConsumerWidget {
@@ -234,14 +236,67 @@ class DetailScreen extends ConsumerWidget {
 
   Widget _buildARButton(BuildContext context, Compound molecule) {
     return OutlinedButton(
-      onPressed: () {
-        // TODO: AR画面への遷移実装
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${molecule.name}のAR表示機能は準備中です'),
-            duration: const Duration(seconds: 2),
+      onPressed: () async {
+        // ローディングダイアログを表示
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const Center(
+            child: CircularProgressIndicator(),
           ),
         );
+
+        try {
+          String? sdfData;
+          
+          // CIDからSDFデータを取得
+          if (molecule.cid.isNotEmpty) {
+            final cidInt = int.tryParse(molecule.cid);
+            if (cidInt != null) {
+              sdfData = await ApiService.getSdfDataByCid(cidInt);
+            }
+          }
+          
+          // ローディングダイアログを閉じる
+          if (context.mounted) {
+            Navigator.of(context).pop();
+          }
+
+          if (sdfData != null && context.mounted) {
+            // 3Dビューアー画面に遷移
+            context.pushNamed(
+              'molecular_viewer',
+              extra: {
+                'sdfData': sdfData,
+                'moleculeName': molecule.name,
+                'moleculeFormula': molecule.description,
+              },
+            );
+          } else {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('${molecule.name}の3Dモデルデータが見つかりませんでした'),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            }
+          }
+        } catch (e) {
+          // ローディングダイアログを閉じる
+          if (context.mounted) {
+            Navigator.of(context).pop();
+          }
+          
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('エラーが発生しました: ${e.toString()}'),
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          }
+        }
       },
       style: FilledButton.styleFrom(
         foregroundColor: AppColors.surface,

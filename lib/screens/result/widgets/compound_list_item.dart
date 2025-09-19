@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:team_25_app/models/compound.dart';
+import 'package:team_25_app/services/api_service.dart';
 
 class CompoundListItem extends StatelessWidget {
   final Compound compound;
@@ -17,11 +19,63 @@ class CompoundListItem extends StatelessWidget {
           ElevatedButton(
             onPressed: compound.cid.isEmpty
                 ? null
-                : () {
-                    // TODO: cid から sdfData を取得する実装が必要
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('3D表示機能は準備中です')),
+                : () async {
+                    // ローディングダイアログを表示
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) => const Center(
+                        child: CircularProgressIndicator(),
+                      ),
                     );
+
+                    try {
+                      // CIDからSDFデータを取得
+                      final cidInt = int.tryParse(compound.cid);
+                      if (cidInt == null) {
+                        throw Exception('Invalid CID format');
+                      }
+
+                      final sdfData = await ApiService.getSdfDataByCid(cidInt);
+                      
+                      // ローディングダイアログを閉じる
+                      if (context.mounted) {
+                        Navigator.of(context).pop();
+                      }
+
+                      if (sdfData != null && context.mounted) {
+                        // 3Dビューアー画面に遷移
+                        context.pushNamed(
+                          'molecular_viewer',
+                          extra: {
+                            'sdfData': sdfData,
+                            'moleculeName': compound.name,
+                            'moleculeFormula': compound.description,
+                          },
+                        );
+                      } else {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('3Dモデルデータが見つかりませんでした'),
+                            ),
+                          );
+                        }
+                      }
+                    } catch (e) {
+                      // ローディングダイアログを閉じる
+                      if (context.mounted) {
+                        Navigator.of(context).pop();
+                      }
+                      
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('エラーが発生しました: ${e.toString()}'),
+                          ),
+                        );
+                      }
+                    }
                   },
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,

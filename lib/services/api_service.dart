@@ -12,9 +12,9 @@ class ApiService {
   static String get _baseUrl {
     if (kIsWeb) {
       // Web環境では直接APIサーバーに接続（CORS対応）
-      return 'http://10.45.0.104:3000';
+      return 'http://192.168.0.15:3000';
     }
-    return 'http://10.45.0.104:3000';
+    return 'http://192.168.0.15:3000';
   }
 
   static final Dio _dio = Dio();
@@ -107,6 +107,39 @@ class ApiService {
       } else {
         throw Exception(
           'Failed to search compounds: ${response.statusMessage}',
+        );
+      }
+    } on DioException catch (e) {
+      if (e.response != null && e.response?.data != null) {
+        final errorMessage =
+            e.response?.data['error'] ?? 'Unknown error from server';
+        throw Exception(errorMessage);
+      }
+      throw Exception('Failed to connect to the server');
+    } catch (e) {
+      throw Exception('An unexpected error occurred');
+    }
+  }
+
+  // CIDからSDFデータを取得するメソッド
+  static Future<String?> getSdfDataByCid(int cid) async {
+    try {
+      final response = await _dio.post(
+        '$_baseUrl/cidtosdf',
+        data: [
+          {'cids': cid}
+        ],
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data;
+        if (data.isNotEmpty && data[0]['sdf'] != null) {
+          return data[0]['sdf'] as String;
+        }
+        return null;
+      } else {
+        throw Exception(
+          'Failed to get SDF data: ${response.statusMessage}',
         );
       }
     } on DioException catch (e) {

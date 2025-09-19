@@ -13,6 +13,7 @@ import '../screens/search/search_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/encyclopedia/encyclopedia_screen.dart';
 import '../screens/camera/camera_screen.dart'; // <-- 追加
+import '../screens/model_viewer/model_viewer_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/splash',
@@ -122,6 +123,34 @@ final GoRouter appRouter = GoRouter(
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return child; // そのまま表示
           },
+        );
+      },
+    ),
+
+    // 3D分子ビューアー画面
+    GoRoute(
+      path: '/molecular_viewer',
+      name: 'molecular_viewer',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        if (extra == null) {
+          return const Scaffold(
+            body: Center(child: Text('分子データが指定されていません')),
+          );
+        }
+
+        final sdfData = extra['sdfData'] as String?;
+        final moleculeName = extra['moleculeName'] as String?;
+
+        if (sdfData == null) {
+          return const Scaffold(
+            body: Center(child: Text('SDFデータが見つかりません')),
+          );
+        }
+
+        return ModelViewerScreen(
+          sdfData: sdfData,
+          moleculeName: moleculeName ?? '不明な化合物',
         );
       },
     ),

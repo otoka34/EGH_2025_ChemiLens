@@ -105,7 +105,7 @@ class CompoundListItem extends StatelessWidget {
             extra: {
               'sdfData': sdfData,
               'moleculeName': compound.name,
-              'moleculeFormula': compound.description,
+              'moleculeFormula': compound.formula,
               'originalImageUrl': originalImageUrl,
             },
           );

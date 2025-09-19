@@ -6,8 +6,11 @@ import 'package:team_25_app/models/element.dart';
 
 part 'encyclopedia_service.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class EncyclopediaService extends _$EncyclopediaService {
+  FirebaseFirestore get _firestore => FirebaseFirestore.instance;
+  FirebaseAuth get _auth => FirebaseAuth.instance;
+
   @override
   Future<List<Element>> build() async {
     // 初期データを読み込む
@@ -16,8 +19,7 @@ class EncyclopediaService extends _$EncyclopediaService {
 
   /// 現在のユーザーIDを取得
   String get _currentUserId {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    return currentUser?.uid ?? 'anonymous';
+    return _auth.currentUser?.uid ?? 'anonymous';
   }
 
   /// ユーザーの図鑑進捗を取得
@@ -26,37 +28,37 @@ class EncyclopediaService extends _$EncyclopediaService {
       final userId = _currentUserId;
       
       // Firestoreからユーザーの進捗を取得
-      final docSnapshot = await FirebaseFirestore.instance
-          .collection('encyclopedia_progress')
-          .doc(userId)
-          .get();
+      final userDoc = await _firestore.collection('users').doc(userId).get();
 
-      if (docSnapshot.exists) {
-        final data = docSnapshot.data() as Map<String, dynamic>;
-        final discoveredElements = Set<String>.from(data['discovered'] ?? []);
+      if (userDoc.exists && userDoc.data()!.containsKey('encyclopedia_progress')) {
+        final progressData = userDoc.data()!['encyclopedia_progress'] as Map<String, dynamic>;
+        final discoveredSymbols = Set<String>.from(progressData['discovered'] ?? []);
         
         // ElementDataのデータに進捗を反映
         return ElementData.allElements.map((element) {
           return element.copyWith(
-            discovered: discoveredElements.contains(element.symbol),
+            discovered: discoveredSymbols.contains(element.symbol),
           );
         }).toList();
       } else {
         // ユーザーの進捗がない場合
         if (userId != 'anonymous') {
           // ログインユーザーの場合は、まずanonymousのデータがあるかチェック
-          final anonymousSnapshot = await FirebaseFirestore.instance
-              .collection('encyclopedia_progress')
-              .doc('anonymous')
-              .get();
+          final anonymousDoc = await _firestore.collection('users').doc('anonymous').get();
           
-          if (anonymousSnapshot.exists) {
-            final anonymousData = anonymousSnapshot.data() as Map<String, dynamic>;
-            final discoveredElements = Set<String>.from(anonymousData['discovered'] ?? []);
+          if (anonymousDoc.exists && anonymousDoc.data()!.containsKey('encyclopedia_progress')) {
+            final anonymousProgress = anonymousDoc.data()!['encyclopedia_progress'] as Map<String, dynamic>;
+            final discoveredSymbols = Set<String>.from(anonymousProgress['discovered'] ?? []);
             
+            // ログインユーザーにデータを移行
+            await _saveProgressToFirestore(ElementData.allElements.map((e) {
+              return e.copyWith(discovered: discoveredSymbols.contains(e.symbol));
+            }).toList());
+            // anonymousのデータは削除しても良いが、一旦残す
+
             return ElementData.allElements.map((element) {
               return element.copyWith(
-                discovered: discoveredElements.contains(element.symbol),
+                discovered: discoveredSymbols.contains(element.symbol),
               );
             }).toList();
           }
@@ -98,38 +100,11 @@ class EncyclopediaService extends _$EncyclopediaService {
     }
   }
 
-  /// 元素を発見済みに設定（化合物発見時に呼び出される）
-  Future<void> discoverElement(String elementSymbol) async {
-    try {
-      final currentElements = state.value ?? [];
-      final elementIndex = currentElements.indexWhere(
-        (e) => e.symbol == elementSymbol,
-      );
-
-      if (elementIndex == -1) return;
-
-      final element = currentElements[elementIndex];
-      if (element.discovered) return; // 既に発見済みの場合は何もしない
-
-      final updatedElement = element.copyWith(discovered: true);
-
-      // ローカル状態を更新
-      final updatedElements = [...currentElements];
-      updatedElements[elementIndex] = updatedElement;
-      state = AsyncData(updatedElements);
-
-      // Firestoreに保存
-      await _saveProgressToFirestore(updatedElements);
-    } catch (e) {
-      print('Error discovering element: $e');
-      rethrow;
-    }
-  }
-
   /// 複数の元素を一度に発見済みに設定
   Future<void> discoverElements(List<String> elementSymbols) async {
     try {
-      final currentElements = state.value ?? [];
+      // Ensure the initial state is loaded by awaiting the future.
+      final currentElements = await future;
       var updatedElements = [...currentElements];
       bool hasChanges = false;
 
@@ -148,10 +123,10 @@ class EncyclopediaService extends _$EncyclopediaService {
       }
 
       if (hasChanges) {
-        // ローカル状態を更新
+        // Update the local state
         state = AsyncData(updatedElements);
 
-        // Firestoreに保存
+        // Save to Firestore
         await _saveProgressToFirestore(updatedElements);
       }
     } catch (e) {
@@ -169,13 +144,17 @@ class EncyclopediaService extends _$EncyclopediaService {
           .map((e) => e.symbol)
           .toList();
 
-      await FirebaseFirestore.instance
-          .collection('encyclopedia_progress')
-          .doc(userId)
-          .set({
-        'discovered': discoveredSymbols,
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
+      final progressData = {
+        'encyclopedia_progress': {
+          'discovered': discoveredSymbols,
+          'updatedAt': FieldValue.serverTimestamp(),
+        }
+      };
+
+      await _firestore.collection('users').doc(userId).set(
+            progressData,
+            SetOptions(merge: true),
+          );
     } catch (e) {
       print('Error saving progress to Firestore: $e');
       rethrow;
@@ -188,7 +167,8 @@ class EncyclopediaService extends _$EncyclopediaService {
     final elements = await fetchUserProgress();
     state = AsyncData(elements);
   }
-
+  
+  // ... (他のメソッドは変更なし)
   /// 完了率を取得
   double getCompletionRate() {
     final elements = state.value ?? [];

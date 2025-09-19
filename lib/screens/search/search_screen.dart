@@ -56,7 +56,6 @@ class _SearchScreenState extends State<SearchScreen> {
     ElementInfo(symbol: 'H', name: '水素', nameEn: 'Hydrogen', number: 1),
     ElementInfo(symbol: 'C', name: '炭素', nameEn: 'Carbon', number: 6),
     ElementInfo(symbol: 'N', name: '窒素', nameEn: 'Nitrogen', number: 7),
-    ElementInfo(symbol: 'Fe', name: '鉄', nameEn: 'Iron', number: 26),
     ElementInfo(symbol: 'Ca', name: 'カルシウム', nameEn: 'Calcium', number: 20),
   ];
 

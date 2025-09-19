@@ -110,7 +110,7 @@ class HistoryItemWidget extends ConsumerWidget {
               padding: const EdgeInsets.only(bottom: 2),
               child: Text(
                 compound.name,
-                style: TextStyleContext.moleculeDescription,
+                style: TextStyleContext.moleculeFormula,
               ),
             ),
           ),
@@ -122,7 +122,7 @@ class HistoryItemWidget extends ConsumerWidget {
   Widget _buildFavoriteIcon(WidgetRef ref) {
     return GestureDetector(
       onTap: () =>
-          ref.read(historyServiceProvider.notifier).toggleFavorite(item.id),
+          ref.read(historyServiceProvider.notifier).toggleFavorite(item.id, item.userId),
       child: Container(
         padding: const EdgeInsets.all(8),
         child: Icon(

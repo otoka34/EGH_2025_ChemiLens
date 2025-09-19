@@ -17,16 +17,6 @@ class EncyclopediaScreen extends ConsumerStatefulWidget {
 class _EncyclopediaScreenState extends ConsumerState<EncyclopediaScreen> {
   bool _showCompleteOverlay = false;
 
-  void _toggleElementDiscovered(int index, List<Element> elements) {
-    if (index >= 0 && index < elements.length) {
-      final element = elements[index];
-      ref
-          .read(encyclopediaServiceProvider.notifier)
-          .toggleElementDiscovered(element.symbol);
-      _checkCompletion(elements);
-    }
-  }
-
   void _checkCompletion(List<Element> elements) {
     final allDiscovered = elements.every((element) => element.discovered);
     if (allDiscovered && !_showCompleteOverlay) {
@@ -50,6 +40,13 @@ class _EncyclopediaScreenState extends ConsumerState<EncyclopediaScreen> {
   Widget build(BuildContext context) {
     final encyclopediaState = ref.watch(encyclopediaServiceProvider);
     final colorScheme = Theme.of(context).colorScheme;
+
+    // Listen for changes to check for completion
+    ref.listen<AsyncValue<List<Element>>>(encyclopediaServiceProvider, (_, next) {
+      next.whenData((elements) {
+        _checkCompletion(elements);
+      });
+    });
 
     return encyclopediaState.when(
       data: (elements) => _buildContent(context, elements, colorScheme),
@@ -182,8 +179,7 @@ class _EncyclopediaScreenState extends ConsumerState<EncyclopediaScreen> {
                           MediaQuery.of(context).size.height * 0.5, // 画面高さの50%
                       child: ElementGrid(
                         elements: elements,
-                        onElementTap: (index) =>
-                            _toggleElementDiscovered(index, elements),
+                        onElementTap: (_) {}, // タップしても何もしない
                       ),
                     ),
                   ),
@@ -290,10 +286,10 @@ class _EncyclopediaScreenState extends ConsumerState<EncyclopediaScreen> {
                                     backgroundColor: Colors.transparent,
                                     shadowColor: Colors.transparent,
                                   ).copyWith(
-                                    overlayColor: WidgetStateProperty.all(
+                                    overlayColor: MaterialStateProperty.all(
                                       Colors.transparent,
                                     ),
-                                    elevation: WidgetStateProperty.all(0),
+                                    elevation: MaterialStateProperty.all(0),
                                   ),
                               child: Ink(
                                 decoration: BoxDecoration(

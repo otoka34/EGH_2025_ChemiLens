@@ -152,7 +152,7 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
                                 borderRadius: BorderRadius.circular(12),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.3),
+                                    color: Colors.black.withOpacity(0.3),
                                     offset: const Offset(0, 4),
                                     blurRadius: 4,
                                   ),
@@ -214,12 +214,12 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
                           decoration: BoxDecoration(
                             color: Theme.of(
                               context,
-                            ).colorScheme.primary.withValues(alpha: 0.1),
+                            ).colorScheme.primary.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
                               color: Theme.of(
                                 context,
-                              ).colorScheme.primary.withValues(alpha: 0.3),
+                              ).colorScheme.primary.withOpacity(0.3),
                             ),
                           ),
                           child: Text(
@@ -339,7 +339,7 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.5),
+                    color: Colors.black.withOpacity(0.5),
                     offset: const Offset(0, 4),
                     blurRadius: 16,
                   ),

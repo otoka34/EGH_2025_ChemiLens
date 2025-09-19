@@ -12,128 +12,66 @@ import 'package:team_25_app/services/image_compression_service.dart';
 
 part 'history_service.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class HistoryService extends _$HistoryService {
+  FirebaseFirestore get _firestore => FirebaseFirestore.instance;
+  FirebaseAuth get _auth => FirebaseAuth.instance;
+
+  CollectionReference<Map<String, dynamic>> _historiesCollection(String? userId) {
+    final uid = userId ?? _auth.currentUser?.uid ?? 'anonymous';
+    return _firestore.collection('users').doc(uid).collection('histories');
+  }
+
   @override
   Future<List<HistoryItem>> build() async {
     // 初期データを読み込む
     return fetchHistories();
   }
 
-  /// メールアドレスで履歴を検索
-  Future<List<HistoryItem>> fetchHistoriesByEmail(String email) async {
+  /// 履歴一覧を取得
+  Future<List<HistoryItem>> fetchHistories({String? userId}) async {
     try {
-      print('🔍 [DEBUG] fetchHistoriesByEmail called with email: $email');
-      
-      // まず、userEmailフィールドがある場合を検索 (インデックス待ちのため一時的にorderBy削除)
-      final emailQuery = await FirebaseFirestore.instance
-          .collection('histories')
-          .where('userEmail', isEqualTo: email)
+      final targetUserId = userId ?? _auth.currentUser?.uid ?? 'anonymous';
+      print('🔍 [DEBUG] fetchHistories called for userId: $targetUserId');
+
+      final querySnapshot = await _historiesCollection(targetUserId)
+          .orderBy('createdAt', descending: true)
           .get();
-      
-      print('🔍 [DEBUG] Found ${emailQuery.docs.length} documents with userEmail: $email');
-      
-      final histories = emailQuery.docs.map((doc) {
+
+      final histories = querySnapshot.docs.map((doc) {
         final data = doc.data();
         data['id'] = doc.id;
         return HistoryItem.fromJson(data);
       }).toList();
-      
-      return histories;
-    } catch (e) {
-      print('❌ Error fetching histories by email: $e');
-      return [];
-    }
-  }
 
-  /// 履歴一覧を取得
-  Future<List<HistoryItem>> fetchHistories({String? userId}) async {
-    try {
-      // 現在ログイン中のユーザーIDを取得
-      final currentUser = FirebaseAuth.instance.currentUser;
-      final targetUserId = userId ?? currentUser?.uid ?? 'anonymous';
-
-      print('🔍 [DEBUG] fetchHistories called');
-      print('🔍 [DEBUG] currentUser: ${currentUser?.uid}');
-      print('🔍 [DEBUG] currentUser email: ${currentUser?.email}');
-      print('🔍 [DEBUG] targetUserId: $targetUserId');
-
-      // まず全ての履歴ドキュメントを確認
-      final allDocsSnapshot = await FirebaseFirestore.instance
-          .collection('histories')
-          .get();
-      print('🔍 [DEBUG] Total documents in histories collection: ${allDocsSnapshot.docs.length}');
-      
-      for (var doc in allDocsSnapshot.docs) {
-        final data = doc.data();
-        print('🔍 [DEBUG] All docs - ${doc.id}: userId=${data['userId']}, userEmail=${data['userEmail'] ?? 'N/A'}, objectName=${data['objectName'] ?? 'N/A'}');
-      }
-
-      Set<HistoryItem> allHistories = {};
-
-      // 1. userIdで検索 (インデックス待ちのため一時的にorderBy削除)
-      Query userIdQuery = FirebaseFirestore.instance
-          .collection('histories')
-          .where('userId', isEqualTo: targetUserId);
-
-      final userIdQuerySnapshot = await userIdQuery.get();
-      print('🔍 [DEBUG] Found ${userIdQuerySnapshot.docs.length} documents for userId: $targetUserId');
-
-      for (var doc in userIdQuerySnapshot.docs) {
-        final data = doc.data() as Map<String, dynamic>;
-        data['id'] = doc.id;
-        allHistories.add(HistoryItem.fromJson(data));
-      }
-
-      // 2. ログインユーザーの場合はメールアドレスでも検索
-      if (currentUser != null && currentUser.email != null && targetUserId != 'anonymous') {
-        print('🔍 [DEBUG] Also searching by email: ${currentUser.email}');
-        final emailHistories = await fetchHistoriesByEmail(currentUser.email!);
-        allHistories.addAll(emailHistories);
-      }
-
-      // 3. anonymousデータも含める場合（未ログインユーザー、または追加データとして）
-      if (targetUserId == 'anonymous') {
-        print('🔍 [DEBUG] Searching for anonymous data');
-        Query anonymousQuery = FirebaseFirestore.instance
-            .collection('histories')
-            .where('userId', isEqualTo: 'anonymous');
-
-        final anonymousSnapshot = await anonymousQuery.get();
-        print('🔍 [DEBUG] Found ${anonymousSnapshot.docs.length} anonymous documents');
-        
-        for (var doc in anonymousSnapshot.docs) {
-          final data = doc.data() as Map<String, dynamic>;
-          data['id'] = doc.id;
-          allHistories.add(HistoryItem.fromJson(data));
+      // If a logged-in user has no histories, check for anonymous histories to migrate
+      if (targetUserId != 'anonymous' && histories.isEmpty) {
+        print('🔍 [DEBUG] No histories for logged-in user, checking anonymous data...');
+        final anonymousHistories = await fetchHistories(userId: 'anonymous');
+        if (anonymousHistories.isNotEmpty) {
+          print('🔍 [DEBUG] Found ${anonymousHistories.length} anonymous histories to migrate.');
+          for (final history in anonymousHistories) {
+            // Re-create history for the logged-in user
+            await createHistory(
+              objectName: history.objectName,
+              compounds: history.compounds,
+              cids: history.cids,
+              imageData: base64Decode(history.imageUrl.split(',').last), // This is a bit of a hack
+              userId: targetUserId,
+            );
+            // Delete the old anonymous history
+            await _historiesCollection('anonymous').doc(history.id).delete();
+          }
+          // Re-fetch histories for the current user
+          return await fetchHistories(userId: targetUserId);
         }
       }
 
-      // 4. 結果をリストに変換してソート
-      final resultList = allHistories.toList();
-      resultList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-
-      print('🔍 [DEBUG] Returning ${resultList.length} histories total');
-      return resultList;
+      print('🔍 [DEBUG] Returning ${histories.length} histories for $targetUserId');
+      return histories;
     } catch (e) {
       print('❌ Error fetching histories: $e');
       return [];
-    }
-  }
-
-  /// 履歴を保存
-  Future<void> saveHistory(HistoryItem history) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('histories')
-          .doc(history.id)
-          .set(history.toJson());
-
-      // 状態を更新
-      state = AsyncData([history, ...state.value ?? []]);
-    } catch (e) {
-      print('Error saving history: $e');
-      rethrow;
     }
   }
 
@@ -146,29 +84,14 @@ class HistoryService extends _$HistoryService {
     String? userId,
   }) async {
     try {
-      print('createHistory called with objectName: $objectName');
-      // 現在ログイン中のユーザーIDを取得、未ログインの場合は'anonymous'
-      final currentUser = FirebaseAuth.instance.currentUser;
-      final uid = userId ?? currentUser?.uid ?? 'anonymous';
-      final userEmail = currentUser?.email;
-      final historyId = FirebaseFirestore.instance
-          .collection('histories')
-          .doc()
-          .id;
-      print('Generated historyId: $historyId');
+      final uid = userId ?? _auth.currentUser?.uid ?? 'anonymous';
+      final historyId = _historiesCollection(uid).doc().id;
+      print('Generated historyId: $historyId for user: $uid');
 
       // 画像を圧縮してからBase64に変換
-      print('Compressing image...');
-      final compressedImageData = await ImageCompressionService.compressImage(
-        imageData,
-      );
-      print(
-        'Image compressed: ${imageData.length} -> ${compressedImageData.length} bytes',
-      );
-
+      final compressedImageData = await ImageCompressionService.compressImage(imageData);
       final base64Image = base64Encode(compressedImageData);
       final imageUrl = 'data:image/jpeg;base64,$base64Image';
-      print('Image converted to Base64 (${base64Image.length} chars)');
 
       // HistoryItemを作成
       final historyItem = HistoryItem(
@@ -182,23 +105,12 @@ class HistoryService extends _$HistoryService {
         createdAt: DateTime.now(),
       );
 
-      // Firestoreに保存（toJson()でシリアライズ）
+      // Firestoreに保存
       final saveData = {
         ...historyItem.toJson(),
-        'compounds': compounds.map((c) => c.toJson()).toList(),
+        'compounds': historyItem.compounds.map((c) => c.toJson()).toList(),
       };
-      
-      // メールアドレスも保存（検索用）
-      if (userEmail != null) {
-        saveData['userEmail'] = userEmail;
-      }
-      
-      await FirebaseFirestore.instance
-          .collection('histories')
-          .doc(historyId)
-          .set(saveData);
-
-      print('History saved to Firestore successfully');
+      await _historiesCollection(uid).doc(historyId).set(saveData);
 
       // 化合物から元素を抽出して図鑑に反映
       final elementSymbols = <String>{};
@@ -208,13 +120,19 @@ class HistoryService extends _$HistoryService {
       
       if (elementSymbols.isNotEmpty) {
         try {
-          final encyclopediaService = ref.read(encyclopediaServiceProvider.notifier);
-          await encyclopediaService.discoverElements(elementSymbols.toList());
+          print('Calling discoverElements from createHistory with: ${elementSymbols.toList()}');
+          // Wait for the encyclopedia provider to be ready before trying to update it.
+          await ref.read(encyclopediaServiceProvider.future);
+          // Now call the update method.
+          await ref.read(encyclopediaServiceProvider.notifier).discoverElements(elementSymbols.toList());
+          print('Finished calling discoverElements from createHistory.');
         } catch (e) {
-          print('Error updating encyclopedia progress: $e');
-          // 図鑑の更新に失敗しても履歴保存は成功として扱う
+          print('Error updating encyclopedia progress from createHistory: $e');
         }
       }
+      print('History saved to Firestore successfully');
+
+      
 
       // 状態を更新
       state = AsyncData([historyItem, ...state.value ?? []]);
@@ -227,12 +145,10 @@ class HistoryService extends _$HistoryService {
   }
 
   /// お気に入り状態を切り替え
-  Future<void> toggleFavorite(String historyId) async {
+  Future<void> toggleFavorite(String historyId, String userId) async {
     try {
       final currentHistories = state.value ?? [];
-      final historyIndex = currentHistories.indexWhere(
-        (h) => h.id == historyId,
-      );
+      final historyIndex = currentHistories.indexWhere((h) => h.id == historyId);
 
       if (historyIndex == -1) return;
 
@@ -240,10 +156,7 @@ class HistoryService extends _$HistoryService {
       final updatedHistory = history.copyWith(isFavorite: !history.isFavorite);
 
       // Firestoreを更新
-      await FirebaseFirestore.instance
-          .collection('histories')
-          .doc(historyId)
-          .update({'isFavorite': updatedHistory.isFavorite});
+      await _historiesCollection(userId).doc(historyId).update({'isFavorite': updatedHistory.isFavorite});
 
       // ローカル状態を更新
       final updatedHistories = [...currentHistories];
@@ -255,19 +168,14 @@ class HistoryService extends _$HistoryService {
     }
   }
 
-  /// 履歴を削除（将来的に実装する場合）
-  Future<void> deleteHistory(String historyId) async {
+  /// 履歴を削除
+  Future<void> deleteHistory(String historyId, String userId) async {
     try {
-      await FirebaseFirestore.instance
-          .collection('histories')
-          .doc(historyId)
-          .delete();
+      await _historiesCollection(userId).doc(historyId).delete();
 
       // ローカル状態からも削除
       final currentHistories = state.value ?? [];
-      final updatedHistories = currentHistories
-          .where((h) => h.id != historyId)
-          .toList();
+      final updatedHistories = currentHistories.where((h) => h.id != historyId).toList();
       state = AsyncData(updatedHistories);
     } catch (e) {
       print('Error deleting history: $e');
@@ -280,5 +188,11 @@ class HistoryService extends _$HistoryService {
     state = const AsyncLoading();
     final histories = await fetchHistories();
     state = AsyncData(histories);
+  }
+  
+  // fetchHistoriesByEmail is deprecated due to new data structure
+  Future<List<HistoryItem>> fetchHistoriesByEmail(String email) async {
+    print('⚠️ fetchHistoriesByEmail is deprecated and will not return results with the new data structure.');
+    return [];
   }
 }

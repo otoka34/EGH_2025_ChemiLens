@@ -24,7 +24,8 @@ export async function analyzeImage(imageBuffer: Buffer, mimeType: string): Promi
           "objectName": "<name of the identified object>",
           "molecules": [
             {
-              "name": "<The precise, single, standard chemical name (e.g., 'Caffeine', 'Polyethylene terephthalate', 'Water'). Do not include formulas, abbreviations, or general categories like 'minerals'.>",
+              "name": "<The standard chemical name (e.g., 'Caffeine', 'Water').>",
+              "formula": "<The chemical formula for the molecule. This is a required field. For example, for Water it is 'H2O', for Caffeine it is 'C8H10N4O2'.>",
               "description": "<First, the Japanese name of the molecule, followed by a newline character, then a description of the substance in Japanese, approximately 20 words long.>",
           ]
         }

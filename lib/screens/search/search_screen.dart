@@ -165,16 +165,16 @@ class _SearchScreenState extends State<SearchScreen> {
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(
         hintText: '元素名を入力してください（例：酸素）',
-        hintStyle: TextStyle(color: Colors.black.withOpacity(0.7)), // ヒント色を黒に変更
+        hintStyle: TextStyle(color: Colors.black.withValues(alpha: 0.7)), // ヒント色を黒に変更
         prefixIcon: Icon(
           Icons.search,
-          color: Colors.black.withOpacity(0.9),
+          color: Colors.black.withValues(alpha: 0.9),
         ), // アイコン色を黒に変更
         suffixIcon: _searchQuery.isNotEmpty
             ? IconButton(
                 icon: Icon(
                   Icons.clear,
-                  color: Colors.black.withOpacity(0.9),
+                  color: Colors.black.withValues(alpha: 0.9),
                 ), // アイコン色を黒に変更
                 onPressed: () {
                   _searchController.clear();
@@ -182,7 +182,7 @@ class _SearchScreenState extends State<SearchScreen> {
               )
             : null,
         filled: true,
-        fillColor: Colors.grey.withOpacity(0.2), // 塗りつぶし色を調整
+        fillColor: Colors.grey.withValues(alpha: 0.2), // 塗りつぶし色を調整
         contentPadding: const EdgeInsets.symmetric(vertical: 15.0),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
@@ -191,7 +191,7 @@ class _SearchScreenState extends State<SearchScreen> {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
           borderSide: BorderSide(
-            color: Colors.grey.withOpacity(0.8),
+            color: Colors.grey.withValues(alpha: 0.8),
             width: 1.5,
           ),
         ),
@@ -217,11 +217,9 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _buildQuickSearch() {
-    return SingleChildScrollView(
+    return ListView(
       padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      children: [
           const Text(
             'よく検索される元素',
             style: TextStyle(
@@ -259,7 +257,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 backgroundColor: AppColors.surface,
                 shape: StadiumBorder(
-                  side: BorderSide(color: AppColors.primary.withOpacity(0.7)),
+                  side: BorderSide(color: AppColors.primary.withValues(alpha: 0.7)),
                 ),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
@@ -269,7 +267,6 @@ class _SearchScreenState extends State<SearchScreen> {
             }).toList(),
           ),
         ],
-      ),
     );
   }
 
@@ -278,7 +275,7 @@ class _SearchScreenState extends State<SearchScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
       itemCount: _searchResults.length,
       separatorBuilder: (context, index) =>
-          Divider(color: AppColors.primary.withOpacity(0.3), height: 1),
+          Divider(color: AppColors.primary.withValues(alpha: 0.3), height: 1),
       itemBuilder: (context, index) {
         final compound = _searchResults[index];
         return Padding(
@@ -299,7 +296,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 compound.description,
                 style: TextStyle(
                   fontSize: 14,
-                  color: AppColors.textPrimary.withOpacity(0.8),
+                  color: AppColors.textPrimary.withValues(alpha: 0.8),
                   height: 1.5,
                 ),
               ),
@@ -318,7 +315,7 @@ class _SearchScreenState extends State<SearchScreen> {
           Icon(
             Icons.search_off,
             size: 80,
-            color: AppColors.textSecondary.withOpacity(0.5),
+            color: AppColors.textSecondary.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 20),
           const Text(
@@ -330,7 +327,7 @@ class _SearchScreenState extends State<SearchScreen> {
             '元素名を確認してもう一度検索してください。',
             style: TextStyle(
               fontSize: 16,
-              color: AppColors.textPrimary.withOpacity(0.7),
+              color: AppColors.textPrimary.withValues(alpha: 0.7),
             ),
             textAlign: TextAlign.center,
           ),

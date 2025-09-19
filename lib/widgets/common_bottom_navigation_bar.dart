@@ -57,7 +57,7 @@ class CommonBottomNavigationBar extends StatelessWidget {
                   index: 0,
                   selectedIcon: Icons.history,
                   unselectedIcon: Icons.history_outlined,
-                  label: '履歴',
+                  label: 'りれき',
                   isSelected: currentIndex == 0,
                 ),
               ),
@@ -68,7 +68,7 @@ class CommonBottomNavigationBar extends StatelessWidget {
                   index: 1,
                   selectedIcon: Icons.search,
                   unselectedIcon: Icons.search_outlined,
-                  label: '検索',
+                  label: 'けんさく',
                   isSelected: currentIndex == 1,
                 ),
               ),
@@ -81,7 +81,7 @@ class CommonBottomNavigationBar extends StatelessWidget {
                   index: 3,
                   selectedIcon: Icons.menu_book,
                   unselectedIcon: Icons.menu_book_outlined,
-                  label: '図鑑',
+                  label: 'ずかん',
                   isSelected: currentIndex == 3,
                 ),
               ),
@@ -92,7 +92,7 @@ class CommonBottomNavigationBar extends StatelessWidget {
                   index: 4,
                   selectedIcon: Icons.manage_accounts,
                   unselectedIcon: Icons.manage_accounts_outlined,
-                  label: 'プロフィール',
+                  label: 'とうろく',
                   isSelected: currentIndex == 4,
                 ),
               ),
@@ -101,7 +101,7 @@ class CommonBottomNavigationBar extends StatelessWidget {
         ),
         // カメラボタン（上にはみ出し）
         Positioned(
-          top: -20,
+          top: -10,
           left: MediaQuery.of(context).size.width / 2 - 40,
           child: GestureDetector(
             onTap: () => _onTap(context, 2),
@@ -145,18 +145,32 @@ class CommonBottomNavigationBar extends StatelessWidget {
     required String label,
     required bool isSelected,
   }) {
+    final color = isSelected ? AppColors.primary : AppColors.primaryDark;
+    
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: () => _onTap(context, index),
         child: SizedBox(
           height: 80,
-          child: Center(
-            child: Icon(
-              isSelected ? selectedIcon : unselectedIcon,
-              size: 28,
-              color: isSelected ? AppColors.primary : AppColors.primaryDark,
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                isSelected ? selectedIcon : unselectedIcon,
+                size: 24,
+                color: color,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: color,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                ),
+              ),
+            ],
           ),
         ),
       ),

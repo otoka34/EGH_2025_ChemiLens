@@ -34,14 +34,18 @@ class ElementCard extends StatelessWidget {
       cardBorderColor = const Color(0xFF53CBF6); // discovered
       symbolColor = const Color(0xFF2B7FC7); // discovered .element-symbol
       nameColor = const Color(0xFF1E6BA8); // discovered .element-name
-      numberBackgroundColor = const Color(0xFF53CBF6).withOpacity(0.2); // discovered .element-number background
+      numberBackgroundColor = const Color(
+        0xFF53CBF6,
+      ).withValues(alpha: 0.2); // discovered .element-number background
       numberColor = const Color(0xFF2B7FC7); // discovered .element-number color
     } else {
       cardBackgroundColor = const Color(0xFFF5F5F5); // undiscovered
       cardBorderColor = const Color(0xFFBDBDBD); // undiscovered
       symbolColor = const Color(0xFFBDBDBD); // undiscovered .element-symbol
       nameColor = const Color(0xFF9E9E9E); // undiscovered .element-name
-      numberBackgroundColor = const Color(0xFF000000).withOpacity(0.1); // default .element-number background
+      numberBackgroundColor = const Color(
+        0xFF000000,
+      ).withValues(alpha: 0.1); // default .element-number background
       numberColor = const Color(0xFF666666); // default .element-number color
     }
 
@@ -67,7 +71,7 @@ class ElementCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  '$atomicNumber',  // 常に原子番号を表示
+                  '$atomicNumber', // 常に原子番号を表示
                   style: theme.textTheme.bodySmall?.copyWith(
                     fontSize: 8,
                     fontWeight: FontWeight.w600,

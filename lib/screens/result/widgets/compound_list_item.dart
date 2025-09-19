@@ -102,15 +102,17 @@ class CompoundListItem extends StatelessWidget {
                         }
 
                         // 3Dビューアー画面に遷移
-                        context.pushNamed(
-                          'molecular_viewer',
-                          extra: {
-                            'sdfData': sdfData,
-                            'moleculeName': compound.name,
-                            'moleculeFormula': compound.description,
-                            'originalImageUrl': originalImageUrl,
-                          },
-                        );
+                        if (context.mounted) {
+                          context.pushNamed(
+                            'molecular_viewer',
+                            extra: {
+                              'sdfData': sdfData,
+                              'moleculeName': compound.name,
+                              'moleculeFormula': compound.description,
+                              'originalImageUrl': originalImageUrl,
+                            },
+                          );
+                        }
                       } else {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(

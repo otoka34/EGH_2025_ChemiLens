@@ -68,10 +68,9 @@ class _EncyclopediaScreenState extends State<EncyclopediaScreen> {
             color: const Color.fromARGB(255, 253, 249, 251),
             child: SafeArea(
               bottom: false,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
                     // 新しいタイトル位置
                     const Padding(
                       padding: EdgeInsets.only(top: 20.0, bottom: 10.0),
@@ -208,7 +207,6 @@ class _EncyclopediaScreenState extends State<EncyclopediaScreen> {
                     // BottomNavigationBar分の余白
                     const SizedBox(height: 100),
                   ],
-                ),
               ),
             ),
           ),

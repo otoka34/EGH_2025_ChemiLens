@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:team_25_app/data/element_data.dart';
 import 'package:team_25_app/models/element.dart' as my_element;
 import 'package:team_25_app/screens/encyclopedia/widgets/element_grid.dart';
-import 'package:team_25_app/widgets/app_bottom_navigation_bar.dart'; // <-- 追加
+import 'package:team_25_app/widgets/common_bottom_navigation_bar.dart';
 
 import '/widgets/common_app_bar.dart';
 
@@ -26,7 +26,7 @@ class HomeScreen extends StatelessWidget {
     final gridHeight = availableHeight * (1 / 2);
 
     return Scaffold(
-      extendBody: true, // <-- 追加: bodyがbottomNavigationBarの領域まで広がるようにする
+      extendBody: true,
       appBar: const CommonAppBar(),
       body: Column(
         children: [
@@ -79,9 +79,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: const AppBottomNavigationBar(
-        currentIndex: 0,
-      ), // <-- 追加
+      bottomNavigationBar: const CommonBottomNavigationBar(currentIndex: 0),
     );
   }
 }

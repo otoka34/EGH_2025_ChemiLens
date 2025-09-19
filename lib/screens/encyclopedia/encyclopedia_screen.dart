@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' hide Element;
 import 'package:team_25_app/data/element_data.dart'; // ElementDataをインポート
 import 'package:team_25_app/models/element.dart';
 import 'package:team_25_app/screens/encyclopedia/widgets/element_grid.dart';
+import 'package:team_25_app/widgets/common_bottom_navigation_bar.dart';
 
 import '/widgets/common_app_bar.dart';
 
@@ -59,131 +60,155 @@ class _EncyclopediaScreenState extends State<EncyclopediaScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      extendBody: true,
       appBar: const CommonAppBar(),
       body: Stack(
         children: [
           Container(
             color: const Color.fromARGB(255, 253, 249, 251),
             child: SafeArea(
-              child: Column(
-                children: [
-                  // 新しいタイトル位置
-                  const Padding(
-                    padding: EdgeInsets.only(top: 20.0, bottom: 10.0),
-                    child: Text(
-                      '元素ずかん',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF333333),
+              bottom: false,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 新しいタイトル位置
+                    const Padding(
+                      padding: EdgeInsets.only(top: 20.0, bottom: 10.0),
+                      child: Text(
+                        '元素ずかん',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF333333),
+                        ),
                       ),
                     ),
-                  ),
-                  // Progress Bar
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0,
-                      vertical: 10.0,
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              '$discoveredCount / $totalElements',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Color(0xFF666666),
+                    // Progress Bar
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0,
+                        vertical: 10.0,
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '$discoveredCount / $totalElements',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Color(0xFF666666),
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 10),
-                            Container(
-                              width: 200,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFE9ECEF),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: FractionallySizedBox(
-                                  widthFactor: discoveredCount / totalElements,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                        colors: [
-                                          colorScheme.primary,
-                                          Color(0xFFE3579D),
-                                        ], // プライマリカラーに変更
-                                      ),
-                                      borderRadius: const BorderRadius.all(
-                                        Radius.circular(4),
+                              const SizedBox(width: 10),
+                              Container(
+                                width: 200,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFE9ECEF),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: FractionallySizedBox(
+                                    widthFactor:
+                                        discoveredCount / totalElements,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.centerLeft,
+                                          end: Alignment.centerRight,
+                                          colors: [
+                                            colorScheme.primary,
+                                            Color(0xFFE3579D),
+                                          ], // プライマリカラーに変更
+                                        ),
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(4),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Bingo Grid (ElementGridを使用)
-                  Expanded(
-                    child: ElementGrid(
-                      elements: _elements, // ElementDataから取得したリストを使用
-                      onElementTap: (index) => _toggleElementDiscovered(index),
-                    ),
-                  ),
-                  // Stats
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Container(
-                      padding: const EdgeInsets.all(15.0),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF8F9FA),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          _buildStatItem(
-                            context,
-                            '$discoveredCount',
-                            '発見済み',
-                            colorScheme.primary,
-                          ),
-                          _buildStatItem(
-                            context,
-                            '$completionRate%',
-                            '達成率',
-                            colorScheme.primary,
+                            ],
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  // Legend
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _buildLegendItem(context, '発見済み', colorScheme.primary),
-                        const SizedBox(width: 20),
-                        _buildLegendItem(
-                          context,
-                          '未発見',
-                          const Color(0xFFBDBDBD),
+                    // Bingo Grid (ElementGridを使用)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: SizedBox(
+                        height:
+                            MediaQuery.of(context).size.height *
+                            0.5, // 画面高さの50%
+                        child: ElementGrid(
+                          elements: _elements,
+                          onElementTap: (index) =>
+                              _toggleElementDiscovered(index),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
+                    // Stats
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        20.0,
+                        20.0,
+                        20.0,
+                        15.0,
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.all(12.0),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF8F9FA),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _buildStatItem(
+                              context,
+                              '$discoveredCount',
+                              '発見済み',
+                              colorScheme.primary,
+                            ),
+                            _buildStatItem(
+                              context,
+                              '$completionRate%',
+                              '達成率',
+                              colorScheme.primary,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    // Legend
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildLegendItem(
+                            context,
+                            '発見済み',
+                            colorScheme.primary,
+                          ),
+                          const SizedBox(width: 20),
+                          _buildLegendItem(
+                            context,
+                            '未発見',
+                            const Color(0xFFBDBDBD),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // BottomNavigationBar分の余白
+                    const SizedBox(height: 100),
+                  ],
+                ),
               ),
             ),
           ),
@@ -280,6 +305,9 @@ class _EncyclopediaScreenState extends State<EncyclopediaScreen> {
               ),
             ),
         ],
+      ),
+      bottomNavigationBar: const CommonBottomNavigationBar(
+        currentIndex: 3, // 図鑑画面のインデックス
       ),
     );
   }

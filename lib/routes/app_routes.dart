@@ -42,7 +42,7 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const EncyclopediaScreen(),
     ),
 
-    // カメラ画面 <-- 追加
+    // カメラ画面
     GoRoute(
       path: '/camera',
       name: 'camera',

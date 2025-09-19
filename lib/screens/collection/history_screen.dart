@@ -9,6 +9,7 @@ import 'package:team_25_app/services/api_service.dart';
 import 'package:team_25_app/services/history_filter_providers.dart';
 import 'package:team_25_app/services/history_service.dart';
 import '/widgets/common_app_bar.dart';
+import 'package:team_25_app/widgets/common_bottom_navigation_bar.dart';
 
 class HistoryScreen extends ConsumerStatefulWidget {
   const HistoryScreen({super.key});
@@ -138,6 +139,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: const CommonBottomNavigationBar(
+        currentIndex: 0, // 履歴画面のインデックス
       ),
     );
   }

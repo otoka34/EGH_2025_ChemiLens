@@ -3,10 +3,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:team_25_app/theme/app_colors.dart';
 
-class AppBottomNavigationBar extends StatelessWidget {
+class CommonBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
 
-  const AppBottomNavigationBar({super.key, required this.currentIndex});
+  const CommonBottomNavigationBar({super.key, required this.currentIndex});
 
   void _onTap(BuildContext context, int index) {
     switch (index) {
@@ -20,7 +20,7 @@ class AppBottomNavigationBar extends StatelessWidget {
         context.go('/camera');
         break;
       case 3:
-        context.go('/book');
+        context.go('/encyclopedia');
         break;
       case 4:
         context.go('/profile');
@@ -39,7 +39,7 @@ class AppBottomNavigationBar extends StatelessWidget {
         Container(
           height: 80,
           decoration: BoxDecoration(
-            color: Colors.grey[300],
+            color: AppColors.surface,
             boxShadow: const [
               BoxShadow(
                 color: Colors.black12,
@@ -109,7 +109,7 @@ class AppBottomNavigationBar extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: Color(0xFFFFA1ED), // <-- AppColors.color4に変更
+                color: AppColors.textSecondary,
                 shape: BoxShape.circle,
                 boxShadow: const [
                   BoxShadow(
@@ -154,8 +154,8 @@ class AppBottomNavigationBar extends StatelessWidget {
           child: Center(
             child: Icon(
               isSelected ? selectedIcon : unselectedIcon,
-              size: 40,
-              color: isSelected ? AppColors.accent : Colors.black,
+              size: 28,
+              color: isSelected ? AppColors.primary : AppColors.primaryDark,
             ),
           ),
         ),

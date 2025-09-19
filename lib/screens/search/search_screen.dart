@@ -3,6 +3,7 @@ import 'package:team_25_app/services/api_service.dart';
 import 'package:team_25_app/theme/app_colors.dart';
 
 import '/widgets/common_app_bar.dart';
+import 'package:team_25_app/widgets/common_bottom_navigation_bar.dart';
 
 // 元素情報のデータモデル（クイック検索用）
 class ElementInfo {
@@ -148,6 +149,9 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           Expanded(child: _buildBody()),
         ],
+      ),
+      bottomNavigationBar: const CommonBottomNavigationBar(
+        currentIndex: 1, // 検索画面のインデックス
       ),
     );
   }

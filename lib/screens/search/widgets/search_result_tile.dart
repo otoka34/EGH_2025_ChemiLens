@@ -39,7 +39,7 @@ class SearchResultTile extends StatelessWidget {
                   description,
                   style: TextStyleContext.searchDescription,
                   overflow: TextOverflow.ellipsis,
-                  maxLines: 3,
+                  maxLines: 10,
                 ),
               ],
             ),

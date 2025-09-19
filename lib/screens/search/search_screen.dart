@@ -168,7 +168,7 @@ class _SearchScreenState extends State<SearchScreen> {
         hintText: '元素名を入力してください（例：酸素）',
         hintStyle: TextStyle(
           color: Colors.black.withValues(alpha: 0.7),
-          fontSize: 12,
+          fontSize: 16,
         ), // ヒント色を黒に変更
         prefixIcon: Icon(
           Icons.search,

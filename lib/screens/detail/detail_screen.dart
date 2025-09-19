@@ -151,7 +151,7 @@ class DetailScreen extends ConsumerWidget {
     Compound molecule,
     HistoryItem item,
   ) {
-    return OutlinedButton(
+    return ElevatedButton( // Changed from OutlinedButton
       onPressed: () async {
         // ローディングダイアログを表示
         CommonLoading.showLoadingDialog(context, message: '3Dモデルを読み込み中...');
@@ -179,7 +179,7 @@ class DetailScreen extends ConsumerWidget {
               extra: {
                 'sdfData': sdfData,
                 'moleculeName': molecule.name,
-                'moleculeFormula': molecule.description,
+                'moleculeFormula': molecule.formula,
                 'originalImageUrl': item.imageUrl,
               },
             );
@@ -209,18 +209,12 @@ class DetailScreen extends ConsumerWidget {
           }
         }
       },
-      style: FilledButton.styleFrom(
-        foregroundColor: AppColors.surface,
-        side: const BorderSide(color: AppColors.primary),
-        backgroundColor: AppColors.primary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      style: ElevatedButton.styleFrom( // Changed from FilledButton.styleFrom
+        backgroundColor: Theme.of(context).colorScheme.primary, // Matched
+        foregroundColor: Theme.of(context).colorScheme.onPrimary, // Matched
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Matched
       ),
-      child: const Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [Text('3Dで見る', style: TextStyle(fontSize: 10))],
-      ),
+      child: const Text('3Dで見る'), // Changed from Column with Text and fontSize
     );
   }
 

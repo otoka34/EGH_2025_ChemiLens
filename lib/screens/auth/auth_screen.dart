@@ -103,94 +103,196 @@ class _AuthScreenState extends State<AuthScreen> {
     });
   }
 
+  Future<void> _signOut() async {
+    try {
+      await _authService.signOut();
+      _showSnackBar('ログアウトしました');
+      // フォームをクリア
+      _emailController.clear();
+      _passwordController.clear();
+    } catch (e) {
+      _showSnackBar('ログアウトに失敗しました: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final ButtonStyle _buttonStyle = ElevatedButton.styleFrom(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      foregroundColor: Theme.of(context).colorScheme.onPrimary,
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0), // Slightly rounded corners
-      ),
-      textStyle: const TextStyle(
-        fontSize: 16.0,
-        fontWeight: FontWeight.bold,
-      ),
-    );
-
     return Scaffold(
-      appBar: const CommonAppBar(), // Use CommonAppBar
-      body: Column( // Wrap existing body content in a Column
+      appBar: const CommonAppBar(),
+      body: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final user = snapshot.data;
+
+          if (user != null && user.emailVerified) {
+            // ログイン済み状態の表示
+            return _buildLoggedInView(user);
+          } else {
+            // ログインフォームの表示
+            return _buildLoginForm();
+          }
+        },
+      ),
+      bottomNavigationBar: const CommonBottomNavigationBar(currentIndex: 4),
+    );
+  }
+
+  Widget _buildLoggedInView(User user) {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // New title in the body
-          const Center(
-            child: Padding(
-              padding: EdgeInsets.only(top: 20.0, bottom: 20.0), // Adjusted padding
-              child: Text(
-                'ログイン / 新規登録', // Changed title text
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF333333),
+          const Icon(Icons.account_circle, size: 80, color: Colors.grey),
+          const SizedBox(height: 24),
+          const Text(
+            'ログイン済み',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey[300]!),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'ログイン中のアカウント:',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
+                const SizedBox(height: 8),
+                Text(
+                  user.email ?? '不明',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ),
-          Expanded( // Wrap existing Padding with Expanded
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 60.0), // Adjusted padding
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start, // Adjusted alignment
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Email Input
-                  TextField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(labelText: 'メールアドレス'),
-                    keyboardType: TextInputType.emailAddress,
-                    autocorrect: false,
-                    textCapitalization: TextCapitalization.none,
-                  ),
-                  const SizedBox(height: 8),
-                  // Password Input
-                  TextField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(
-                      labelText: 'パスワード',
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _isPasswordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _isPasswordVisible = !_isPasswordVisible;
-                          });
-                        },
-                      ),
-                    ),
-                    obscureText: !_isPasswordVisible,
-                    autocorrect: false,
-                    textCapitalization: TextCapitalization.none,
-                  ),
-                  const SizedBox(height: 40), // Increased spacing
-                  if (_isLoading)
-                    const Center(child: CircularProgressIndicator())
-                  else ...[
-                    // Register Button
-                    ElevatedButton(onPressed: _register, style: _buttonStyle, child: const Text('ユーザー登録')),
-                    const SizedBox(height: 8),
-                    // Login Button
-                    ElevatedButton(onPressed: _signIn, style: _buttonStyle, child: const Text('ログイン')),
-                  ],
-                ],
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: _signOut,
+            icon: const Icon(Icons.logout),
+            label: const Text('ログアウト'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
           ),
         ],
       ),
-      bottomNavigationBar: CommonBottomNavigationBar(currentIndex: 4),
+    );
+  }
+
+  Widget _buildLoginForm() {
+    final ButtonStyle _buttonStyle = ElevatedButton.styleFrom(
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+      textStyle: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+    );
+
+    return Column(
+      children: [
+        const Center(
+          child: Padding(
+            padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+            child: Text(
+              'ログイン / 新規登録', // Changed title text
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF333333),
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          // Wrap existing Padding with Expanded
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 60.0,
+            ), // Adjusted padding
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start, // Adjusted alignment
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Email Input
+                TextField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(labelText: 'メールアドレス'),
+                  keyboardType: TextInputType.emailAddress,
+                  autocorrect: false,
+                  textCapitalization: TextCapitalization.none,
+                ),
+                const SizedBox(height: 8),
+                // Password Input
+                TextField(
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'パスワード',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    ),
+                  ),
+                  obscureText: !_isPasswordVisible,
+                  autocorrect: false,
+                  textCapitalization: TextCapitalization.none,
+                ),
+                const SizedBox(height: 40), // Increased spacing
+                if (_isLoading)
+                  const Center(child: CircularProgressIndicator())
+                else ...[
+                  // Register Button
+                  ElevatedButton(
+                    onPressed: _register,
+                    style: _buttonStyle,
+                    child: const Text('ユーザー登録'),
+                  ),
+                  const SizedBox(height: 8),
+                  // Login Button
+                  ElevatedButton(
+                    onPressed: _signIn,
+                    style: _buttonStyle,
+                    child: const Text('ログイン'),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

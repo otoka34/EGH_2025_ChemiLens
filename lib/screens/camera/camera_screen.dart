@@ -4,10 +4,10 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:team_25_app/screens/result/result_screen.dart';
-import 'package:team_25_app/screens/collection/history_screen.dart';
 import 'package:team_25_app/services/api_service.dart';
 import 'package:team_25_app/services/history_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '/theme/app_colors.dart';
 
 class CameraScreen extends ConsumerStatefulWidget {
@@ -266,22 +266,23 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) {
-        if (!didPop) {
-          // 戻るボタンが押された時の処理
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => const HistoryScreen(),
-            ),
-          );
-        }
-      },
-      child: Scaffold(
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
         backgroundColor: Colors.black,
-        body: _buildBody(),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            context.go('/history');
+          },
+        ),
+        title: const Text(
+          'カメラ',
+          style: TextStyle(color: Colors.white, fontSize: 18),
+        ),
       ),
+      body: _buildBody(),
     );
   }
 
@@ -393,54 +394,6 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
           child: CameraPreview(_controller!),
         ),
 
-        // 上部のコントロール（カメラ切り替え）
-        Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          child: Container(
-            padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top + 16,
-              left: 16,
-              right: 16,
-              bottom: 16,
-            ),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black.withValues(alpha: 0.7),
-                  Colors.transparent,
-                ],
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                // カメラ切り替えボタン
-                if ((_cameras?.length ?? 0) > 1)
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.3),
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      onPressed: _switchCamera,
-                      icon: const Icon(
-                        Icons.flip_camera_ios,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                      padding: EdgeInsets.zero,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
 
         // 下部の撮影ボタンとコントロール
         Positioned(
@@ -462,13 +415,36 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                // 戻るボタン
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                    size: 32,
+                // ギャラリーボタン
+                GestureDetector(
+                  onTap: _pickFromGallery,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.5),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                        child: const Icon(
+                          Icons.photo_library,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'ギャラリー',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 
@@ -504,13 +480,41 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
                   ),
                 ),
 
-                // ギャラリーボタン
-                IconButton(
-                  onPressed: _isLoading ? null : _pickFromGallery,
-                  icon: const Icon(
-                    Icons.photo_library,
-                    color: Colors.white,
-                    size: 32,
+                // 内外カメラ切り替えボタン
+                GestureDetector(
+                  onTap: (_cameras?.length ?? 0) > 1 ? _switchCamera : null,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: (_cameras?.length ?? 0) > 1
+                              ? Colors.black.withValues(alpha: 0.5)
+                              : Colors.grey.withValues(alpha: 0.3),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: (_cameras?.length ?? 0) > 1 ? Colors.white : Colors.grey,
+                            width: 2
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.flip_camera_ios,
+                          color: (_cameras?.length ?? 0) > 1 ? Colors.white : Colors.grey,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '切り替え',
+                        style: TextStyle(
+                          color: (_cameras?.length ?? 0) > 1 ? Colors.white : Colors.grey,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

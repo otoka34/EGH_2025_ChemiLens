@@ -13,13 +13,19 @@ class AppBottomNavigationBar extends StatelessWidget {
   void _onTap(BuildContext context, int index) {
     switch (index) {
       case 0:
-        context.go('/');
+        context.go('/history');
         break;
       case 1:
-        context.go('/camera');
+        context.go('/search');
         break;
       case 2:
-        context.go('/search');
+        context.go('/camera');
+        break;
+      case 3:
+        context.go('/book');
+        break;
+      case 4:
+        context.go('/profile');
         break;
     }
   }
@@ -46,26 +52,50 @@ class AppBottomNavigationBar extends StatelessWidget {
           ),
           child: Row(
             children: [
-              // ホームボタン（左半分を占有）
+              // 履歴ボタン
               Expanded(
                 child: _buildNavButton(
                   context: context,
                   index: 0,
-                  icon: Icons.home,
-                  label: 'ホーム',
+                  selectedIcon: Icons.history,
+                  unselectedIcon: Icons.history_outlined,
+                  label: '履歴',
                   isSelected: currentIndex == 0,
+                ),
+              ),
+              // 検索ボタン
+              Expanded(
+                child: _buildNavButton(
+                  context: context,
+                  index: 1,
+                  selectedIcon: Icons.search,
+                  unselectedIcon: Icons.search_outlined,
+                  label: '検索',
+                  isSelected: currentIndex == 1,
                 ),
               ),
               // カメラボタン用の空きスペース
               const SizedBox(width: 80),
-              // 検索ボタン（右半分を占有）
+              // 図鑑ボタン
               Expanded(
                 child: _buildNavButton(
                   context: context,
-                  index: 2,
-                  icon: Icons.search,
-                  label: '検索',
-                  isSelected: currentIndex == 2,
+                  index: 3,
+                  selectedIcon: Icons.menu_book,
+                  unselectedIcon: Icons.menu_book_outlined,
+                  label: '図鑑',
+                  isSelected: currentIndex == 3,
+                ),
+              ),
+              // プロフィールボタン
+              Expanded(
+                child: _buildNavButton(
+                  context: context,
+                  index: 4,
+                  selectedIcon: Icons.manage_accounts,
+                  unselectedIcon: Icons.manage_accounts_outlined,
+                  label: 'プロフィール',
+                  isSelected: currentIndex == 4,
                 ),
               ),
             ],
@@ -76,7 +106,7 @@ class AppBottomNavigationBar extends StatelessWidget {
           top: -20,
           left: MediaQuery.of(context).size.width / 2 - 40,
           child: GestureDetector(
-            onTap: () => _onTap(context, 1),
+            onTap: () => _onTap(context, 2),
             child: Container(
               width: 80,
               height: 80,
@@ -109,7 +139,8 @@ class AppBottomNavigationBar extends StatelessWidget {
   Widget _buildNavButton({
     required BuildContext context,
     required int index,
-    required IconData icon,
+    required IconData selectedIcon,
+    required IconData unselectedIcon,
     required String label,
     required bool isSelected,
   }) {
@@ -121,7 +152,7 @@ class AppBottomNavigationBar extends StatelessWidget {
           height: 80,
           child: Center(
             child: Icon(
-              icon,
+              isSelected ? selectedIcon : unselectedIcon,
               size: 40,
               color: Colors.black,
             ),

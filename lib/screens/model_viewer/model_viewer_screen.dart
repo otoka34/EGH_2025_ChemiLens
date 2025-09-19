@@ -253,88 +253,7 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
                       Wrap(
                         spacing: 8,
                         runSpacing: 4,
-                        children: const [
-                          _AtomColorChip(
-                            element: 'H',
-                            color: Colors.white, // 水素 (White)
-                            name: '水素',
-                          ),
-                          _AtomColorChip(
-                            element: 'B',
-                            color: Color(0xFFEC7063), // ピンク
-                            name: 'ホウ素',
-                          ),
-                          _AtomColorChip(
-                            element: 'C',
-                            color: Color(0xFF444444), // 黒グレー
-                            name: '炭素',
-                          ),
-                          _AtomColorChip(
-                            element: 'N',
-                            color: Color(0xFF2E86C1), // 濃い青
-                            name: '窒素',
-                          ),
-                          _AtomColorChip(
-                            element: 'O',
-                            color: Colors.red, // 酸素 (Red)
-                            name: '酸素',
-                          ),
-                          _AtomColorChip(
-                            element: 'F',
-                            color: Color(0xFF2ECC71), // 蛍光グリーン
-                            name: 'フッ素',
-                          ),
-                          _AtomColorChip(
-                            element: 'Na',
-                            color: Color(0xFFF5B041), // 薄オレンジ
-                            name: 'ナトリウム',
-                          ),
-                          _AtomColorChip(
-                            element: 'Mg',
-                            color: Color(0xFF82E0AA), // 薄グリーン
-                            name: 'マグネシウム',
-                          ),
-                          _AtomColorChip(
-                            element: 'Al',
-                            color: Color(0xFFBDC3C7), // 銀色グレー
-                            name: 'アルミニウム',
-                          ),
-                          _AtomColorChip(
-                            element: 'Si',
-                            color: Color(0xFF5D6D7E), // 灰青
-                            name: 'ケイ素',
-                          ),
-                          _AtomColorChip(
-                            element: 'P',
-                            color: Color(0xFFE67E22), // オレンジ
-                            name: 'リン',
-                          ),
-                          _AtomColorChip(
-                            element: 'S',
-                            color: Color(0xFFF4D03F), // 黄色
-                            name: '硫黄',
-                          ),
-                          _AtomColorChip(
-                            element: 'Cl',
-                            color: Color(0xFF58D68D), // 黄緑
-                            name: '塩素',
-                          ),
-                          _AtomColorChip(
-                            element: 'K',
-                            color: Color(0xFFAF7AC5), // 赤紫
-                            name: 'カリウム',
-                          ),
-                          _AtomColorChip(
-                            element: 'Ca',
-                            color: Color(0xFF76D7C4), // 水色グリーン
-                            name: 'カルシウム',
-                          ),
-                          _AtomColorChip(
-                            element: 'I',
-                            color: Color(0xFF8E44AD), // 紫
-                            name: 'ヨウ素',
-                          ),
-                        ],
+                        children: _buildElementColorChips(),
                       ),
                       const SizedBox(height: 12),
                       const Text(
@@ -369,6 +288,67 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
     );
   }
 
+  List<Widget> _buildElementColorChips() {
+    if (widget.formula == null || widget.formula!.isEmpty) {
+      return [];
+    }
+
+    // 元素記号と色・日本語名のマッピング
+    final Map<String, Map<String, dynamic>> elementData = {
+      'H': {'color': Colors.white, 'name': '水素'},
+      'B': {'color': const Color(0xFFEC7062), 'name': 'ホウ素'},
+      'C': {'color': const Color(0xFF444444), 'name': '炭素'},
+      'N': {'color': const Color(0xFF3048C9), 'name': '窒素'},
+      'O': {'color': const Color(0xFFFF0D0D), 'name': '酸素'},
+      'F': {'color': const Color(0xFF90E050), 'name': 'フッ素'},
+      'Ne': {'color': const Color(0xFFB3E3F5), 'name': 'ネオン'},
+      'Na': {'color': const Color(0xFFAB5CF2), 'name': 'ナトリウム'},
+      'Mg': {'color': const Color(0xFF8AFF00), 'name': 'マグネシウム'},
+      'Al': {'color': const Color(0xFFBFA6A6), 'name': 'アルミニウム'},
+      'Si': {'color': const Color(0xFFF0C8A0), 'name': 'ケイ素'},
+      'P': {'color': const Color(0xFFFF8C00), 'name': 'リン'},
+      'S': {'color': const Color(0xFFFFFF30), 'name': '硫黄'},
+      'Cl': {'color': const Color(0xFF1FF01F), 'name': '塩素'},
+      'Ar': {'color': const Color(0xFF80D1E3), 'name': 'アルゴン'},
+      'K': {'color': const Color(0xFF8F40D4), 'name': 'カリウム'},
+      'Ca': {'color': const Color(0xFF3DFF00), 'name': 'カルシウム'},
+      'Ti': {'color': const Color(0xFFBFC2C7), 'name': 'チタン'},
+      'Cr': {'color': const Color(0xFF8A99C7), 'name': 'クロム'},
+      'Mn': {'color': const Color(0xFF9C7AC7), 'name': 'マンガン'},
+      'Fe': {'color': const Color(0xFFE06633), 'name': '鉄'},
+      'Co': {'color': const Color(0xFFF090A0), 'name': 'コバルト'},
+      'Ni': {'color': const Color(0xFF50D050), 'name': 'ニッケル'},
+      'Cu': {'color': const Color(0xFFC88033), 'name': '銅'},
+      'Zn': {'color': const Color(0xFF7D80B0), 'name': '亜鉛'},
+      'Br': {'color': const Color(0xFFA62929), 'name': '臭素'},
+      'Kr': {'color': const Color(0xFF5CB8D1), 'name': 'クリプトン'},
+      'Ag': {'color': const Color(0xFFC0C0C0), 'name': '銀'},
+      'I': {'color': const Color(0xFF940094), 'name': 'ヨウ素'},
+      'Xe': {'color': const Color(0xFF429EB0), 'name': 'キセノン'},
+      'Pt': {'color': const Color(0xFFD0D0E0), 'name': '白金'},
+      'Au': {'color': const Color(0xFFFFD123), 'name': '金'},
+    };
+
+    // 分子式から元素記号を抽出（正規表現）
+    final RegExp elementRegex = RegExp(r'([A-Z][a-z]?)');
+    final Set<String> elements = elementRegex
+        .allMatches(widget.formula!)
+        .map((match) => match.group(1)!)
+        .toSet();
+
+    // 抽出された元素のみのチップを作成
+    return elements
+        .where((element) => elementData.containsKey(element))
+        .map((element) {
+      final data = elementData[element]!;
+      return _AtomColorChip(
+        element: element,
+        color: data['color'],
+        name: data['name'],
+      );
+    }).toList();
+  }
+
   @override
   void dispose() {
     // 一時ファイルをクリーンアップ（Web環境では不要）
@@ -399,7 +379,7 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                     offset: const Offset(0, 4),
                     blurRadius: 16,
                   ),

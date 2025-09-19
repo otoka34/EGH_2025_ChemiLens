@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http_parser/http_parser.dart';
 
 import '../models/detection_result.dart';
@@ -128,7 +127,7 @@ class ApiService {
       final response = await _dio.post(
         '$_baseUrl/cidtosdf',
         data: [
-          {'cids': cid}
+          {'cids': cid},
         ],
       );
 
@@ -139,9 +138,7 @@ class ApiService {
         }
         return null;
       } else {
-        throw Exception(
-          'Failed to get SDF data: ${response.statusMessage}',
-        );
+        throw Exception('Failed to get SDF data: ${response.statusMessage}');
       }
     } on DioException catch (e) {
       if (e.response != null && e.response?.data != null) {

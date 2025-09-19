@@ -44,29 +44,6 @@ class HistoryService extends _$HistoryService {
         return HistoryItem.fromJson(data);
       }).toList();
 
-      // If a logged-in user has no histories, check for anonymous histories to migrate
-      if (targetUserId != 'anonymous' && histories.isEmpty) {
-        print('🔍 [DEBUG] No histories for logged-in user, checking anonymous data...');
-        final anonymousHistories = await fetchHistories(userId: 'anonymous');
-        if (anonymousHistories.isNotEmpty) {
-          print('🔍 [DEBUG] Found ${anonymousHistories.length} anonymous histories to migrate.');
-          for (final history in anonymousHistories) {
-            // Re-create history for the logged-in user
-            await createHistory(
-              objectName: history.objectName,
-              compounds: history.compounds,
-              cids: history.cids,
-              imageData: base64Decode(history.imageUrl.split(',').last), // This is a bit of a hack
-              userId: targetUserId,
-            );
-            // Delete the old anonymous history
-            await _historiesCollection('anonymous').doc(history.id).delete();
-          }
-          // Re-fetch histories for the current user
-          return await fetchHistories(userId: targetUserId);
-        }
-      }
-
       print('🔍 [DEBUG] Returning ${histories.length} histories for $targetUserId');
       return histories;
     } catch (e) {

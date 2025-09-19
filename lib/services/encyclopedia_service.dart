@@ -41,30 +41,7 @@ class EncyclopediaService extends _$EncyclopediaService {
           );
         }).toList();
       } else {
-        // ユーザーの進捗がない場合
-        if (userId != 'anonymous') {
-          // ログインユーザーの場合は、まずanonymousのデータがあるかチェック
-          final anonymousDoc = await _firestore.collection('users').doc('anonymous').get();
-          
-          if (anonymousDoc.exists && anonymousDoc.data()!.containsKey('encyclopedia_progress')) {
-            final anonymousProgress = anonymousDoc.data()!['encyclopedia_progress'] as Map<String, dynamic>;
-            final discoveredSymbols = Set<String>.from(anonymousProgress['discovered'] ?? []);
-            
-            // ログインユーザーにデータを移行
-            await _saveProgressToFirestore(ElementData.allElements.map((e) {
-              return e.copyWith(discovered: discoveredSymbols.contains(e.symbol));
-            }).toList());
-            // anonymousのデータは削除しても良いが、一旦残す
-
-            return ElementData.allElements.map((element) {
-              return element.copyWith(
-                discovered: discoveredSymbols.contains(element.symbol),
-              );
-            }).toList();
-          }
-        }
-        
-        // anonymousデータもない場合はElementDataのデフォルト状態を返す
+        // ユーザーの進捗がない場合、またはanonymousユーザーの場合はElementDataのデフォルト状態を返す
         return List.from(ElementData.allElements);
       }
     } catch (e) {

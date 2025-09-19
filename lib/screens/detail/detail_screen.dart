@@ -27,7 +27,21 @@ class DetailScreen extends ConsumerWidget {
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (error, stack) => Scaffold(
-        appBar: AppBar(title: const Text('エラー')),
+        appBar: AppBar(
+          title: const Text(
+            'エラー',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          backgroundColor: AppColors.primaryDark,
+          elevation: 0,
+          iconTheme: const IconThemeData(
+            color: Colors.white,
+          ),
+        ),
         body: Center(child: Text('エラーが発生しました: $error')),
       ),
     );
@@ -35,7 +49,21 @@ class DetailScreen extends ConsumerWidget {
 
   Widget _buildDetailContent(BuildContext context, HistoryItem item) {
     return Scaffold(
-      appBar: AppBar(title: Text(item.objectName)),
+      appBar: AppBar(
+        title: Text(
+          item.objectName,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        backgroundColor: AppColors.primaryDark,
+        elevation: 0,
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+      ),
       backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         child: Column(

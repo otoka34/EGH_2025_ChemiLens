@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:team_25_app/theme/app_colors.dart';
 
 class AppBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
 
-  const AppBottomNavigationBar({
-    super.key,
-    required this.currentIndex,
-  });
+  const AppBottomNavigationBar({super.key, required this.currentIndex});
 
   void _onTap(BuildContext context, int index) {
     switch (index) {
@@ -126,7 +124,10 @@ class AppBottomNavigationBar extends StatelessWidget {
                   'assets/images/camera_icon.svg',
                   width: 40,
                   height: 40,
-                  colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+                  colorFilter: const ColorFilter.mode(
+                    Colors.black,
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
             ),
@@ -154,7 +155,7 @@ class AppBottomNavigationBar extends StatelessWidget {
             child: Icon(
               isSelected ? selectedIcon : unselectedIcon,
               size: 40,
-              color: Colors.black,
+              color: isSelected ? AppColors.accent : Colors.black,
             ),
           ),
         ),

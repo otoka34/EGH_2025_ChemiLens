@@ -12,9 +12,9 @@ class ApiService {
   static String get _baseUrl {
     if (kIsWeb) {
       // Web環境では直接APIサーバーに接続（CORS対応）
-      return 'http://192.168.0.15:3000';
+      return 'http://10.45.0.94:3000';
     }
-    return 'http://192.168.0.15:3000';
+    return 'http://10.45.0.94:3000';
   }
 
   static final Dio _dio = Dio();

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:team_25_app/services/api_service.dart';
 import 'package:team_25_app/theme/app_colors.dart';
-import 'package:flutter_svg/flutter_svg.dart'; // SvgPicture を使うために追加
+
+import '/widgets/common_app_bar.dart';
 
 // 元素情報のデータモデル（クイック検索用）
 class ElementInfo {
@@ -133,41 +133,26 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF0F172A), // ホーム画面と同じ背景色
-        elevation: 0,
-        title: GestureDetector(
-          onTap: () {
-            context.go('/'); // ホーム画面へ遷移
-          },
-          child: Row(
-            children: [
-              SvgPicture.asset(
-                'assets/images/app_bar_icon.svg',
-                height: 32,
-                width: 32,
-              ),
-            ],
-          ),
-        ),
-        // toolbarHeight, flexibleSpace, bottom を削除
-      ),
+      appBar: const CommonAppBar(),
       body: Column(
         children: [
           // 検索バーをbodyの先頭に移動
           Padding(
-            padding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 20.0), // 上部のパディングを調整
+            padding: const EdgeInsets.fromLTRB(
+              24.0,
+              20.0,
+              24.0,
+              20.0,
+            ), // 上部のパディングを調整
             child: _buildSearchBar(),
           ),
-          Expanded(
-            child: _buildBody(),
-          ),
+          Expanded(child: _buildBody()),
         ],
       ),
     );
   }
 
-// 検索バーのウィジェット
+  // 検索バーのウィジェット
   Widget _buildSearchBar() {
     return TextField(
       controller: _searchController,
@@ -177,10 +162,16 @@ class _SearchScreenState extends State<SearchScreen> {
       decoration: InputDecoration(
         hintText: '元素名を入力してください（例：酸素）',
         hintStyle: TextStyle(color: Colors.black.withOpacity(0.7)), // ヒント色を黒に変更
-        prefixIcon: Icon(Icons.search, color: Colors.black.withOpacity(0.9)), // アイコン色を黒に変更
+        prefixIcon: Icon(
+          Icons.search,
+          color: Colors.black.withOpacity(0.9),
+        ), // アイコン色を黒に変更
         suffixIcon: _searchQuery.isNotEmpty
             ? IconButton(
-                icon: Icon(Icons.clear, color: Colors.black.withOpacity(0.9)), // アイコン色を黒に変更
+                icon: Icon(
+                  Icons.clear,
+                  color: Colors.black.withOpacity(0.9),
+                ), // アイコン色を黒に変更
                 onPressed: () {
                   _searchController.clear();
                 },
@@ -195,7 +186,10 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
-          borderSide: BorderSide(color: Colors.grey.withOpacity(0.8), width: 1.5),
+          borderSide: BorderSide(
+            color: Colors.grey.withOpacity(0.8),
+            width: 1.5,
+          ),
         ),
       ),
       onSubmitted: _performSearch,
@@ -263,7 +257,10 @@ class _SearchScreenState extends State<SearchScreen> {
                 shape: StadiumBorder(
                   side: BorderSide(color: AppColors.primary.withOpacity(0.7)),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
               );
             }).toList(),
           ),
@@ -276,10 +273,8 @@ class _SearchScreenState extends State<SearchScreen> {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
       itemCount: _searchResults.length,
-      separatorBuilder: (context, index) => Divider(
-        color: AppColors.primary.withOpacity(0.3),
-        height: 1,
-      ),
+      separatorBuilder: (context, index) =>
+          Divider(color: AppColors.primary.withOpacity(0.3), height: 1),
       itemBuilder: (context, index) {
         final compound = _searchResults[index];
         return Padding(
@@ -324,10 +319,7 @@ class _SearchScreenState extends State<SearchScreen> {
           const SizedBox(height: 20),
           const Text(
             '見つかりませんでした',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(

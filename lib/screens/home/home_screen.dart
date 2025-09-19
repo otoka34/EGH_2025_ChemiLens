@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:team_25_app/data/element_data.dart';
 import 'package:team_25_app/models/element.dart' as my_element;
 import 'package:team_25_app/screens/encyclopedia/widgets/element_grid.dart';
-import 'package:team_25_app/data/element_data.dart';
 import 'package:team_25_app/widgets/app_bottom_navigation_bar.dart'; // <-- 追加
+
+import '/widgets/common_app_bar.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -20,27 +21,13 @@ class HomeScreen extends StatelessWidget {
 
     final bottomNavBarHeight = 80.0; // AppBottomNavigationBarの高さ
 
-    final availableHeight = screenHeight - appBarHeight - statusBarHeight - bottomNavBarHeight;
-    final gridHeight = availableHeight * (1 / 2); 
+    final availableHeight =
+        screenHeight - appBarHeight - statusBarHeight - bottomNavBarHeight;
+    final gridHeight = availableHeight * (1 / 2);
 
     return Scaffold(
       extendBody: true, // <-- 追加: bodyがbottomNavigationBarの領域まで広がるようにする
-      appBar: AppBar(
-        title: GestureDetector( // <-- GestureDetectorで囲む
-          onTap: () {
-            context.go('/'); // ホーム画面へ遷移
-          },
-          child: Row(
-            children: [
-              SvgPicture.asset(
-                'assets/images/app_bar_icon.svg',
-                height: 32,
-                width: 32,
-              ),
-            ],
-          ),
-        ),
-      ),
+      appBar: const CommonAppBar(),
       body: Column(
         children: [
           // ホーム画面のタイトル
@@ -81,7 +68,10 @@ class HomeScreen extends StatelessWidget {
                 context.go('/history'); // 履歴画面へ遷移
               },
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
                 textStyle: const TextStyle(fontSize: 14),
               ),
               child: const Text('最近見た分子を見る'),
@@ -89,7 +79,9 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: const AppBottomNavigationBar(currentIndex: 0), // <-- 追加
+      bottomNavigationBar: const AppBottomNavigationBar(
+        currentIndex: 0,
+      ), // <-- 追加
     );
   }
 }

@@ -10,11 +10,11 @@ class ImageCompressionService {
       // 画像をデコード
       final image = img.decodeImage(imageData);
       if (image == null) {
-        print('Failed to decode image, returning original');
+        // print('Failed to decode image, returning original');
         return imageData;
       }
 
-      print('Original image: ${image.width}x${image.height}');
+      // print('Original image: ${image.width}x${image.height}');
 
       // 段階的に圧縮
       var quality = 85;
@@ -37,13 +37,13 @@ class ImageCompressionService {
           img.encodeJpg(resized, quality: quality),
         );
 
-        print(
-          'Compressed to ${resized.width}x${resized.height}, quality: $quality, size: ${compressedData.length} bytes',
-        );
+        // print(
+        //   'Compressed to ${resized.width}x${resized.height}, quality: $quality, size: ${compressedData.length} bytes',
+        // );
 
         // 500KB以下なら完了
         if (compressedData.length <= 500 * 1024) {
-          print('Compression successful: ${compressedData.length} bytes');
+          // print('Compression successful: ${compressedData.length} bytes');
           return compressedData;
         }
 
@@ -60,10 +60,10 @@ class ImageCompressionService {
       }
 
       // 最終的に500KBを超える場合でも圧縮済みデータを返す
-      print('Final compression: ${compressedData?.length ?? 0} bytes');
+      // print('Final compression: ${compressedData?.length ?? 0} bytes');
       return compressedData ?? imageData;
     } catch (e) {
-      print('Error compressing image: $e');
+      // print('Error compressing image: $e');
       return imageData;
     }
   }

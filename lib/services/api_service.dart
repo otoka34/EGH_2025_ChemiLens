@@ -26,7 +26,7 @@ class ApiService {
         finalMimeType = 'image/jpeg';
       }
 
-      print('Sending image with MIME type: $finalMimeType');
+      // print('Sending image with MIME type: $finalMimeType');
 
       // FormDataを作成して画像を添付
       final formData = FormData.fromMap({
@@ -38,11 +38,11 @@ class ApiService {
       });
 
       // バックエンドの /analyze エンドポイントにPOSTリクエストを送信
-      print('Sending POST request to: $_baseUrl/analyze');
+      // print('Sending POST request to: $_baseUrl/analyze');
       final response = await _dio.post('$_baseUrl/analyze', data: formData);
 
       if (response.statusCode == 200) {
-        print('API Response: ${response.data}');
+        // print('API Response: ${response.data}');
         // 成功レスポンスをDetectionResultに変換
         return DetectionResult.fromApiResponse(response.data);
       } else {
@@ -51,14 +51,14 @@ class ApiService {
       }
     } on DioException catch (e) {
       // Dioのエラー（ネットワークエラーなど）
-      print('DioException: ${e.type}, ${e.message}');
+      // print('DioException: ${e.type}, ${e.message}');
       if (e.response != null) {
-        print('Response status: ${e.response!.statusCode}');
-        print('Response data: ${e.response!.data}');
+        // print('Response status: ${e.response!.statusCode}');
+        // print('Response data: ${e.response!.data}');
       }
       throw Exception('Failed to connect to the server: $e');
     } catch (e) {
-      print('Unexpected error: $e');
+      // print('Unexpected error: $e');
       throw Exception('An unexpected error occurred: $e');
     }
   }

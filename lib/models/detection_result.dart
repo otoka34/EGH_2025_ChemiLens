@@ -24,7 +24,7 @@ abstract class DetectionResult with _$DetectionResult {
           try {
             // APIレスポンスからCompoundを作成
             final formula = v['formula'] ?? '';
-            print('Processing molecule: ${v['name']} with formula: $formula');
+            // print('Processing molecule: ${v['name']} with formula: $formula');
             
             moleculeList.add(
               Compound(
@@ -35,10 +35,10 @@ abstract class DetectionResult with _$DetectionResult {
                 description: v['description'] ?? '',
               ),
             );
-            print('Successfully added molecule: ${v['name']}');
+            // print('Successfully added molecule: ${v['name']}');
           } catch (e) {
-            print('Error processing molecule ${v['name']}: $e');
-            print('Stack trace: ${StackTrace.current}');
+            // print('Error processing molecule ${v['name']}: $e');
+            // print('Stack trace: ${StackTrace.current}');
           }
         });
       }
@@ -49,10 +49,10 @@ abstract class DetectionResult with _$DetectionResult {
         molecules: moleculeList,
       );
       
-      print('Successfully created DetectionResult: ${result.objectName} with ${result.molecules.length} molecules');
+      // print('Successfully created DetectionResult: ${result.objectName} with ${result.molecules.length} molecules');
       return result;
     } catch (e) {
-      print('Error in fromApiResponse: $e');
+      // print('Error in fromApiResponse: $e');
       rethrow;
     }
   }

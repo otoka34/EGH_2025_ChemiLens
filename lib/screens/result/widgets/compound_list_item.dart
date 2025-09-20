@@ -77,7 +77,7 @@ class CompoundListItem extends StatelessWidget {
               final base64Image = base64Encode(compressedBytes);
               originalImageUrl = 'data:image/jpeg;base64,$base64Image';
             } catch (e) {
-              print('Error converting XFile to data URL: $e');
+              // print('Error converting XFile to data URL: $e');
               originalImageUrl = null;
             }
           }
@@ -91,7 +91,7 @@ class CompoundListItem extends StatelessWidget {
             final base64Image = base64Encode(compressedBytes);
             originalImageUrl = 'data:image/jpeg;base64,$base64Image';
           } catch (e) {
-            print('Error converting file to data URL: $e');
+            // print('Error converting file to data URL: $e');
             originalImageUrl = null;
           }
         } else {

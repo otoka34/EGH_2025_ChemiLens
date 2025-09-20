@@ -285,7 +285,7 @@ class _SearchScreenState extends State<SearchScreen> {
           description: compound.description,
           onTap: () {
             // TODO: 検索結果タップ時の処理
-            print('Tapped: ${compound.name}');
+            // print('Tapped: ${compound.name}');
           },
         );
       },

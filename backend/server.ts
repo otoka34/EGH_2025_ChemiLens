@@ -29,7 +29,7 @@ app.use((req, res, next) => {
   }
 });
 
-app.post("/api/analyze", upload.single("image"), async (req, res) => {
+app.post("/analyze", upload.single("image"), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ error: "No file provided" });
@@ -68,7 +68,7 @@ app.post("/api/analyze", upload.single("image"), async (req, res) => {
 });
 
 // SDFデータ(text/plain)を受け取り、GLBファイルを返すエンドポイント
-app.post("/api/convert", express.text({ type: 'text/plain', limit: '1mb' }), async (req, res) => {
+app.post("/convert", express.text({ type: 'text/plain', limit: '1mb' }), async (req, res) => {
     const sdfData = req.body;
     if (typeof sdfData !== 'string' || !sdfData) {
         return res.status(400).json({ error: "SDF data (string) is required" });
@@ -122,7 +122,7 @@ Object.values(elementSymbolMap).forEach(symbol => {
 });
 
 // 元素記号による化合物検索エンドポイント
-app.get("/api/search", async (req, res) => {
+app.get("/search", async (req, res) => {
     const userInput = (req.query.element as string) || '';
 
     // デバッグ用に受け取った値をログに出力
@@ -152,7 +152,7 @@ app.get("/api/search", async (req, res) => {
 });
 
 // 複数のCIDを含むオブジェクト配列を受け取り、それぞれにSDFデータを付与して返すエンドポイント
-app.post("/api/cidtosdf", async (req, res) => {
+app.post("/cidtosdf", async (req, res) => {
     const requestData = req.body;
 
     // リクエストボディが配列であるかを検証
@@ -195,4 +195,6 @@ app.post("/api/cidtosdf", async (req, res) => {
     }
 });
 
-export default app;
+app.listen(3000, '0.0.0.0', () => {
+    console.log("Server running on http://localhost:3000 and http://10.124.53.133:3000");
+});

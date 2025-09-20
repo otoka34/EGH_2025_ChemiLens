@@ -32,7 +32,7 @@ class HistoryService extends _$HistoryService {
   Future<List<HistoryItem>> fetchHistories({String? userId}) async {
     try {
       final targetUserId = userId ?? _auth.currentUser?.uid ?? 'anonymous';
-      print('🔍 [DEBUG] fetchHistories called for userId: $targetUserId');
+      // print('🔍 [DEBUG] fetchHistories called for userId: $targetUserId');
 
       final querySnapshot = await _historiesCollection(targetUserId)
           .orderBy('createdAt', descending: true)
@@ -44,10 +44,10 @@ class HistoryService extends _$HistoryService {
         return HistoryItem.fromJson(data);
       }).toList();
 
-      print('🔍 [DEBUG] Returning ${histories.length} histories for $targetUserId');
+      // print('🔍 [DEBUG] Returning ${histories.length} histories for $targetUserId');
       return histories;
     } catch (e) {
-      print('❌ Error fetching histories: $e');
+      // print('❌ Error fetching histories: $e');
       return [];
     }
   }
@@ -63,7 +63,7 @@ class HistoryService extends _$HistoryService {
     try {
       final uid = userId ?? _auth.currentUser?.uid ?? 'anonymous';
       final historyId = _historiesCollection(uid).doc().id;
-      print('Generated historyId: $historyId for user: $uid');
+      // print('Generated historyId: $historyId for user: $uid');
 
       // 画像を圧縮してからBase64に変換
       final compressedImageData = await ImageCompressionService.compressImage(imageData);
@@ -97,17 +97,17 @@ class HistoryService extends _$HistoryService {
       
       if (elementSymbols.isNotEmpty) {
         try {
-          print('Calling discoverElements from createHistory with: ${elementSymbols.toList()}');
+          // print('Calling discoverElements from createHistory with: ${elementSymbols.toList()}');
           // Wait for the encyclopedia provider to be ready before trying to update it.
           await ref.read(encyclopediaServiceProvider.future);
           // Now call the update method.
           await ref.read(encyclopediaServiceProvider.notifier).discoverElements(elementSymbols.toList());
-          print('Finished calling discoverElements from createHistory.');
+          // print('Finished calling discoverElements from createHistory.');
         } catch (e) {
-          print('Error updating encyclopedia progress from createHistory: $e');
+          // print('Error updating encyclopedia progress from createHistory: $e');
         }
       }
-      print('History saved to Firestore successfully');
+      // print('History saved to Firestore successfully');
 
       
 
@@ -116,7 +116,7 @@ class HistoryService extends _$HistoryService {
 
       return historyItem;
     } catch (e) {
-      print('Error creating history: $e');
+      // print('Error creating history: $e');
       rethrow;
     }
   }
@@ -140,7 +140,7 @@ class HistoryService extends _$HistoryService {
       updatedHistories[historyIndex] = updatedHistory;
       state = AsyncData(updatedHistories);
     } catch (e) {
-      print('Error toggling favorite: $e');
+      // print('Error toggling favorite: $e');
       rethrow;
     }
   }
@@ -155,7 +155,7 @@ class HistoryService extends _$HistoryService {
       final updatedHistories = currentHistories.where((h) => h.id != historyId).toList();
       state = AsyncData(updatedHistories);
     } catch (e) {
-      print('Error deleting history: $e');
+      // print('Error deleting history: $e');
       rethrow;
     }
   }
@@ -169,7 +169,7 @@ class HistoryService extends _$HistoryService {
   
   // fetchHistoriesByEmail is deprecated due to new data structure
   Future<List<HistoryItem>> fetchHistoriesByEmail(String email) async {
-    print('⚠️ fetchHistoriesByEmail is deprecated and will not return results with the new data structure.');
+    // print('⚠️ fetchHistoriesByEmail is deprecated and will not return results with the new data structure.');
     return [];
   }
 }

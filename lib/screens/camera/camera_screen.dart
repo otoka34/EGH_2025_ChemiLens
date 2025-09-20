@@ -208,7 +208,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> {
           );
         } catch (e) {
           // 履歴保存の失敗は結果画面への遷移を妨げない
-          debugPrint('History save failed: $e');
+          // debugPrint('History save failed: $e');
         }
       }
 

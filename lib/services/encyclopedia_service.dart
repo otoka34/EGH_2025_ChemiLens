@@ -45,7 +45,7 @@ class EncyclopediaService extends _$EncyclopediaService {
         return List.from(ElementData.allElements);
       }
     } catch (e) {
-      print('Error fetching encyclopedia progress: $e');
+      // print('Error fetching encyclopedia progress: $e');
       // エラーの場合はデフォルト状態を返す
       return List.from(ElementData.allElements);
     }
@@ -72,7 +72,7 @@ class EncyclopediaService extends _$EncyclopediaService {
       // Firestoreに保存
       await _saveProgressToFirestore(updatedElements);
     } catch (e) {
-      print('Error toggling element discovery: $e');
+      // print('Error toggling element discovery: $e');
       rethrow;
     }
   }
@@ -109,7 +109,7 @@ if (hasChanges) {
   }
 }
     } catch (e) {
-      print('Error discovering elements: $e');
+      // print('Error discovering elements: $e');
       rethrow;
     } 
   }
@@ -135,7 +135,7 @@ if (hasChanges) {
             SetOptions(merge: true),
           );
     } catch (e) {
-      print('Error saving progress to Firestore: $e');
+      // print('Error saving progress to Firestore: $e');
       rethrow;
     }
   }

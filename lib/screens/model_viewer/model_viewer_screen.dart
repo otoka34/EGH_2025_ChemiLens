@@ -82,7 +82,10 @@ class _ModelViewerScreenState extends State<ModelViewerScreen> {
         }
       }
     } catch (e) {
-      print('ModelViewerScreen: Error loading model: $e');
+      // print(
+// print(
+// print(
+// print('ModelViewerScreen: Error loading model: $e');
       if (mounted) {
         setState(() {
           _isLoading = false;

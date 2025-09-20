@@ -165,7 +165,7 @@ class _SearchScreenState extends State<SearchScreen> {
       style: const TextStyle(color: Colors.black, fontSize: 16), // テキスト色を黒に変更
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(
-        hintText: '元素名を入力してください（例：酸素）',
+        hintText: '元素記号を入力(例：C,O)',
         hintStyle: TextStyle(
           color: Colors.black.withValues(alpha: 0.7),
           fontSize: 16,
